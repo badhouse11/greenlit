@@ -161,11 +161,11 @@ export function Rules({ onBack }: { onBack: () => void }) {
               </tr>
               <tr>
                 <td>The decks</td>
-                <td>Both star decks are reshuffled every reel. No star appears twice in the same reel. Genres don’t repeat within a game.</td>
+                <td>Both star decks are reshuffled every reel, and last reel’s stars go to the bottom. Draws alternate between actors and actresses. No star appears twice in the same reel, and genres don’t repeat within a game.</td>
               </tr>
               <tr>
                 <td>The vault</td>
-                <td>One hidden legend per two competing studios, between one and three a reel. Where they fall in the deck is random and secret.</td>
+                <td>One hidden legend per competing studio, between two and five a reel. Where they fall in the deck is random and secret.</td>
               </tr>
             </tbody>
           </table>

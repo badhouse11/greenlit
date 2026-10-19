@@ -67,7 +67,8 @@ After the final reel: final standings by points (greenlight stubs break a tie, t
 | Trades | One completed deal per studio per reel; equal numbers of stars each way |
 | IOUs | Up to $15M owed at once. Taken off the debtor's budget the next time it competes (not while it's Commissioner) and paid to the other studio the next time *it* competes. No IOUs once a studio has no picture left |
 | Commissioner | Doesn't pitch or score themselves; casting vote on a tie |
-| The vault | One hidden legend per two competing studios (1–3 a reel), at secret random draws, always before casting closes |
+| The vault | One hidden legend per competing studio (2–5 a reel), at secret random draws, always before casting closes |
+| The draw | Alternates actor, actress, actor, actress (each card has a `gender` of `f` or `m`); last reel's stars go to the bottom of the deck |
 | Scoring | 0–5 stamps each for casting, budget, plot. Every studio banks its stamps as points; most points after the final reel wins |
 | Decks | Star decks reshuffle every reel; no repeats within a reel. Genres don't repeat within a game |
 
@@ -77,8 +78,8 @@ Every rule number lives in one place: `RULES` at the top of `src/game/engine.ts`
 
 The decks are plain JSON, so you can change them without touching the code:
 
-- `src/data/talent.json` – 100 living stars
-- `src/data/legacy.json` – 40 legends for the vault
+- `src/data/talent.json` – 172 living stars
+- `src/data/legacy.json` – 94 legends for the vault
 - `src/data/genres.json` – 16 core genres plus 8 "director's cut" genres (switch them on at setup)
 
 Add, remove or rename cards freely. Each card just needs a unique `id`.

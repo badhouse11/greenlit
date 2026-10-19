@@ -98,6 +98,35 @@ describe('auction rules', () => {
   });
 });
 
+describe('the draw', () => {
+  it('alternates boy, girl, boy, girl, vault legends included', () => {
+    for (let k = 0; k < 20; k++) {
+      let g = make(5);
+      const genders: string[] = [];
+      for (let i = 0; i < 20; i++) {
+        g = draw(g);
+        genders.push(g.round.onTable!.gender!);
+        g = bin(g);
+      }
+      for (let i = 1; i < genders.length; i++) expect(genders[i] !== genders[i - 1]).toBe(true);
+    }
+  });
+
+  it('shuffles differently every game', () => {
+    const firsts = new Set<string>();
+    for (let k = 0; k < 12; k++) firsts.add(draw(make(4)).round.onTable!.id);
+    expect(firsts.size > 6).toBe(true);
+  });
+
+  it('sends last reel’s stars to the bottom of the deck', () => {
+    let g = castEveryone(make(3, [0, 1, 2]));
+    const seen = new Set(g.round.sales.map((s) => s.card.id));
+    g = nextReel(scoreAndLock(g));
+    const top = g.round.talentDeck.slice(0, 60);
+    expect(top.some((c) => seen.has(c.id))).toBe(false);
+  });
+});
+
 describe('the vault', () => {
   it('hides a fixed number of legends per reel and always surfaces them', () => {
     for (let n = 3; n <= 8; n++) {

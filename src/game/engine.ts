@@ -37,17 +37,29 @@ export const CATEGORIES: { key: ScoreCategory; label: string; hint: string }[] =
   { key: 'plot', label: 'Plot', hint: 'Is it a film you’d actually greenlight?' },
 ];
 
-/** Legends hidden in each reel: one per two competing studios, between one and three. */
-export const legacyPerReel = (competitors: number) => Math.min(3, Math.max(1, Math.round(competitors / 2)));
+/** Legends hidden in each reel: one per competing studio, between two and five. */
+export const legacyPerReel = (competitors: number) => Math.min(5, Math.max(2, competitors));
 
-export const TALENT: Card[] = talentData.cards.map((c) => ({ ...c, deck: 'talent' as const }));
-export const LEGACY: Card[] = legacyData.cards.map((c) => ({ ...c, deck: 'legacy' as const }));
+const asGender = (g: unknown): 'f' | 'm' | undefined => (g === 'f' || g === 'm' ? g : undefined);
+export const TALENT: Card[] = talentData.cards.map((c) => ({ id: c.id, name: c.name, gender: asGender(c.gender), deck: 'talent' as const }));
+export const LEGACY: Card[] = legacyData.cards.map((c) => ({ id: c.id, name: c.name, gender: asGender(c.gender), deck: 'legacy' as const }));
 export const GENRES: { id: string; name: string; pack: string }[] = genreData.cards;
 
 /* ------------------------------------------------------------------ */
 /*  Utilities                                                          */
 /* ------------------------------------------------------------------ */
-export function shuffle<T>(input: readonly T[], rng: () => number = Math.random): T[] {
+/** Cryptographic randomness where available, so no two shuffles line up. */
+export function random(): number {
+  const c = (globalThis as { crypto?: { getRandomValues?: (a: Uint32Array) => Uint32Array } }).crypto;
+  if (c?.getRandomValues) {
+    const a = new Uint32Array(1);
+    c.getRandomValues(a);
+    return a[0] / 4294967296;
+  }
+  return Math.random();
+}
+
+export function shuffle<T>(input: readonly T[], rng: () => number = random): T[] {
   const a = [...input];
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(rng() * (i + 1));
@@ -187,7 +199,14 @@ function pickGenre(g: Game): string {
   return shuffle(fresh)[0];
 }
 
+/** Shuffled, with anyone drawn last reel moved to the bottom so each reel feels new. */
+function freshDeck(cards: Card[], recent: Set<string>): Card[] {
+  const deck = shuffle(cards);
+  return [...deck.filter((c) => !recent.has(c.id)), ...deck.filter((c) => recent.has(c.id))];
+}
+
 function setUpRound(input: Game, idx: number): Game {
+  const recent = new Set((input.round?.sales ?? []).map((s) => s.card.id));
   const g = clone(input);
   const commissionerId = g.order[idx];
   const genre = pickGenre(g);
@@ -224,8 +243,8 @@ function setUpRound(input: Game, idx: number): Game {
     number: idx + 1,
     commissionerId,
     genre,
-    talentDeck: shuffle(TALENT),
-    legacyDeck: shuffle(LEGACY),
+    talentDeck: freshDeck(TALENT, recent),
+    legacyDeck: freshDeck(LEGACY, recent),
     onTable: null,
     sales: [],
     studios,
@@ -234,6 +253,7 @@ function setUpRound(input: Game, idx: number): Game {
     pitchCursor: 0,
     legacySlots,
     drawCount: 0,
+    nextGender: random() < 0.5 ? 'f' : 'm',
     scores: Object.fromEntries(Object.keys(studios).map((id) => [id, emptyCard()])),
     winnerId: null,
     logline: '',
@@ -337,10 +357,16 @@ export function draw(input: Game): Game {
   if (castingComplete(input)) throw new RuleError('Casting is closed. Every studio has five stars.');
   const g = clone(input);
   const fromVault = nextIsLegacy(g) && g.round.legacyDeck.length > 0;
-  const card = (fromVault ? g.round.legacyDeck : g.round.talentDeck).shift();
+  const deck = fromVault ? g.round.legacyDeck : g.round.talentDeck;
+  // Boy, girl, boy, girl: take the top card of the gender that's due, if there is one.
+  const want = g.round.nextGender;
+  let at = want ? deck.findIndex((c) => c.gender === want) : 0;
+  if (at < 0) at = 0;
+  const [card] = deck.splice(at, 1);
   if (!card) throw new RuleError('The Talent Deck is empty.');
   g.round.onTable = card;
   g.round.drawCount += 1;
+  if (card.gender) g.round.nextGender = card.gender === 'f' ? 'm' : 'f';
   return g;
 }
 

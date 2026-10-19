@@ -4,6 +4,7 @@ export interface Card {
   id: string;
   name: string;
   deck: DeckKind;
+  gender?: 'f' | 'm';
 }
 
 export interface Studio {
@@ -88,6 +89,7 @@ export interface Round {
   pitchCursor: number; // which studio is on the clock
   legacySlots: number[]; // secret draw numbers where a vault legend surfaces
   drawCount: number;
+  nextGender?: 'f' | 'm'; // draws alternate: boy, girl, boy, girl
   scores: Record<string, Scorecard>;
   winnerId: string | null;
   logline: string;
