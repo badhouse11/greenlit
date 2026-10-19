@@ -8,7 +8,7 @@ import { Play } from './screens/Play';
 import { Archive } from './screens/Archive';
 import { Rules } from './screens/Rules';
 import { PrintShop } from './screens/PrintShop';
-import { HostRoom, JoinRoom } from './screens/online/OnlineRoom';
+import { JoinRoom, StartRoom } from './screens/online/OnlineRoom';
 import { MULTIPLAYER_READY } from './net/useRoom';
 
 /** A link like greenlit.app/?room=ABCD drops a phone straight into that room. */
@@ -20,7 +20,7 @@ const linkedRoom = (() => {
   }
 })();
 
-export type View = 'home' | 'setup' | 'game' | 'archive' | 'rules' | 'print' | 'host' | 'join';
+export type View = 'home' | 'setup' | 'game' | 'archive' | 'rules' | 'print' | 'start' | 'join' | 'watch';
 
 export interface Toast {
   text: string;
@@ -162,8 +162,9 @@ export default function App() {
         <Home
           saved={game}
           onNew={() => setView('setup')}
-          onHost={MULTIPLAYER_READY ? () => setView('host') : undefined}
+          onHost={MULTIPLAYER_READY ? () => setView('start') : undefined}
           onJoin={MULTIPLAYER_READY ? () => setView('join') : undefined}
+          onWatch={MULTIPLAYER_READY ? () => setView('watch') : undefined}
           onContinue={() => setView('game')}
           onArchive={() => openAside('archive')}
           onRules={() => openAside('rules')}
@@ -177,7 +178,8 @@ export default function App() {
         <Archive films={archive} onBack={() => setView(returnTo)} onRemove={removeFilm} onClear={clearArchive} />
       )}
       {view === 'rules' && <Rules onBack={() => setView(returnTo)} />}
-      {view === 'host' && <HostRoom onExit={() => setView('home')} />}
+      {view === 'start' && <StartRoom onExit={() => setView('home')} />}
+      {view === 'watch' && <JoinRoom watch onExit={() => setView('home')} />}
       {view === 'join' && (
         <JoinRoom
           initialCode={linkedRoom ?? undefined}

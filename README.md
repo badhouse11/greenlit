@@ -29,7 +29,11 @@ Or drag-and-drop: run `npm run build` locally and drop the `dist` folder onto ap
 
 ## Everyone's phone (multiplayer)
 
-One device (TV, laptop or tablet) hosts the room as **the big screen**. Everyone else opens the site on their phone, taps **Join a game** and types the four-letter code. Bids are made from phones and shown live on every screen; the Commissioner's phone holds the secret genre and the scorecards.
+Phones only. One player taps **Start a game**: their phone opens the room, shows a four-letter code and an invite link, and becomes the host (they still play). Everyone else taps **Join a game**. Every phone shows the whole game: the star under the hammer, live bids, everyone's budgets, and the big reveals at the same moment. The Commissioner's phone holds the secret genre and the scorecards.
+
+Optional: any laptop or TV can tap **Watch a game on the big screen** and type the code to show the game to the room. It's display-only.
+
+If the host's phone goes quiet for 20 seconds, any other studio can step in as host from the Room menu.
 
 - **Room server:** `server/index.ts`, a Cloudflare Worker with one Durable Object per room. Config is in `wrangler.toml`. Deploy it with Cloudflare's "Import a repository" (Workers Builds), Worker name `greenlit-rooms`, deploy command `npx wrangler deploy`.
 - **Connecting the site:** in Netlify, add the environment variable `VITE_ROOM_SERVER` set to the Worker's address (e.g. `https://greenlit-rooms.yourname.workers.dev`), then redeploy. Without it, the site runs pass-the-phone mode only.

@@ -104,3 +104,36 @@ export function StudioDot({ colour }: { colour: string }) {
 }
 
 export const nameOf = (v: View, id: string | null | undefined) => (id && v.game ? studioById(v.game, id).name : '');
+
+/* ---------------------------------------------------------------------- */
+/*  Inviting people in                                                     */
+/* ---------------------------------------------------------------------- */
+export const inviteLink = (code: string) => `${window.location.origin}/?room=${code}`;
+
+export function ShareInvite({ code }: { code: string }) {
+  const [copied, setCopied] = useState(false);
+  const link = inviteLink(code);
+  const share = async () => {
+    const nav = navigator as Navigator & { share?: (d: { title: string; text: string; url: string }) => Promise<void> };
+    if (nav.share) {
+      try {
+        await nav.share({ title: 'GREENLIT', text: `Join my GREENLIT game. Room code ${code}.`, url: link });
+        return;
+      } catch {
+        /* cancelled: fall through to copying */
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2500);
+    } catch {
+      window.prompt?.('Copy this invite link', link);
+    }
+  };
+  return (
+    <button className="btn btn--small share-btn" onClick={share}>
+      {copied ? 'Link copied' : 'Share invite link'}
+    </button>
+  );
+}

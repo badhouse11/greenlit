@@ -62,6 +62,7 @@ export interface RoomState {
   history: { game: Game; label: string }[];
   event: RoomEvent | null;
   eventSeq: number;
+  hostToken: string | null; // the phone that started the room runs the housekeeping
   shopUrl?: string;
 }
 
@@ -99,6 +100,7 @@ export function newRoom(code: string, now: number): RoomState {
     history: [],
     event: null,
     eventSeq: 0,
+    hostToken: null,
   };
 }
 
@@ -126,17 +128,50 @@ export class RoomCore {
     return m.role === 'player' && !!this.state.game && m.studioId === this.state.game.round.commissionerId;
   }
 
-  /** The Commissioner, or the big screen standing in for them on public controls. */
+  private online = new Set<string>();
+  private now = 0;
+
+  private hostStudio(): string | null {
+    const t = this.state.hostToken;
+    return t ? this.state.seats[t]?.studioId ?? null : null;
+  }
+
+  private isHost(m: Meta) {
+    return !!m.token && m.token === this.state.hostToken;
+  }
+
+  /** The host's phone has been gone long enough for someone else to step in. */
+  private hostAway() {
+    const t = this.state.hostToken;
+    if (!t || !this.state.seats[t]) return true;
+    const id = this.state.seats[t].studioId;
+    if (!id) return !this.online.size;
+    if (this.online.has(id)) return false;
+    return this.now - (this.state.lastSeen[id] ?? 0) >= AUCTION.hostAwayMs;
+  }
+
+  /** Host-only housekeeping. If the host has vanished, any studio can step in. */
+  private requireHost(m: Meta) {
+    if (this.isHost(m)) return;
+    if (m.role === 'player' && m.studioId && m.token && this.hostAway()) {
+      this.state.hostToken = m.token;
+      const name = this.state.game?.studios.find((s) => s.id === m.studioId)?.name ?? this.state.lobby.find((l) => l.id === m.studioId)?.name;
+      if (name) this.say(`${name} steps in as host.`);
+      return;
+    }
+    throw new Denied('Only the host can do that.');
+  }
+
+  /** Public controls belong to the Commissioner; the host covers if the Commissioner's phone is away. */
   private requireRunner(m: Meta) {
-    if (!(m.role === 'screen' || this.isCommissioner(m))) throw new Denied('That’s the Commissioner’s call.');
+    if (this.isCommissioner(m)) return;
+    const commId = this.state.game?.round.commissionerId;
+    if (commId && !this.online.has(commId) && this.isHost(m)) return;
+    throw new Denied('That’s the Commissioner’s call.');
   }
 
   private requireCommissioner(m: Meta) {
     if (!this.isCommissioner(m)) throw new Denied('Only the Commissioner can do that.');
-  }
-
-  private requireScreen(m: Meta) {
-    if (m.role !== 'screen') throw new Denied('Only the big screen can do that.');
   }
 
   private requirePhase(...phases: Game['phase'][]) {
@@ -156,6 +191,8 @@ export class RoomCore {
   /*  Entry point                                                        */
   /* ------------------------------------------------------------------ */
   handle(meta: Meta, msg: ClientMsg, now: number, online: Set<string>): Outcome {
+    this.online = online;
+    this.now = now;
     try {
       switch (msg.t) {
         case 'hello':
@@ -164,8 +201,8 @@ export class RoomCore {
           return this.join(meta, msg.name, msg.colour);
         case 'takeover':
           return this.takeover(meta, msg.studioId, online, now);
-        case 'claimScreen':
-          return this.claimScreen(meta, online);
+        case 'watch':
+          return this.watch(meta);
         case 'start':
           return this.start(meta, msg.settings);
         case 'act':
@@ -188,20 +225,22 @@ export class RoomCore {
         reply: { t: 'welcome', token: tok, role: seat.role, studioId: seat.studioId },
       };
     }
-    const hasScreen = Object.values(this.state.seats).some((s) => s.role === 'screen');
+    const exists = Object.keys(this.state.seats).length > 0;
     if (create) {
-      if (hasScreen) throw new Denied('That room code is taken.');
+      if (exists) throw new Denied('That room code is taken.');
+      // The phone that starts the room is a player and the host.
       const t = token();
-      this.state.seats[t] = { role: 'screen', studioId: null };
-      return { changed: true, meta: { token: t, role: 'screen', studioId: null }, reply: { t: 'welcome', token: t, role: 'screen', studioId: null } };
+      this.state.seats[t] = { role: 'player', studioId: null };
+      this.state.hostToken = t;
+      return { changed: true, meta: { token: t, role: 'player', studioId: null }, reply: { t: 'welcome', token: t, role: 'player', studioId: null } };
     }
-    if (!hasScreen) throw new Denied('No game with that code. Check the code on the big screen.');
+    if (!exists) throw new Denied('No game with that code. Check the code with whoever started the game.');
     return { changed: false, meta: { token: null, role: 'guest', studioId: null }, reply: { t: 'welcome', token: null, role: 'guest', studioId: null } };
   }
 
   private join(meta: Meta, rawName: string, colour: string): Outcome {
     if (this.state.game) throw new Denied('This game has already started. Take over a studio instead.');
-    if (meta.role === 'screen') throw new Denied('The big screen can’t join as a studio.');
+    if (meta.role === 'screen') throw new Denied('A big screen can’t join as a studio.');
     const name = rawName.trim().slice(0, 28);
     if (!name) throw new Denied('Give your studio a name.');
     const existing = meta.studioId ? this.state.lobby.find((l) => l.id === meta.studioId) : undefined;
@@ -225,13 +264,17 @@ export class RoomCore {
   }
 
   private takeover(meta: Meta, studioId: string, online: Set<string>, now: number): Outcome {
-    if (meta.role === 'screen') throw new Denied('The big screen can’t run a studio.');
+    if (meta.role === 'screen') throw new Denied('A big screen can’t run a studio.');
     const inLobby = !this.state.game && this.state.lobby.find((l) => l.id === studioId);
     const studio = this.state.game?.studios.find((s) => s.id === studioId);
     if (!inLobby && (!studio || studio.folded)) throw new Denied('That studio isn’t available.');
     if (online.has(studioId)) throw new Denied('That studio is still connected on another phone.');
-    for (const [t, s] of Object.entries(this.state.seats)) if (s.studioId === studioId) delete this.state.seats[t];
     const t = token();
+    for (const [old, s] of Object.entries(this.state.seats)) {
+      if (s.studioId !== studioId) continue;
+      if (old === this.state.hostToken) this.state.hostToken = t;
+      delete this.state.seats[old];
+    }
     this.state.seats[t] = { role: 'player', studioId };
     this.state.lastSeen[studioId] = now;
     const name = inLobby ? inLobby.name : studio!.name;
@@ -239,17 +282,16 @@ export class RoomCore {
     return { changed: true, meta: { token: t, role: 'player', studioId }, reply: { t: 'welcome', token: t, role: 'player', studioId } };
   }
 
-  private claimScreen(meta: Meta, online: Set<string>): Outcome {
-    if (online.has('screen')) throw new Denied('The big screen is still connected.');
-    if (meta.role === 'player') throw new Denied('Leave your studio before becoming the big screen.');
-    for (const [t, s] of Object.entries(this.state.seats)) if (s.role === 'screen') delete this.state.seats[t];
+  /** A laptop or TV that just shows the game. As many as you like. */
+  private watch(meta: Meta): Outcome {
+    if (meta.role === 'player') throw new Denied('This phone is already running a studio.');
     const t = token();
     this.state.seats[t] = { role: 'screen', studioId: null };
     return { changed: true, meta: { token: t, role: 'screen', studioId: null }, reply: { t: 'welcome', token: t, role: 'screen', studioId: null } };
   }
 
   private start(meta: Meta, settings: Settings): Outcome {
-    this.requireScreen(meta);
+    this.requireHost(meta);
     if (this.state.game) throw new Denied('The game is already running.');
     const lobby = this.state.lobby;
     if (lobby.length < RULES.minStudios) throw new Denied(`You need at least ${RULES.minStudios} studios. ${lobby.length} so far.`);
@@ -282,7 +324,7 @@ export class RoomCore {
   /* ------------------------------------------------------------------ */
   private act(m: Meta, action: Action, now: number, online: Set<string>): Outcome {
     if (!this.state.game && action.a === 'fold') {
-      this.requireScreen(m);
+      this.requireHost(m);
       const entry = this.state.lobby.find((l) => l.id === action.studioId);
       if (!entry) throw new Denied('That studio has already left.');
       this.state.lobby = this.state.lobby.filter((l) => l.id !== entry.id);
@@ -291,7 +333,7 @@ export class RoomCore {
       return { changed: true };
     }
     if (action.a === 'backToLobby') {
-      this.requireScreen(m);
+      this.requireHost(m);
       if (this.state.game && this.state.game.phase !== 'final') throw new Denied('Finish the game first.');
       this.backToLobby();
       return { changed: true };
@@ -401,7 +443,7 @@ export class RoomCore {
       case 'nextPitch': {
         this.requirePhase('pitching');
         const onStage = g.round.pitchOrder[g.round.pitchCursor];
-        if (!(m.role === 'screen' || this.isCommissioner(m) || m.studioId === onStage)) throw new Denied('It’s not your pitch.');
+        if (!(this.isCommissioner(m) || m.studioId === onStage || this.isHost(m))) throw new Denied('It’s not your pitch.');
         this.clockAction(action.a, now);
         break;
       }
@@ -444,7 +486,7 @@ export class RoomCore {
 
       case 'logline': {
         this.requirePhase('ceremony');
-        if (!(m.role === 'screen' || m.studioId === g.round.winnerId)) throw new Denied('Only the greenlit studio can write the logline.');
+        if (m.studioId !== g.round.winnerId) throw new Denied('Only the greenlit studio can write the logline.');
         this.setGame(editWinningFilm(g, { logline: String(action.text ?? '').slice(0, MAX_LOGLINE) }));
         return { changed: true };
       }
@@ -459,13 +501,13 @@ export class RoomCore {
         break;
 
       case 'tieBreak':
-        this.requireScreen(m);
+        this.requireHost(m);
         this.requirePhase('final');
         this.setGame(settleTie(g, action.studioId));
         break;
 
       case 'fold': {
-        this.requireScreen(m);
+        this.requireHost(m);
         this.requireOfflineLongEnough(action.studioId, online, now);
         this.snapshot('fold');
         const name = this.name(action.studioId);
@@ -484,7 +526,7 @@ export class RoomCore {
       }
 
       case 'fireCommissioner': {
-        this.requireScreen(m);
+        this.requireHost(m);
         const oldId = g.round.commissionerId;
         this.requireOfflineLongEnough(oldId, online, now);
         this.snapshot('fire');
@@ -501,7 +543,7 @@ export class RoomCore {
       }
 
       case 'undo': {
-        this.requireScreen(m);
+        this.requireHost(m);
         if (this.state.auction) throw new Denied('Finish this auction before undoing.');
         const last = this.state.history.pop();
         if (!last) throw new Denied('Nothing to undo.');
@@ -659,6 +701,15 @@ export class RoomCore {
     return changed;
   }
 
+  private hostAwayAt(online: Set<string>, now: number) {
+    const keep = [this.online, this.now] as const;
+    this.online = online;
+    this.now = now;
+    const away = this.hostAway();
+    [this.online, this.now] = keep;
+    return away;
+  }
+
   markSeen(id: string, now: number) {
     this.state.lastSeen[id] = now;
   }
@@ -702,7 +753,8 @@ export class RoomCore {
     return {
       code: s.code,
       serverNow: now,
-      you: { role: m.role, studioId: m.studioId },
+      you: { role: m.role, studioId: m.studioId, isHost: this.isHost(m) },
+      host: { studioId: this.hostStudio(), away: this.hostAwayAt(online, now) },
       lobby: s.lobby,
       online: [...online],
       lastSeen: s.lastSeen,

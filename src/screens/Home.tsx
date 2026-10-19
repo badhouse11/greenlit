@@ -8,6 +8,7 @@ export function Home({
   onNew,
   onHost,
   onJoin,
+  onWatch,
   onContinue,
   onArchive,
   onRules,
@@ -18,6 +19,7 @@ export function Home({
   onNew: () => void;
   onHost?: () => void;
   onJoin?: () => void;
+  onWatch?: () => void;
   onContinue: () => void;
   onArchive: () => void;
   onRules: () => void;
@@ -63,10 +65,10 @@ export function Home({
       {onHost && onJoin ? (
         <div className="home__actions">
           <button className="btn btn--big btn--go" onClick={onHost}>
-            Host on the big screen
+            Start a game
           </button>
           <button className="btn btn--big" onClick={onJoin}>
-            Join with your phone
+            Join a game
           </button>
         </div>
       ) : null}
@@ -87,6 +89,11 @@ export function Home({
               Only one phone? Pass it round instead
             </button>
           )
+        ) : null}
+        {onHost && onJoin && onWatch ? (
+          <button className="link-btn" onClick={onWatch}>
+            Got a TV? Watch a game on the big screen
+          </button>
         ) : unfinished ? (
           <>
             <button className="btn btn--big btn--go" onClick={onContinue}>
@@ -105,7 +112,7 @@ export function Home({
 
       <nav className="home__foot" aria-label="More">
         <button className="link-btn" onClick={onRules}>
-          How to play
+          How it works
         </button>
         <button className="link-btn" onClick={onArchive}>
           The archive{archiveCount ? ` (${archiveCount} ${archiveCount === 1 ? 'film' : 'films'})` : ''}

@@ -3378,6 +3378,251 @@ a.shop-strip:hover {
   }
 }
 
+
+/* ---------- How it works --------------------------------------------------- */
+
+.explainer {
+  display: grid;
+  gap: 18px;
+}
+
+.explainer__pitch {
+  --tk-bg: #e9a752;
+  --tk-ink: #4a1f10;
+  --r: 18px;
+  padding: clamp(22px, 5vw, 36px);
+  display: grid;
+  gap: 14px;
+  text-align: center;
+}
+
+.explainer__big {
+  font-size: clamp(2rem, 7vw, 3.2rem);
+  color: var(--grenadine);
+  text-shadow: 2px 2px 0 rgba(74, 31, 16, 0.85);
+  text-wrap: balance;
+}
+
+.explainer__pitch p {
+  font-size: 1.1rem;
+  max-width: 34em;
+  margin: 0 auto;
+}
+
+.explainer__facts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 28px;
+  font-family: var(--f-mono);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.explainer__facts b {
+  font-family: var(--f-ticket);
+  font-variation-settings: 'wdth' 80;
+  font-size: 1.3rem;
+}
+
+.explainer__h {
+  font-size: 1.8rem;
+  margin-top: 14px;
+}
+
+.explainer__steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr));
+  gap: 12px;
+}
+
+.explainer__steps li {
+  display: grid;
+  grid-template-columns: 2.2em 1fr;
+  gap: 10px;
+  align-items: start;
+  padding: 14px 16px;
+  border-radius: 4px;
+  background: rgba(255, 252, 245, 0.6);
+}
+
+.explainer__steps li > span:last-child {
+  display: grid;
+  gap: 2px;
+}
+
+.explainer__steps strong {
+  font-size: 1.3rem;
+}
+
+.explainer__no {
+  font-size: 2rem;
+  color: var(--grenadine);
+  line-height: 1;
+}
+
+.explainer__ways {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
+  gap: 14px;
+}
+
+.explainer__way {
+  padding: 18px 22px;
+  display: grid;
+  gap: 6px;
+  height: 100%;
+}
+
+.explainer__way strong {
+  font-size: 1.35rem;
+}
+
+/* ---------- phones-only extras --------------------------------------------- */
+
+.phone-band__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.phone-band__name {
+  min-width: 0;
+}
+
+.phone-band__menu {
+  flex: none;
+  border: 1.5px solid currentColor;
+  background: transparent;
+  color: inherit;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.crisis--phone {
+  font-size: 0.88rem;
+}
+
+.room-menu__code {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.room-menu__code b {
+  font-size: 3.4rem;
+  letter-spacing: 0.08em;
+  color: var(--grenadine);
+  line-height: 1;
+}
+
+.share-btn {
+  margin-top: 6px;
+}
+
+.code-ticket--phone {
+  width: min(420px, 100%);
+  padding: 22px 20px;
+}
+
+.code-ticket--phone .code-ticket__code {
+  font-size: clamp(4rem, 22vw, 6rem);
+}
+
+.lobby-phone {
+  gap: 20px;
+}
+
+.lobby-phone__list,
+.lobby-phone__start {
+  display: grid;
+  gap: 14px;
+  width: min(480px, 100%);
+  text-align: left;
+}
+
+.lobby-grid--phone {
+  grid-template-columns: 1fr;
+}
+
+.lobby-grid--phone .lobby-stub {
+  min-height: 58px;
+  padding: 12px 20px;
+}
+
+.lobby-grid--phone .lobby-stub__name {
+  font-size: 1.25rem;
+}
+
+.phone-h2 {
+  font-size: 1.5rem;
+}
+
+.phone-film {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+}
+
+.phone-film .film {
+  grid-template-columns: 1fr;
+}
+
+.phone-film .film__stub {
+  display: none;
+}
+
+.phone-standings {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+}
+
+.phone-standings__list {
+  list-style: none;
+  margin: 0;
+  padding: 6px 12px;
+  border-radius: 4px;
+  background: rgba(255, 252, 245, 0.55);
+}
+
+.phone-standings__list li {
+  display: grid;
+  grid-template-columns: 2.2em 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(58, 38, 32, 0.2);
+}
+
+.phone-standings__list li:last-child {
+  border-bottom: 0;
+}
+
+.phone-standings__list b {
+  font-family: var(--f-ticket);
+  font-variation-settings: 'wdth' 80;
+  font-size: 1.5rem;
+}
+
+.phone-standings__list .tokens {
+  margin-top: 2px;
+}
+
+.reveal--phone .sleeve {
+  width: min(340px, 100%);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

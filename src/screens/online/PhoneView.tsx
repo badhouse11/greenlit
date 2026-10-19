@@ -8,7 +8,10 @@ import {
   RULES,
   cardTotal,
   castingComplete,
+  champion,
   commissioner,
+  leaders,
+  tokens,
   hasFuturePlay,
   maxBid,
   maxReelScore,
@@ -21,9 +24,10 @@ import {
   validateTrade,
 } from '../../game/engine';
 import { stock } from '../../lib/palette';
-import { LoyaltyCard, Sleeve, Stepper } from '../../components/Cards';
+import { FilmTicket, LoyaltyCard, Sleeve, Stepper, TokenRow } from '../../components/Cards';
 import { FitText, Ticket } from '../../components/Ticket';
-import { PROMPTS, auctionState, clockLeft, mmss, nameOf, ordinal } from './shared';
+import { AUCTION } from '../../net/protocol';
+import { PROMPTS, ShareInvite, auctionState, clockLeft, mmss, ordinal } from './shared';
 
 interface Props {
   room: Room;
@@ -48,21 +52,36 @@ export function PhoneView({ room, view }: Props) {
   }
   const isComm = g.round.commissionerId === me;
   const rs = g.round.studios[me];
+  return <PhoneShell room={room} view={view} isComm={isComm} rs={rs} />;
+}
+
+function PhoneShell({ room, view, isComm, rs }: Props & { isComm: boolean; rs?: RoundStudio }) {
+  const [menu, setMenu] = useState(false);
+  const g = view.game!;
   return (
     <div className="phone-wrap">
-      <PhoneBand view={view} isComm={isComm} rs={rs} />
+      <PhoneBand view={view} isComm={isComm} rs={rs} onMenu={() => setMenu(true)} />
+      <CrisisBanner room={room} view={view} />
       <main className="phone">{isComm ? <CommissionerPhone room={room} view={view} /> : <PlayerPhone room={room} view={view} rs={rs} />}</main>
+      {g.phase === 'reveal' && <PhoneReveal room={room} view={view} isComm={isComm} />}
+      {g.phase === 'oscar' && <PhoneOscar room={room} view={view} isComm={isComm} />}
+      {menu && <RoomMenu room={room} view={view} onClose={() => setMenu(false)} />}
     </div>
   );
 }
 
-function PhoneBand({ view, isComm, rs }: { view: View; isComm: boolean; rs?: RoundStudio }) {
+function PhoneBand({ view, isComm, rs, onMenu }: { view: View; isComm: boolean; rs?: RoundStudio; onMenu: () => void }) {
   const g = view.game!;
   const s = studioById(g, view.you.studioId!);
   const k = stock(s.colour);
   return (
     <header className="phone-band" style={{ background: k.bg, color: k.ink }}>
-      <div className="phone-band__name t-ticket">{s.name}</div>
+      <div className="phone-band__top">
+        <div className="phone-band__name t-ticket">{s.name}</div>
+        <button className="phone-band__menu" onClick={onMenu} aria-label="Room menu">
+          {view.you.isHost ? 'Host' : 'Room'} {view.code}
+        </button>
+      </div>
       <div className="phone-band__meta">
         {isComm ? (
           <span className="phone-band__role">Commissioner</span>
@@ -128,10 +147,11 @@ function CommissionerPhone({ room, view }: { room: Room; view: View }) {
         <section className="phone-stack phone--centre">
           <div className="t-wide">Reel {g.round.number}</div>
           <h1 className="t-ticket phone-title">You’re the Commissioner</h1>
-          <p className="lede">Your phone shows the secret genre. Keep it to yourself, keep a straight face, and run the auction.</p>
+          <p className="lede">Your phone shows the secret genre. Keep it to yourself, keep a straight face, and run the auction. You don’t bid this reel.</p>
           <button className="btn btn--big btn--hot" onClick={() => act({ a: 'toCommission' })}>
             Show me the commission
           </button>
+          {g.roundIndex > 0 && <PhoneStandings g={g} />}
         </section>
       );
     case 'commission':
@@ -150,15 +170,7 @@ function CommissionerPhone({ room, view }: { room: Room; view: View }) {
     case 'casting':
       return <CommissionerCasting room={room} view={view} peek={peek} />;
     case 'reveal':
-      return (
-        <section className="phone-stack phone--centre">
-          <div className="t-wide">The genre is</div>
-          <div className="phone-genre t-ticket">{g.round.genre}</div>
-          <button className="btn btn--big" onClick={() => act({ a: 'toTrading' })}>
-            Open the trading floor
-          </button>
-        </section>
-      );
+      return null;
     case 'trading':
       return (
         <section className="phone-stack">
@@ -186,40 +198,20 @@ function CommissionerPhone({ room, view }: { room: Room; view: View }) {
     case 'scoring':
       return <ScoringPhone room={room} view={view} />;
     case 'oscar':
-      return (
-        <section className="phone-stack phone--centre">
-          {view.oscar.stage === 'table' ? (
-            <>
-              <h1 className="t-ticket phone-title">Put your phone on the table</h1>
-              <p className="lede">Everyone, eyes on the big screen. Somebody do a drumroll.</p>
-              <button className="btn btn--big btn--hot" onClick={() => act({ a: 'oscarOpen' })}>
-                Open the envelope
-              </button>
-            </>
-          ) : view.oscar.stage === 'drumroll' ? (
-            <h1 className="t-ticket phone-title">And the Oscar goes to…</h1>
-          ) : (
-            <>
-              <h1 className="t-ticket phone-title">{nameOf(view, g.round.winnerId)}</h1>
-              <button className="btn btn--big" onClick={() => act({ a: 'toCeremony' })}>
-                Show everyone the scorecards
-              </button>
-            </>
-          )}
-        </section>
-      );
+      return null;
     case 'ceremony':
       return (
-        <section className="phone-stack phone--centre">
-          <h1 className="t-ticket phone-title">{nameOf(view, g.round.winnerId)} is greenlit</h1>
-          <p className="lede">Your work here is done. Hand the chair on.</p>
+        <section className="phone-stack">
+          <GreenlitFilm view={view} />
           <button className="btn btn--big" onClick={() => act({ a: 'nextReel' })}>
             {g.roundIndex === g.order.length - 1 ? 'Roll the final credits' : `On to reel ${g.round.number + 1}`}
           </button>
+          <AllScorecards g={g} />
+          <PhoneStandings g={g} />
         </section>
       );
     case 'final':
-      return <FinalPhone view={view} />;
+      return <FinalPhone room={room} view={view} />;
     default:
       return null;
   }
@@ -288,18 +280,18 @@ function PlayerPhone({ room, view, rs }: { room: Room; view: View; rs?: RoundStu
           <p className="lede">
             {g.phase === 'handover' ? 'They’re about to read the secret genre.' : 'They’re reading the secret genre. Watch their face.'} You’ve got ${rs.budget}M for five stars.
           </p>
+          {rs.startBudget !== RULES.startingBudget && (
+            <p className="notice">
+              Debts called in: you start this reel on ${rs.startBudget}M ({rs.startBudget > RULES.startingBudget ? 'someone paid you back' : 'you paid back an IOU'}).
+            </p>
+          )}
+          {g.roundIndex > 0 && <PhoneStandings g={g} />}
         </section>
       );
     case 'casting':
       return <PlayerCasting room={room} view={view} rs={rs} />;
     case 'reveal':
-      return (
-        <section className="phone-stack phone--centre">
-          <div className="t-wide">You’re making a</div>
-          <div className="phone-genre t-ticket">{g.round.genre}</div>
-          <MyCast rs={rs} />
-        </section>
-      );
+      return null;
     case 'trading':
       return <TradingPhone room={room} view={view} rs={rs} />;
     case 'prep':
@@ -330,16 +322,11 @@ function PlayerPhone({ room, view, rs }: { room: Room; view: View; rs?: RoundStu
         </section>
       );
     case 'oscar':
-      return (
-        <section className="phone-stack phone--centre">
-          <h1 className="t-ticket phone-title">{view.oscar.stage === 'winner' ? nameOf(view, g.round.winnerId) : 'Eyes on the big screen'}</h1>
-          {view.oscar.stage === 'winner' && <p className="lede">takes the Oscar.</p>}
-        </section>
-      );
+      return null;
     case 'ceremony':
       return <CeremonyPhone room={room} view={view} rs={rs} />;
     case 'final':
-      return <FinalPhone view={view} />;
+      return <FinalPhone room={room} view={view} />;
     default:
       return null;
   }
@@ -358,6 +345,7 @@ function PlayerCasting({ room, view, rs }: { room: Room; view: View; rs: RoundSt
       <section className="phone-stack">
         <p className="lede">{full ? 'Full house. You’ve got your five. Sit back and enjoy the bidding.' : `Waiting for ${commissioner(g).name} to draw the next star.`}</p>
         <MyCast rs={rs} />
+        <MiniLedger g={g} />
       </section>
     );
   }
@@ -393,6 +381,7 @@ function PlayerCasting({ room, view, rs }: { room: Room; view: View; rs: RoundSt
         </>
       )}
       <MyCast rs={rs} />
+      <MiniLedger g={g} />
     </section>
   );
 }
@@ -703,7 +692,7 @@ function CeremonyPhone({ room, view, rs }: { room: Room; view: View; rs: RoundSt
   }, [logline]);
   return (
     <section className="phone-stack">
-      <h1 className="t-ticket phone-title">{won ? 'You’re greenlit' : `${nameOf(view, g.round.winnerId)} is greenlit`}</h1>
+      <GreenlitFilm view={view} />
       {won && (
         <label className="field">
           <span>Logline for the archive</span>
@@ -714,20 +703,289 @@ function CeremonyPhone({ room, view, rs }: { room: Room; view: View; rs: RoundSt
       <p className="phone-small">
         {cardTotal(g.round.scores[me])} of {maxReelScore()} stamps this reel. {points(g, me)} points overall.
       </p>
+      <PhoneStandings g={g} />
     </section>
   );
 }
 
-function FinalPhone({ view }: { view: View }) {
+function FinalPhone({ room, view }: Props) {
   const g = view.game!;
-  const table = standings(g);
-  const place = table.findIndex((r) => r.studio.id === view.you.studioId) + 1;
+  const champ = champion(g);
+  const tied = leaders(g);
+  const me = view.you.studioId!;
+  const place = standings(g).findIndex((r) => r.studio.id === me) + 1;
   return (
-    <section className="phone-stack phone--centre">
-      <div className="t-wide">Final credits</div>
-      <h1 className="t-ticket phone-title">{place === 1 ? 'Studio of the night' : `${ordinal(place)} place`}</h1>
-      <p className="lede">{points(g, view.you.studioId!)} points. Look at the big screen for the full credits.</p>
+    <section className="phone-stack">
+      <div className="phone--centre phone-stack">
+        <div className="t-wide">Final credits</div>
+        {!champ && tied.length > 1 ? (
+          <>
+            <h1 className="t-ticket phone-title">Dead heat at the box office</h1>
+            <p className="lede">
+              {tied.map((id) => studioById(g, id).name).join(' and ')} are level. One last pitch each: same cast, any genre the table shouts out. The rest of you decide.
+            </p>
+            {view.you.isHost &&
+              tied.map((id) => (
+                <button key={id} className="btn btn--go" onClick={() => room.act({ a: 'tieBreak', studioId: id })}>
+                  {studioById(g, id).name} wins the tie-breaker
+                </button>
+              ))}
+            {!view.you.isHost && <p className="phone-small">The host taps in the winner.</p>}
+          </>
+        ) : (
+          champ && (
+            <>
+              <p className="lede">The studio of the night is</p>
+              <h1 className="champion t-ticket">{studioById(g, champ).name}</h1>
+              {champ !== me && <p className="phone-small">You finished {ordinal(place).toLowerCase()}.</p>}
+            </>
+          )
+        )}
+      </div>
+      <PhoneStandings g={g} title="Final standings" />
+      <h2 className="t-ticket phone-h2">Tonight’s pictures</h2>
+      {g.films.map((f) => (
+        <FilmTicket key={f.id} film={f} stamped compact />
+      ))}
+      {view.you.isHost ? (
+        <button className="btn btn--big" onClick={() => room.act({ a: 'backToLobby' })}>
+          Run it back: new game, same studios
+        </button>
+      ) : (
+        <p className="phone-small">The host can start another game with the same studios.</p>
+      )}
     </section>
+  );
+}
+
+function GreenlitFilm({ view }: { view: View }) {
+  const g = view.game!;
+  const film = g.films[g.films.length - 1];
+  if (!film) return null;
+  return (
+    <div className="phone-film">
+      <div className="t-wide">
+        Reel {g.round.number} · {g.round.genre}
+      </div>
+      <FilmTicket film={film} stamped slam compact />
+    </div>
+  );
+}
+
+function AllScorecards({ g }: { g: Game }) {
+  return (
+    <div className="loyalty-grid">
+      {[...g.round.pitchOrder]
+        .sort((x, y) => cardTotal(g.round.scores[y]) - cardTotal(g.round.scores[x]))
+        .map((id) => (
+          <LoyaltyCard key={id} studio={studioById(g, id)} title={g.round.studios[id].title.trim() || `Untitled ${g.round.genre} Project`} rs={g.round.studios[id]} card={g.round.scores[id]} />
+        ))}
+    </div>
+  );
+}
+
+function PhoneStandings({ g, title = 'The board so far' }: { g: Game; title?: string }) {
+  return (
+    <section className="phone-standings">
+      <h2 className="t-ticket phone-h2">{title}</h2>
+      <ol className="phone-standings__list">
+        {standings(g).map((row, i) => (
+          <li key={row.studio.id}>
+            <span className="t-mono">{String(i + 1).padStart(2, '0')}</span>
+            <span>
+              <span className="dot" style={{ background: stock(row.studio.colour).bg }} />
+              {row.studio.name}
+              {row.studio.folded ? ' (folded)' : ''}
+              <TokenRow count={tokens(g, row.studio.id)} />
+            </span>
+            <b>{row.points}</b>
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+/* ---------------------------------------------------------------------- */
+/*  The big moments, on every phone at once                                */
+/* ---------------------------------------------------------------------- */
+function PhoneReveal({ room, view, isComm }: Props & { isComm: boolean }) {
+  const g = view.game!;
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const t = window.setTimeout(() => setOpen(true), 700);
+    return () => window.clearTimeout(t);
+  }, []);
+  return (
+    <div className={`reveal reveal--phone ${open ? 'is-open' : ''}`} role="dialog" aria-modal="true" aria-label="The genre reveal">
+      <div className="reveal__inner">
+        <div className="reveal__kicker t-wide">Your next picture is…</div>
+        <Sleeve genre={g.round.genre} showGenre={open} peeking={false} reel={g.round.number} commissionerName={commissioner(g).name} />
+        <div className="reveal__after" style={{ display: 'grid', gap: 14, justifyItems: 'center' }}>
+          <p style={{ opacity: 0.85 }}>You have your cast. Now make the film.</p>
+          {isComm ? (
+            <button className="btn btn--big" style={{ ['--b-bg' as string]: '#F4E7CE', ['--b-ink' as string]: '#1D1814' }} onClick={() => room.act({ a: 'toTrading' })}>
+              Open the trading floor
+            </button>
+          ) : (
+            <p className="phone-small" style={{ color: 'inherit', opacity: 0.7 }}>
+              {commissioner(g).name} opens the trading floor next.
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PhoneOscar({ room, view, isComm }: Props & { isComm: boolean }) {
+  const g = view.game!;
+  const stage = view.oscar.stage;
+  const film = g.films[g.films.length - 1];
+  const winner = stage === 'winner' && g.round.winnerId ? studioById(g, g.round.winnerId) : null;
+  return (
+    <div className={`oscar oscar--${stage}`} role="dialog" aria-modal="true" aria-label="The Oscar">
+      <div className="oscar__inner">
+        {stage === 'table' && (
+          <>
+            <div className="t-wide oscar__kicker">
+              Reel {g.round.number} · {g.round.genre}
+            </div>
+            <p className="oscar__line t-ticket">The envelope, please.</p>
+            {isComm ? (
+              <>
+                <p className="oscar__sub">Put your phone in the middle of the table. Somebody do a drumroll.</p>
+                <button className="btn btn--big oscar__btn" onClick={() => room.act({ a: 'oscarOpen' })}>
+                  Open the envelope
+                </button>
+              </>
+            ) : (
+              <p className="oscar__sub">{commissioner(g).name} is about to open it. Somebody do a drumroll.</p>
+            )}
+          </>
+        )}
+        {stage === 'drumroll' && (
+          <>
+            <p className="oscar__line t-ticket">And the Oscar goes to</p>
+            <div className="oscar__dots" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </div>
+          </>
+        )}
+        {winner && film && (
+          <>
+            <div className="t-wide oscar__kicker">And the Oscar goes to</div>
+            <h1 className="oscar__winner t-ticket">{winner.name}</h1>
+            <p className="oscar__film">
+              for <em>{film.title}</em>
+            </p>
+            <p className="oscar__sub">
+              {cardTotal(film.score)} of {maxReelScore()} stamps
+            </p>
+            {isComm ? (
+              <button className="btn btn--big oscar__btn" onClick={() => room.act({ a: 'toCeremony' })}>
+                See the scorecards
+              </button>
+            ) : (
+              <p className="oscar__sub">Scorecards next.</p>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------------- */
+/*  Crisis talks and the room menu                                         */
+/* ---------------------------------------------------------------------- */
+function CrisisBanner({ room, view }: Props) {
+  const g = view.game!;
+  const now = room.serverNow();
+  const quiet = g.studios.filter((s) => !s.folded && s.id !== view.you.studioId && !view.online.includes(s.id) && g.phase !== 'final');
+  useTicker(quiet.length > 0, 1000);
+  if (!quiet.length) return null;
+  const canAct = view.you.isHost || view.host.away;
+  return (
+    <div className="crisis crisis--phone" role="status">
+      {quiet.map((s) => {
+        const left = Math.max(0, AUCTION.graceMs - (now - (view.lastSeen[s.id] ?? 0)));
+        const isComm = s.id === g.round.commissionerId;
+        return (
+          <div key={s.id} className="crisis__row">
+            <span>
+              <strong>Crisis talks.</strong> {s.name} has gone dark. {left > 0 ? `Holding their seat for ${mmss(left)}.` : 'They can rejoin from any phone with the room code.'}
+            </span>
+            {left === 0 &&
+              canAct &&
+              (isComm ? (
+                <button className="btn btn--small btn--hot" onClick={() => room.act({ a: 'fireCommissioner' })}>
+                  Fire the Commissioner
+                </button>
+              ) : (
+                <button className="btn btn--small btn--hot" onClick={() => room.act({ a: 'fold', studioId: s.id })}>
+                  Fold {s.name}
+                </button>
+              ))}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function RoomMenu({ room, view, onClose }: Props & { onClose: () => void }) {
+  const g = view.game!;
+  const hostName = view.host.studioId ? g.studios.find((s) => s.id === view.host.studioId)?.name : null;
+  const canHost = view.you.isHost || view.host.away;
+  return (
+    <div className="scrim" role="dialog" aria-modal="true" aria-labelledby="room-menu-h" onClick={onClose}>
+      <div className="form-sheet dialog room-menu" onClick={(e) => e.stopPropagation()}>
+        <div className="room-menu__code">
+          <span className="t-wide">Room code</span>
+          <b className="t-ticket" id="room-menu-h">
+            {view.code}
+          </b>
+          <ShareInvite code={view.code} />
+        </div>
+        <p className="phone-small">
+          A phone died? The new phone joins with this code and takes over the studio. Got a TV? Open {window.location.host} on it, tap <strong>Watch on a big screen</strong>, and type the code.
+        </p>
+        <hr className="form-sheet__rule" />
+        {view.you.isHost ? (
+          <p>
+            <strong>You’re the host.</strong> You look after the housekeeping.
+          </p>
+        ) : view.host.away ? (
+          <p>
+            <strong>{hostName ?? 'The host'} has gone quiet.</strong> Anyone can step in: use a control below and you become the host.
+          </p>
+        ) : (
+          <p>
+            Hosted by <strong>{hostName ?? 'the host'}</strong>.
+          </p>
+        )}
+        {canHost && (
+          <div className="btn-row btn-row--stack">
+            <button
+              className="btn btn--ghost"
+              disabled={!view.canUndo}
+              onClick={() => {
+                room.act({ a: 'undo' });
+                onClose();
+              }}
+            >
+              Undo the last move
+            </button>
+          </div>
+        )}
+        <button className="btn" onClick={onClose}>
+          Back to the game
+        </button>
+      </div>
+    </div>
   );
 }
 

@@ -5,7 +5,7 @@ import { useTicker } from '../../net/useRoom';
 import type { View } from '../../net/protocol';
 import { AUCTION } from '../../net/protocol';
 import { RULES, cardTotal, champion, commissioner, leaders, maxReelScore, points, standings, studioById, tokens } from '../../game/engine';
-import { PALETTE, PALETTE_KEYS, stock } from '../../lib/palette';
+import { stock } from '../../lib/palette';
 import { FilmTicket, LoyaltyCard, Sleeve, StarTicket, StudioStub, TokenRow } from '../../components/Cards';
 import { Ticket } from '../../components/Ticket';
 import { ShopStrip } from '../../components/ShopStrip';
@@ -35,11 +35,6 @@ export function ScreenView({ room, view }: Props) {
             Room {view.code} · Reel {g.round.number}/{g.order.length} · {PHASE_LABEL[g.phase]}
           </span>
           <span className="marquee__boss"> · Commissioner: {commissioner(g).name}</span>
-        </div>
-        <div className="marquee__tools">
-          <button className="tool" disabled={!view.canUndo} onClick={() => room.act({ a: 'undo' })}>
-            Undo
-          </button>
         </div>
       </header>
       {showStrip && <ShopStrip />}
@@ -95,9 +90,9 @@ function ScreenPhase({ room, view }: Props) {
 /* ---------------------------------------------------------------------- */
 /*  Lobby                                                                  */
 /* ---------------------------------------------------------------------- */
-function Lobby({ room, view }: Props) {
-  const [directorsCut, setDirectorsCut] = useState(false);
+function Lobby({ view }: Props) {
   const n = view.lobby.length;
+  const hostName = view.lobby.find((l) => l.id === view.host.studioId)?.name;
   return (
     <div className="app screen-app">
       <ShopStrip />
@@ -110,7 +105,7 @@ function Lobby({ room, view }: Props) {
             <div className="code-ticket__code t-ticket">{view.code}</div>
           </Ticket>
           <p className="lede">
-            Everyone opens the site on their phone, taps <strong>Join a game</strong> and types the code. This screen stays on the table for the whole night.
+            Everyone opens the site on their phone, taps <strong>Join a game</strong> and types the code. This screen just shows the game: everything is played on phones.
           </p>
         </section>
         <section className="lobby__studios">
@@ -127,25 +122,17 @@ function Lobby({ room, view }: Props) {
                 return (
                   <Ticket key={l.id} bg={k.bg} ink={k.ink} className="lobby-stub" serrated>
                     <span className="t-ticket lobby-stub__name">{l.name}</span>
-                    {!on && (
-                      <button className="link-btn" onClick={() => room.act({ a: 'fold', studioId: l.id })}>
-                        Remove
-                      </button>
-                    )}
+                    {!on && <span className="t-mono">offline</span>}
                   </Ticket>
                 );
               })}
             </div>
           )}
-          <label className="toggle">
-            <input type="checkbox" checked={directorsCut} onChange={(e) => setDirectorsCut(e.target.checked)} />
-            <span>
-              <strong>Director’s cut genres.</strong> Adds Heist, Biopic, Superhero and more.
-            </span>
-          </label>
-          <button className="btn btn--big btn--go" disabled={n < RULES.minStudios} onClick={() => room.send({ t: 'start', settings: { directorsCut } })}>
-            {n < RULES.minStudios ? `Need ${RULES.minStudios - n} more ${RULES.minStudios - n === 1 ? 'studio' : 'studios'}` : 'Roll camera on reel one'}
-          </button>
+          <p className="lede">
+            {n < RULES.minStudios
+              ? `Need ${RULES.minStudios - n} more ${RULES.minStudios - n === 1 ? 'studio' : 'studios'} to play.`
+              : `${hostName ?? 'The host'} rolls camera from their phone.`}
+          </p>
         </section>
       </main>
     </div>
@@ -166,23 +153,12 @@ function CrisisTalks({ room, view }: Props) {
       {quiet.map((s) => {
         const since = view.lastSeen[s.id] ?? 0;
         const left = Math.max(0, AUCTION.graceMs - (now - since));
-        const isComm = s.id === g.round.commissionerId;
         return (
           <div key={s.id} className="crisis__row">
             <span>
               <strong>Crisis talks.</strong> {s.name} has gone dark.{' '}
-              {left > 0 ? `Holding their seat for ${mmss(left)}.` : 'They can rejoin from any phone, or the board can act.'}
+              {left > 0 ? `Holding their seat for ${mmss(left)}.` : 'They can rejoin from any phone, or the host can act.'}
             </span>
-            {left === 0 &&
-              (isComm ? (
-                <button className="btn btn--small btn--hot" onClick={() => room.act({ a: 'fireCommissioner' })}>
-                  Fire the Commissioner
-                </button>
-              ) : (
-                <button className="btn btn--small btn--hot" onClick={() => room.act({ a: 'fold', studioId: s.id })}>
-                  Fold {s.name}
-                </button>
-              ))}
           </div>
         );
       })}
@@ -193,7 +169,7 @@ function CrisisTalks({ room, view }: Props) {
 /* ---------------------------------------------------------------------- */
 /*  Phases                                                                 */
 /* ---------------------------------------------------------------------- */
-function Handover({ room, view }: Props) {
+function Handover({ view }: Props) {
   const g = view.game!;
   const boss = commissioner(g);
   const adjusted = Object.values(g.round.studios).filter((rs) => rs.startBudget !== RULES.startingBudget);
@@ -222,9 +198,6 @@ function Handover({ room, view }: Props) {
         </Ticket>
       )}
       {g.roundIndex > 0 && <Standings g={g} />}
-      <button className="btn btn--ghost btn--small" onClick={() => room.act({ a: 'toCommission' })}>
-        Skip ahead: show the Commissioner the commission
-      </button>
     </main>
   );
 }
@@ -263,24 +236,11 @@ function Casting({ room, view }: Props) {
           <BidBoard view={view} now={room.serverNow()} big />
         ) : done ? (
           <div className="centre-stack">
-            <p className="lede">Every studio has five stars. Time to find out what you’re making.</p>
-            <button className="btn btn--big btn--hot" onClick={() => room.act({ a: 'openEnvelope' })}>
-              Open the envelope
-            </button>
+            <p className="lede">Every studio has five stars. {commissioner(g).name} is about to open the envelope.</p>
           </div>
         ) : (
           <div className="centre-stack">
             <p className="lede">Bid from your phones. Shouting is encouraged.</p>
-            <button className="btn btn--ghost btn--small" onClick={() => room.act({ a: 'draw' })}>
-              Draw the next star from here
-            </button>
-          </div>
-        )}
-        {a && (
-          <div className="btn-row" style={{ justifyContent: 'center' }}>
-            <button className="btn btn--small btn--ghost" disabled={!a.high} onClick={() => room.act({ a: 'hammer' })}>
-              Hammer it now
-            </button>
           </div>
         )}
       </section>
@@ -293,7 +253,7 @@ function Casting({ room, view }: Props) {
   );
 }
 
-function Reveal({ room, view }: Props) {
+function Reveal({ view }: Props) {
   const g = view.game!;
   const [open, setOpen] = useState(false);
   useEffect(() => {
@@ -307,16 +267,13 @@ function Reveal({ room, view }: Props) {
         <Sleeve genre={g.round.genre} showGenre={open} peeking={false} reel={g.round.number} commissionerName={commissioner(g).name} />
         <div className="reveal__after" style={{ display: 'grid', gap: 16, justifyItems: 'center' }}>
           <p style={{ opacity: 0.85 }}>You have your cast. Now make the film.</p>
-          <button className="btn btn--big" style={{ ['--b-bg' as string]: '#F4E7CE', ['--b-ink' as string]: '#1D1814' }} onClick={() => room.act({ a: 'toTrading' })}>
-            Open the trading floor
-          </button>
         </div>
       </div>
     </div>
   );
 }
 
-function Trading({ room, view }: Props) {
+function Trading({ view }: Props) {
   const g = view.game!;
   return (
     <main className="page">
@@ -327,9 +284,6 @@ function Trading({ room, view }: Props) {
             The genre is <strong>{g.round.genre}</strong>. Make your one deal on your phone. {view.offers.length > 0 && `${view.offers.length} ${view.offers.length === 1 ? 'offer is' : 'offers are'} on the table.`}
           </p>
         </div>
-        <button className="btn btn--go" onClick={() => room.act({ a: 'closeTrading' })}>
-          Close the trading floor
-        </button>
       </div>
       {g.round.trades.length > 0 && (
         <div className="memo-list" style={{ marginBottom: 24 }}>
@@ -349,7 +303,7 @@ function Trading({ room, view }: Props) {
   );
 }
 
-function Prep({ room, view }: Props) {
+function Prep({ view }: Props) {
   const g = view.game!;
   return (
     <main className="page">
@@ -387,9 +341,6 @@ function Prep({ room, view }: Props) {
               </li>
             ))}
           </ol>
-          <button className="btn btn--hot" onClick={() => room.act({ a: 'firstPitch' })}>
-            Lights. Camera. First pitch
-          </button>
         </aside>
       </div>
     </main>
@@ -433,7 +384,7 @@ function Pitching({ room, view }: Props) {
   );
 }
 
-function Oscar({ room, view }: Props) {
+function Oscar({ view }: Props) {
   const g = view.game!;
   const stage = view.oscar.stage;
   const film = g.films[g.films.length - 1];
@@ -446,11 +397,8 @@ function Oscar({ room, view }: Props) {
             <div className="t-wide oscar__kicker">
               Reel {g.round.number} · {g.round.genre}
             </div>
-            <p className="oscar__line t-ticket">Commissioner, put your phone on the table.</p>
-            <p className="oscar__sub">Everyone gather round. Somebody do a drumroll.</p>
-            <button className="btn btn--big oscar__btn" onClick={() => room.act({ a: 'oscarOpen' })}>
-              Open the envelope
-            </button>
+            <p className="oscar__line t-ticket">The envelope, please.</p>
+            <p className="oscar__sub">{commissioner(g).name} is about to open it. Somebody do a drumroll.</p>
           </>
         )}
         {stage === 'drumroll' && (
@@ -473,9 +421,6 @@ function Oscar({ room, view }: Props) {
             <p className="oscar__sub">
               {cardTotal(film.score)} of {maxReelScore()} stamps
             </p>
-            <button className="btn btn--big oscar__btn" onClick={() => room.act({ a: 'toCeremony' })}>
-              See the scorecards
-            </button>
           </>
         )}
       </div>
@@ -483,10 +428,9 @@ function Oscar({ room, view }: Props) {
   );
 }
 
-function Ceremony({ room, view }: Props) {
+function Ceremony({ view }: Props) {
   const g = view.game!;
   const film = g.films[g.films.length - 1];
-  const last = g.roundIndex === g.order.length - 1;
   return (
     <main className="page ceremony">
       <div className="t-wide">
@@ -504,14 +448,11 @@ function Ceremony({ room, view }: Props) {
         </div>
       </section>
       <Standings g={g} />
-      <button className="btn btn--big" onClick={() => room.act({ a: 'nextReel' })}>
-        {last ? 'Roll the final credits' : `On to reel ${g.round.number + 1}`}
-      </button>
     </main>
   );
 }
 
-function Final({ room, view }: Props) {
+function Final({ view }: Props) {
   const g = view.game!;
   const champ = champion(g);
   const tied = leaders(g);
@@ -524,13 +465,7 @@ function Final({ room, view }: Props) {
           <p className="lede">
             {tied.map((id) => studioById(g, id).name).join(' and ')} are level on {points(g, tied[0])} points and {tokens(g, tied[0])} greenlights. One last pitch each: same cast, any genre the table shouts out.
           </p>
-          <div className="btn-row" style={{ justifyContent: 'center' }}>
-            {tied.map((id) => (
-              <button key={id} className="btn btn--go btn--big" onClick={() => room.act({ a: 'tieBreak', studioId: id })}>
-                {studioById(g, id).name} wins the tie-breaker
-              </button>
-            ))}
-          </div>
+          <p className="muted">The host taps in the winner from their phone.</p>
         </>
       ) : (
         champ && (
@@ -549,9 +484,6 @@ function Final({ room, view }: Props) {
           <FilmTicket key={f.id} film={f} stamped compact />
         ))}
       </section>
-      <button className="btn btn--big" onClick={() => room.act({ a: 'backToLobby' })}>
-        Run it back: new game, same studios
-      </button>
     </main>
   );
 }
@@ -586,5 +518,3 @@ function Standings({ g, title = 'The board so far' }: { g: Game; title?: string 
     </section>
   );
 }
-
-export const COLOUR_CHOICES = PALETTE_KEYS.map((k) => ({ key: k, ...PALETTE[k] }));

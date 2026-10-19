@@ -44,7 +44,8 @@ export interface RoomEvent {
 export interface View {
   code: string;
   serverNow: number;
-  you: { role: Role; studioId: string | null };
+  you: { role: Role; studioId: string | null; isHost: boolean };
+  host: { studioId: string | null; away: boolean };
   lobby: LobbyStudio[];
   online: string[]; // studio ids, plus 'screen'
   lastSeen: Record<string, number>;
@@ -95,7 +96,7 @@ export type ClientMsg =
   | { t: 'hello'; token?: string | null; create?: boolean }
   | { t: 'join'; name: string; colour: string }
   | { t: 'takeover'; studioId: string }
-  | { t: 'claimScreen' }
+  | { t: 'watch' }
   | { t: 'start'; settings: Settings }
   | { t: 'act'; action: Action }
   | { t: 'ping' };
@@ -113,6 +114,7 @@ export const AUCTION = {
   settledMs: 2500, // nobody else can afford to outbid: sold quickly
   oscarDrumrollMs: 3400,
   graceMs: 180000, // crisis talks before a studio can be folded
+  hostAwayMs: 20000, // the host's phone has been gone this long: anyone can step in
 };
 
 /** Room codes avoid letters that read badly on a TV (I, O, Q, S, Z). */
