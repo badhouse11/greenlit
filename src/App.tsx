@@ -168,7 +168,6 @@ export default function App() {
           onContinue={() => setView('game')}
           onArchive={() => openAside('archive')}
           onRules={() => openAside('rules')}
-          onPrint={() => openAside('print')}
           archiveCount={archive.length}
         />
       )}

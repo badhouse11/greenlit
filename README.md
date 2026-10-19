@@ -92,7 +92,7 @@ Add, remove or rename cards freely. Each card just needs a unique `id`.
 
 ## Print the decks
 
-**Print the decks** (on the home screen) lays out every card at poker size (63 × 88 mm), nine to an A4 sheet: talent, legacy, genres, $1M notes, greenlight stubs and card backs. Print at 100% scale with background graphics on. This is the starting point for the physical edition.
+The print shop (not linked from the home screen for now) lays out every card at poker size (63 × 88 mm), nine to an A4 sheet: talent, legacy, genres, $1M notes, greenlight stubs and card backs. Print at 100% scale with background graphics on. This is the starting point for the physical edition.
 
 ## Under the hood
 

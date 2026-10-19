@@ -1109,6 +1109,13 @@ p {
   font-size: 0.95rem;
 }
 
+.home__credit {
+  margin: 28px 0 0;
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+}
+
 /* ---------- screen: setup ---------------------------------------------- */
 
 .setup {

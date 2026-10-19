@@ -12,7 +12,6 @@ export function Home({
   onContinue,
   onArchive,
   onRules,
-  onPrint,
   archiveCount,
 }: {
   saved: Game | null;
@@ -23,7 +22,6 @@ export function Home({
   onContinue: () => void;
   onArchive: () => void;
   onRules: () => void;
-  onPrint: () => void;
   archiveCount: number;
 }) {
   const unfinished = saved && saved.phase !== 'final';
@@ -117,15 +115,14 @@ export function Home({
         <button className="link-btn" onClick={onArchive}>
           The archive{archiveCount ? ` (${archiveCount} ${archiveCount === 1 ? 'film' : 'films'})` : ''}
         </button>
-        <button className="link-btn" onClick={onPrint}>
-          Print the decks
-        </button>
         {saved && saved.phase === 'final' && (
           <button className="link-btn" onClick={onContinue}>
             Last game’s final credits
           </button>
         )}
       </nav>
+
+      <p className="home__credit t-wide">A Badhouse project</p>
     </main>
     </>
   );
