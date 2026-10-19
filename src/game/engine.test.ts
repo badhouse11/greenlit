@@ -1,0 +1,245 @@
+import { describe, expect, it } from 'vitest';
+import {
+  RULES,
+  cardTotal,
+  legacyPerReel,
+  lockScores,
+  nextPitch,
+  points,
+  reelLeaders,
+  setScore,
+  bin,
+  castingComplete,
+  champion,
+  createGame,
+  draw,
+  eligibleBidders,
+  executeTrade,
+  greenlight,
+  leaders,
+  maxBid,
+  nextBudget,
+  nextReel,
+  playing,
+  sell,
+  settleTie,
+  setPhase,
+  slotsLeft,
+  validateTrade,
+} from './engine';
+import type { Game } from './types';
+
+const names = ['Badhouse Pictures', 'Moonlight Films', 'Golden Age', 'The Last Take', 'Velvet Rope', 'Kitsch & Co'];
+const make = (n: number, order?: number[]) =>
+  createGame(
+    names.slice(0, n).map((name) => ({ name, colour: 'grenadine' })),
+    { directorsCut: false },
+    order,
+  );
+
+/** Plays a whole casting auction with random but legal bids. */
+function castEveryone(g: Game, rng = Math.random): Game {
+  let guard = 0;
+  while (!castingComplete(g)) {
+    if (guard++ > 500) throw new Error('casting never finished');
+    g = draw(g);
+    if (rng() < 0.08) {
+      g = bin(g);
+      continue;
+    }
+    const bidders = eligibleBidders(g);
+    const rs = bidders[Math.floor(rng() * bidders.length)];
+    const price = 1 + Math.floor(rng() * maxBid(rs));
+    g = sell(g, rs.studioId, Math.min(price, maxBid(rs)));
+  }
+  return setPhase(g, 'reveal');
+}
+
+describe('auction rules', () => {
+  it('starts every competing studio on $20M and keeps the commissioner out', () => {
+    const g = make(4);
+    expect(playing(g)).toHaveLength(3);
+    expect(g.round.studios[g.round.commissionerId]).toBeUndefined();
+    playing(g).forEach((rs) => expect(rs.budget).toBe(RULES.startingBudget));
+  });
+
+  it('reserves $1M per empty slot', () => {
+    let g = make(3);
+    const id = playing(g)[0].studioId;
+    expect(maxBid(g.round.studios[id])).toBe(16);
+    g = draw(g);
+    expect(() => sell(g, id, 17)).toThrow();
+    g = sell(g, id, 16);
+    const rs = g.round.studios[id];
+    expect(rs.budget).toBe(4);
+    expect(maxBid(rs)).toBe(1);
+    expect(slotsLeft(rs)).toBe(4);
+  });
+
+  it('blocks a full roster from buying more', () => {
+    let g = make(3);
+    const id = playing(g)[0].studioId;
+    for (let i = 0; i < 5; i++) g = sell(draw(g), id, 1);
+    g = draw(g);
+    expect(() => sell(g, id, 1)).toThrow();
+  });
+
+  it('cannot reveal until casting is done', () => {
+    expect(() => setPhase(make(3), 'reveal')).toThrow();
+  });
+
+  it('never deals the same star twice in a round', () => {
+    const g = castEveryone(make(8));
+    const ids = g.round.sales.map((s) => s.card.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+});
+
+describe('the vault', () => {
+  it('hides a fixed number of legends per reel and always surfaces them', () => {
+    for (let n = 3; n <= 8; n++) {
+      for (let k = 0; k < 10; k++) {
+        const g = castEveryone(make(Math.min(n, 6)));
+        const competitors = Math.min(n, 6) - 1;
+        const legends = g.round.sales.filter((s) => s.card.deck === 'legacy').length;
+        expect(legends).toBe(legacyPerReel(competitors));
+        expect(g.round.legacySlots).toHaveLength(legacyPerReel(competitors));
+      }
+    }
+  });
+});
+
+/** Pitches, random scores, then the lock. */
+function scoreAndLock(g: Game, rng = Math.random): Game {
+  g = setPhase(g, 'prep');
+  g = setPhase(g, 'pitching');
+  while (g.phase === 'pitching') g = nextPitch(g);
+  for (const rs of playing(g)) {
+    for (const cat of ['casting', 'budget', 'plot'] as const) g = setScore(g, rs.studioId, cat, Math.floor(rng() * 6));
+  }
+  const top = reelLeaders(g);
+  return lockScores(g, top.length > 1 ? top[0] : undefined);
+}
+
+describe('loyalty-card scoring', () => {
+  it('banks every studio’s points and greenlights the top card', () => {
+    let g = castEveryone(make(4));
+    g = setPhase(g, 'scoring');
+    const [A, B, C] = playing(g).map((r) => r.studioId);
+    g = setScore(g, A, 'casting', 5);
+    g = setScore(g, A, 'plot', 2);
+    g = setScore(g, B, 'budget', 4);
+    g = setScore(g, C, 'plot', 9); // clamps to 5
+    expect(cardTotal(g.round.scores[C])).toBe(5);
+    g = lockScores(g);
+    expect(g.phase).toBe('oscar');
+    expect(g.round.winnerId).toBe(A);
+    expect(points(g, A)).toBe(7);
+    expect(points(g, B)).toBe(4);
+    expect(points(g, C)).toBe(5);
+    expect(g.films[0].score?.casting).toBe(5);
+  });
+
+  it('demands a casting vote on a tie', () => {
+    let g = castEveryone(make(3));
+    const [A, B] = playing(g).map((r) => r.studioId);
+    g = setScore(g, A, 'plot', 3);
+    g = setScore(g, B, 'plot', 3);
+    expect(() => lockScores(g)).toThrow();
+    expect(lockScores(g, B).round.winnerId).toBe(B);
+  });
+});
+
+describe('trading floor and IOUs', () => {
+  it('swaps stars, moves cash and carries an IOU into the next picture', () => {
+    // order: s1 commissions round 1, s2 round 2, s3 round 3
+    let g = castEveryone(make(3, [0, 1, 2]));
+    const [A, B] = playing(g); // s2, s3
+    const terms = {
+      a: A.studioId,
+      b: B.studioId,
+      aGives: { cardIds: [A.cast[0].id], cash: 0, iou: 4 },
+      bGives: { cardIds: [B.cast[0].id], cash: 0, iou: 0 },
+    };
+    expect(validateTrade(g, terms)).toBeNull();
+    g = executeTrade(g, terms);
+    expect(g.round.studios[A.studioId].cast).toHaveLength(5);
+    expect(g.round.studios[A.studioId].cast.some((c) => c.id === B.cast[0].id)).toBe(true);
+    expect(nextBudget(g, A.studioId)).toBe(16);
+    expect(nextBudget(g, B.studioId)).toBe(24);
+
+    // one trade each
+    const again = { ...terms };
+    expect(validateTrade(g, again)).not.toBeNull();
+
+    g = nextReel(greenlight(g, A.studioId));
+    // round 2: s2 commissions, so only s1 and s3 compete. s3 collects its $4M.
+    expect(g.round.studios[B.studioId].budget).toBe(24);
+    // s2's debt waits for round 3, when it competes again
+    g = nextReel(greenlight(castEveryone(g), B.studioId));
+    expect(g.round.studios[A.studioId].budget).toBe(16);
+  });
+
+  it('needs equal swaps so everyone keeps five', () => {
+    const g = castEveryone(make(4));
+    const [A, B] = playing(g);
+    expect(
+      validateTrade(g, {
+        a: A.studioId,
+        b: B.studioId,
+        aGives: { cardIds: [A.cast[0].id, A.cast[1].id], cash: 0, iou: 0 },
+        bGives: { cardIds: [B.cast[0].id], cash: 0, iou: 0 },
+      }),
+    ).toMatch(/same number/);
+  });
+
+  it('caps IOUs at $15M and bans them with no future picture', () => {
+    let g = castEveryone(make(3, [0, 1, 2]));
+    const [A, B] = playing(g);
+    expect(
+      validateTrade(g, {
+        a: A.studioId,
+        b: B.studioId,
+        aGives: { cardIds: [A.cast[0].id], cash: 0, iou: 16 },
+        bGives: { cardIds: [B.cast[0].id], cash: 0, iou: 0 },
+      }),
+    ).toMatch(/at most/);
+    // jump to the final reel
+    g = nextReel(greenlight(g, A.studioId));
+    g = nextReel(greenlight(castEveryone(g), playing(g)[0].studioId));
+    g = castEveryone(g);
+    const [C, D] = playing(g);
+    expect(
+      validateTrade(g, {
+        a: C.studioId,
+        b: D.studioId,
+        aGives: { cardIds: [C.cast[0].id], cash: 0, iou: 1 },
+        bGives: { cardIds: [D.cast[0].id], cash: 0, iou: 0 },
+      }),
+    ).toMatch(/no future/);
+  });
+});
+
+describe('a whole game', () => {
+  it('rotates the commissioner once each and crowns a champion', () => {
+    for (let n = 3; n <= 6; n++) {
+      let g = make(n);
+      const seen: string[] = [];
+      for (let r = 0; r < n; r++) {
+        seen.push(g.round.commissionerId);
+        g = castEveryone(g);
+        expect(() => greenlight(g, g.round.commissionerId)).toThrow();
+        g = nextReel(scoreAndLock(g));
+      }
+      expect(g.phase).toBe('final');
+      expect(new Set(seen).size).toBe(n);
+      expect(g.films).toHaveLength(n);
+      const top = leaders(g);
+      if (top.length > 1) {
+        expect(champion(g)).toBeNull();
+        g = settleTie(g, top[0]);
+      }
+      expect(champion(g)).not.toBeNull();
+    }
+  });
+});

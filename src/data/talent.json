@@ -1,0 +1,407 @@
+{
+  "deck": "talent",
+  "title": "The Talent Deck",
+  "note": "Living stars. Edit freely: add, remove or rename. Ids just need to stay unique.",
+  "cards": [
+    {
+      "id": "T001",
+      "name": "Leonardo DiCaprio"
+    },
+    {
+      "id": "T002",
+      "name": "Meryl Streep"
+    },
+    {
+      "id": "T003",
+      "name": "Brad Pitt"
+    },
+    {
+      "id": "T004",
+      "name": "Margot Robbie"
+    },
+    {
+      "id": "T005",
+      "name": "Tom Cruise"
+    },
+    {
+      "id": "T006",
+      "name": "Zendaya"
+    },
+    {
+      "id": "T007",
+      "name": "Denzel Washington"
+    },
+    {
+      "id": "T008",
+      "name": "Florence Pugh"
+    },
+    {
+      "id": "T009",
+      "name": "Ryan Gosling"
+    },
+    {
+      "id": "T010",
+      "name": "Emma Stone"
+    },
+    {
+      "id": "T011",
+      "name": "Timothée Chalamet"
+    },
+    {
+      "id": "T012",
+      "name": "Cillian Murphy"
+    },
+    {
+      "id": "T013",
+      "name": "Jennifer Lawrence"
+    },
+    {
+      "id": "T014",
+      "name": "Samuel L. Jackson"
+    },
+    {
+      "id": "T015",
+      "name": "Cate Blanchett"
+    },
+    {
+      "id": "T016",
+      "name": "Joaquin Phoenix"
+    },
+    {
+      "id": "T017",
+      "name": "Anne Hathaway"
+    },
+    {
+      "id": "T018",
+      "name": "Pedro Pascal"
+    },
+    {
+      "id": "T019",
+      "name": "Tom Hanks"
+    },
+    {
+      "id": "T020",
+      "name": "Julia Roberts"
+    },
+    {
+      "id": "T021",
+      "name": "Scarlett Johansson"
+    },
+    {
+      "id": "T022",
+      "name": "Keanu Reeves"
+    },
+    {
+      "id": "T023",
+      "name": "Will Smith"
+    },
+    {
+      "id": "T024",
+      "name": "Nicole Kidman"
+    },
+    {
+      "id": "T025",
+      "name": "Robert Downey Jr."
+    },
+    {
+      "id": "T026",
+      "name": "Natalie Portman"
+    },
+    {
+      "id": "T027",
+      "name": "Johnny Depp"
+    },
+    {
+      "id": "T028",
+      "name": "Angelina Jolie"
+    },
+    {
+      "id": "T029",
+      "name": "George Clooney"
+    },
+    {
+      "id": "T030",
+      "name": "Sandra Bullock"
+    },
+    {
+      "id": "T031",
+      "name": "Matt Damon"
+    },
+    {
+      "id": "T032",
+      "name": "Viola Davis"
+    },
+    {
+      "id": "T033",
+      "name": "Morgan Freeman"
+    },
+    {
+      "id": "T034",
+      "name": "Kate Winslet"
+    },
+    {
+      "id": "T035",
+      "name": "Christian Bale"
+    },
+    {
+      "id": "T036",
+      "name": "Hugh Jackman"
+    },
+    {
+      "id": "T037",
+      "name": "Dwayne Johnson"
+    },
+    {
+      "id": "T038",
+      "name": "Jennifer Aniston"
+    },
+    {
+      "id": "T039",
+      "name": "Keira Knightley"
+    },
+    {
+      "id": "T040",
+      "name": "Daniel Day-Lewis"
+    },
+    {
+      "id": "T041",
+      "name": "Judi Dench"
+    },
+    {
+      "id": "T042",
+      "name": "Jack Black"
+    },
+    {
+      "id": "T043",
+      "name": "Jason Statham"
+    },
+    {
+      "id": "T044",
+      "name": "Danny DeVito"
+    },
+    {
+      "id": "T045",
+      "name": "Whoopi Goldberg"
+    },
+    {
+      "id": "T046",
+      "name": "Al Pacino"
+    },
+    {
+      "id": "T047",
+      "name": "Robert De Niro"
+    },
+    {
+      "id": "T048",
+      "name": "Harrison Ford"
+    },
+    {
+      "id": "T049",
+      "name": "Arnold Schwarzenegger"
+    },
+    {
+      "id": "T050",
+      "name": "Sylvester Stallone"
+    },
+    {
+      "id": "T051",
+      "name": "Jim Carrey"
+    },
+    {
+      "id": "T052",
+      "name": "Adam Sandler"
+    },
+    {
+      "id": "T053",
+      "name": "Will Ferrell"
+    },
+    {
+      "id": "T054",
+      "name": "Eddie Murphy"
+    },
+    {
+      "id": "T055",
+      "name": "Jackie Chan"
+    },
+    {
+      "id": "T056",
+      "name": "Michelle Yeoh"
+    },
+    {
+      "id": "T057",
+      "name": "Nicolas Cage"
+    },
+    {
+      "id": "T058",
+      "name": "Anthony Hopkins"
+    },
+    {
+      "id": "T059",
+      "name": "Helen Mirren"
+    },
+    {
+      "id": "T060",
+      "name": "Ian McKellen"
+    },
+    {
+      "id": "T061",
+      "name": "Emma Thompson"
+    },
+    {
+      "id": "T062",
+      "name": "Hugh Grant"
+    },
+    {
+      "id": "T063",
+      "name": "Colin Firth"
+    },
+    {
+      "id": "T064",
+      "name": "Daniel Craig"
+    },
+    {
+      "id": "T065",
+      "name": "Idris Elba"
+    },
+    {
+      "id": "T066",
+      "name": "Benedict Cumberbatch"
+    },
+    {
+      "id": "T067",
+      "name": "Tom Hardy"
+    },
+    {
+      "id": "T068",
+      "name": "Jake Gyllenhaal"
+    },
+    {
+      "id": "T069",
+      "name": "Chris Hemsworth"
+    },
+    {
+      "id": "T070",
+      "name": "Ryan Reynolds"
+    },
+    {
+      "id": "T071",
+      "name": "Mark Ruffalo"
+    },
+    {
+      "id": "T072",
+      "name": "Zoe Saldaña"
+    },
+    {
+      "id": "T073",
+      "name": "Halle Berry"
+    },
+    {
+      "id": "T074",
+      "name": "Charlize Theron"
+    },
+    {
+      "id": "T075",
+      "name": "Amy Adams"
+    },
+    {
+      "id": "T076",
+      "name": "Saoirse Ronan"
+    },
+    {
+      "id": "T077",
+      "name": "Austin Butler"
+    },
+    {
+      "id": "T078",
+      "name": "Paul Mescal"
+    },
+    {
+      "id": "T079",
+      "name": "Barry Keoghan"
+    },
+    {
+      "id": "T080",
+      "name": "Jacob Elordi"
+    },
+    {
+      "id": "T081",
+      "name": "Sydney Sweeney"
+    },
+    {
+      "id": "T082",
+      "name": "Jenna Ortega"
+    },
+    {
+      "id": "T083",
+      "name": "Anya Taylor-Joy"
+    },
+    {
+      "id": "T084",
+      "name": "Tom Holland"
+    },
+    {
+      "id": "T085",
+      "name": "Daniel Kaluuya"
+    },
+    {
+      "id": "T086",
+      "name": "Lupita Nyong'o"
+    },
+    {
+      "id": "T087",
+      "name": "Michael B. Jordan"
+    },
+    {
+      "id": "T088",
+      "name": "Glen Powell"
+    },
+    {
+      "id": "T089",
+      "name": "Bill Murray"
+    },
+    {
+      "id": "T090",
+      "name": "Steve Carell"
+    },
+    {
+      "id": "T091",
+      "name": "Melissa McCarthy"
+    },
+    {
+      "id": "T092",
+      "name": "Tilda Swinton"
+    },
+    {
+      "id": "T093",
+      "name": "Willem Dafoe"
+    },
+    {
+      "id": "T094",
+      "name": "Javier Bardem"
+    },
+    {
+      "id": "T095",
+      "name": "Penélope Cruz"
+    },
+    {
+      "id": "T096",
+      "name": "Gary Oldman"
+    },
+    {
+      "id": "T097",
+      "name": "Emily Blunt"
+    },
+    {
+      "id": "T098",
+      "name": "Robert Pattinson"
+    },
+    {
+      "id": "T099",
+      "name": "Olivia Colman"
+    },
+    {
+      "id": "T100",
+      "name": "Rowan Atkinson"
+    }
+  ]
+}

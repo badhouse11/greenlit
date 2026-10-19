@@ -1,0 +1,167 @@
+{
+  "deck": "legacy",
+  "title": "The Legacy Vault",
+  "note": "Legendary late performers. Same rules as talent once drawn.",
+  "cards": [
+    {
+      "id": "L001",
+      "name": "Marilyn Monroe"
+    },
+    {
+      "id": "L002",
+      "name": "Marlon Brando"
+    },
+    {
+      "id": "L003",
+      "name": "Audrey Hepburn"
+    },
+    {
+      "id": "L004",
+      "name": "James Dean"
+    },
+    {
+      "id": "L005",
+      "name": "Robin Williams"
+    },
+    {
+      "id": "L006",
+      "name": "Heath Ledger"
+    },
+    {
+      "id": "L007",
+      "name": "Alan Rickman"
+    },
+    {
+      "id": "L008",
+      "name": "Maggie Smith"
+    },
+    {
+      "id": "L009",
+      "name": "Gene Wilder"
+    },
+    {
+      "id": "L010",
+      "name": "Christopher Lee"
+    },
+    {
+      "id": "L011",
+      "name": "Elizabeth Taylor"
+    },
+    {
+      "id": "L012",
+      "name": "Sidney Poitier"
+    },
+    {
+      "id": "L013",
+      "name": "Paul Newman"
+    },
+    {
+      "id": "L014",
+      "name": "Carrie Fisher"
+    },
+    {
+      "id": "L015",
+      "name": "Patrick Swayze"
+    },
+    {
+      "id": "L016",
+      "name": "Humphrey Bogart"
+    },
+    {
+      "id": "L017",
+      "name": "Charlie Chaplin"
+    },
+    {
+      "id": "L018",
+      "name": "Cary Grant"
+    },
+    {
+      "id": "L019",
+      "name": "Grace Kelly"
+    },
+    {
+      "id": "L020",
+      "name": "John Wayne"
+    },
+    {
+      "id": "L021",
+      "name": "Katharine Hepburn"
+    },
+    {
+      "id": "L022",
+      "name": "Bette Davis"
+    },
+    {
+      "id": "L023",
+      "name": "Judy Garland"
+    },
+    {
+      "id": "L024",
+      "name": "Fred Astaire"
+    },
+    {
+      "id": "L025",
+      "name": "Bruce Lee"
+    },
+    {
+      "id": "L026",
+      "name": "Philip Seymour Hoffman"
+    },
+    {
+      "id": "L027",
+      "name": "Chadwick Boseman"
+    },
+    {
+      "id": "L028",
+      "name": "John Candy"
+    },
+    {
+      "id": "L029",
+      "name": "Leslie Nielsen"
+    },
+    {
+      "id": "L030",
+      "name": "Steve McQueen"
+    },
+    {
+      "id": "L031",
+      "name": "Gene Hackman"
+    },
+    {
+      "id": "L032",
+      "name": "Robert Redford"
+    },
+    {
+      "id": "L033",
+      "name": "Diane Keaton"
+    },
+    {
+      "id": "L034",
+      "name": "Peter Sellers"
+    },
+    {
+      "id": "L035",
+      "name": "Ingrid Bergman"
+    },
+    {
+      "id": "L036",
+      "name": "Orson Welles"
+    },
+    {
+      "id": "L037",
+      "name": "Vivien Leigh"
+    },
+    {
+      "id": "L038",
+      "name": "Lauren Bacall"
+    },
+    {
+      "id": "L039",
+      "name": "Rik Mayall"
+    },
+    {
+      "id": "L040",
+      "name": "Chris Farley"
+    }
+  ]
+}

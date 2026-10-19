@@ -1,0 +1,127 @@
+{
+  "deck": "genre",
+  "title": "The Genre Deck",
+  "note": "core genres are always in. \"directorsCut\" genres are added when that setting is on.",
+  "cards": [
+    {
+      "id": "G001",
+      "name": "Horror",
+      "pack": "core"
+    },
+    {
+      "id": "G002",
+      "name": "Romantic Comedy",
+      "pack": "core"
+    },
+    {
+      "id": "G003",
+      "name": "Action",
+      "pack": "core"
+    },
+    {
+      "id": "G004",
+      "name": "Thriller",
+      "pack": "core"
+    },
+    {
+      "id": "G005",
+      "name": "Science Fiction",
+      "pack": "core"
+    },
+    {
+      "id": "G006",
+      "name": "Fantasy",
+      "pack": "core"
+    },
+    {
+      "id": "G007",
+      "name": "Comedy",
+      "pack": "core"
+    },
+    {
+      "id": "G008",
+      "name": "Drama",
+      "pack": "core"
+    },
+    {
+      "id": "G009",
+      "name": "Musical",
+      "pack": "core"
+    },
+    {
+      "id": "G010",
+      "name": "Western",
+      "pack": "core"
+    },
+    {
+      "id": "G011",
+      "name": "Crime",
+      "pack": "core"
+    },
+    {
+      "id": "G012",
+      "name": "Mystery",
+      "pack": "core"
+    },
+    {
+      "id": "G013",
+      "name": "War",
+      "pack": "core"
+    },
+    {
+      "id": "G014",
+      "name": "Adventure",
+      "pack": "core"
+    },
+    {
+      "id": "G015",
+      "name": "Disaster",
+      "pack": "core"
+    },
+    {
+      "id": "G016",
+      "name": "Romance",
+      "pack": "core"
+    },
+    {
+      "id": "G017",
+      "name": "Heist",
+      "pack": "directorsCut"
+    },
+    {
+      "id": "G018",
+      "name": "Biopic",
+      "pack": "directorsCut"
+    },
+    {
+      "id": "G019",
+      "name": "Superhero",
+      "pack": "directorsCut"
+    },
+    {
+      "id": "G020",
+      "name": "Christmas Film",
+      "pack": "directorsCut"
+    },
+    {
+      "id": "G021",
+      "name": "Sports",
+      "pack": "directorsCut"
+    },
+    {
+      "id": "G022",
+      "name": "Coming-of-Age",
+      "pack": "directorsCut"
+    },
+    {
+      "id": "G023",
+      "name": "Period Drama",
+      "pack": "directorsCut"
+    },
+    {
+      "id": "G024",
+      "name": "Film Noir",
+      "pack": "directorsCut"
+    }
+  ]
+}
