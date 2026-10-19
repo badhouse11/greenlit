@@ -8,8 +8,19 @@ import { Play } from './screens/Play';
 import { Archive } from './screens/Archive';
 import { Rules } from './screens/Rules';
 import { PrintShop } from './screens/PrintShop';
+import { HostRoom, JoinRoom } from './screens/online/OnlineRoom';
+import { MULTIPLAYER_READY } from './net/useRoom';
 
-export type View = 'home' | 'setup' | 'game' | 'archive' | 'rules' | 'print';
+/** A link like greenlit.app/?room=ABCD drops a phone straight into that room. */
+const linkedRoom = (() => {
+  try {
+    return new URLSearchParams(window.location.search).get('room')?.toUpperCase() ?? null;
+  } catch {
+    return null;
+  }
+})();
+
+export type View = 'home' | 'setup' | 'game' | 'archive' | 'rules' | 'print' | 'host' | 'join';
 
 export interface Toast {
   text: string;
@@ -36,7 +47,7 @@ const PHASE_LABEL: Record<Game['phase'], string> = {
 export default function App() {
   const [game, setGame] = useState<Game | null>(() => loadGame());
   const [past, setPast] = useState<Game[]>([]);
-  const [view, setView] = useState<View>('home');
+  const [view, setView] = useState<View>(() => (linkedRoom ? 'join' : 'home'));
   const [returnTo, setReturnTo] = useState<View>('home');
   const [archive, setArchive] = useState<GreenlitFilm[]>(() => loadArchive());
   const [toast, setToast] = useState<Toast | null>(null);
@@ -151,6 +162,8 @@ export default function App() {
         <Home
           saved={game}
           onNew={() => setView('setup')}
+          onHost={MULTIPLAYER_READY ? () => setView('host') : undefined}
+          onJoin={MULTIPLAYER_READY ? () => setView('join') : undefined}
           onContinue={() => setView('game')}
           onArchive={() => openAside('archive')}
           onRules={() => openAside('rules')}
@@ -164,6 +177,16 @@ export default function App() {
         <Archive films={archive} onBack={() => setView(returnTo)} onRemove={removeFilm} onClear={clearArchive} />
       )}
       {view === 'rules' && <Rules onBack={() => setView(returnTo)} />}
+      {view === 'host' && <HostRoom onExit={() => setView('home')} />}
+      {view === 'join' && (
+        <JoinRoom
+          initialCode={linkedRoom ?? undefined}
+          onExit={() => {
+            if (linkedRoom) window.history.replaceState(null, '', window.location.pathname);
+            setView('home');
+          }}
+        />
+      )}
       {view === 'print' && <PrintShop onBack={() => setView(returnTo)} />}
 
       {toast && (

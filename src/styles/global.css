@@ -935,6 +935,7 @@ p {
 }
 
 .toast {
+  pointer-events: none;
   position: fixed;
   left: 50%;
   top: 58px;
@@ -2766,6 +2767,614 @@ p {
   .archive-tools .field {
     min-width: 0;
     flex: 1 1 140px;
+  }
+}
+
+
+/* ==========================================================================
+   Build 3: shop strip, everyone's-phone multiplayer
+   ========================================================================== */
+
+/* ---------- the shop strip: a thin running marquee ----------------------- */
+
+.shop-strip {
+  display: block;
+  overflow: hidden;
+  background: var(--ink);
+  color: var(--paper);
+  border-bottom: 1px solid rgba(244, 231, 206, 0.25);
+  font-family: var(--f-wide);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  padding-block: 5px;
+}
+
+a.shop-strip:hover .shop-strip__track,
+a.shop-strip:focus-visible .shop-strip__track {
+  animation-play-state: paused;
+}
+
+a.shop-strip:hover {
+  color: var(--gold);
+}
+
+.shop-strip__track {
+  display: inline-flex;
+  animation: strip 48s linear infinite;
+}
+
+.shop-strip__run > span {
+  padding-right: 2.2em;
+}
+
+.shop-strip__star {
+  margin-left: 2.2em;
+  color: var(--gold);
+}
+
+@keyframes strip {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ---------- home ---------------------------------------------------------- */
+
+.home__actions--quiet {
+  margin-top: -18px;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---------- toasts by tone ------------------------------------------------ */
+
+.toast--vault {
+  background: var(--vault);
+  color: var(--gold);
+  border: 1.5px solid var(--gold);
+}
+
+.toast--sold {
+  background: var(--stamp);
+}
+
+.toast--alarm {
+  background: var(--grenadine);
+}
+
+.conn-badge {
+  position: fixed;
+  top: calc(10px + env(safe-area-inset-top, 0px));
+  right: max(10px, env(safe-area-inset-right, 0px));
+  z-index: 70;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--grenadine);
+  color: var(--paper);
+  font-family: var(--f-mono);
+  font-size: 0.75rem;
+}
+
+/* ---------- joining ------------------------------------------------------- */
+
+.join-gate {
+  padding-top: clamp(24px, 8vh, 72px);
+}
+
+.join-form {
+  display: grid;
+  gap: 14px;
+  width: min(420px, 100%);
+}
+
+.code-input {
+  text-align: center;
+  font-size: 3.2rem;
+  letter-spacing: 0.3em;
+  padding: 8px 0 8px 0.3em;
+  min-height: 84px;
+  text-transform: uppercase;
+}
+
+.join-form--studio .studio-row {
+  grid-template-columns: 1fr auto;
+  padding: 12px 14px;
+}
+
+.join-form--studio .input--line {
+  font-family: var(--f-ticket);
+  font-variation-settings: 'wdth' 75;
+  font-weight: 850;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+}
+
+.swatches--big {
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.swatches--big .swatch {
+  width: 40px;
+  height: 40px;
+}
+
+.swatch:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+.takeover-row {
+  border: 0;
+  width: 100%;
+  grid-template-columns: 1fr auto;
+  text-align: left;
+  cursor: pointer;
+  font-size: 1.3rem;
+  min-height: 56px;
+}
+
+/* ---------- the big screen ------------------------------------------------ */
+
+.screen-app .page {
+  max-width: 1400px;
+}
+
+.lobby {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: 40px;
+  align-items: start;
+  padding-top: clamp(24px, 5vh, 56px);
+}
+
+.lobby__join,
+.lobby__studios {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+
+.lobby__h {
+  font-size: 2rem;
+}
+
+.code-ticket {
+  --tk-bg: #e9a752;
+  --tk-ink: #4a1f10;
+  --r: 22px;
+  padding: 34px 28px 30px;
+  display: grid;
+  gap: 6px;
+  text-align: center;
+}
+
+.code-ticket__kicker {
+  font-size: 0.85rem;
+}
+
+.code-ticket__url {
+  font-family: var(--f-mono);
+  font-size: clamp(1rem, 2.4vw, 1.5rem);
+  margin-bottom: 14px;
+  overflow-wrap: anywhere;
+}
+
+.code-ticket__code {
+  font-size: clamp(5rem, 14vw, 10rem);
+  letter-spacing: 0.08em;
+  color: var(--grenadine);
+  text-shadow: 3px 3px 0 rgba(74, 31, 16, 0.85);
+  line-height: 0.9;
+}
+
+.lobby-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.lobby-stub {
+  padding: 16px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  min-height: 74px;
+  animation: slide-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.lobby-stub__name {
+  font-size: 1.5rem;
+  min-width: 0;
+}
+
+.lobby-stub--mine {
+  width: min(380px, 100%);
+  justify-content: center;
+  min-height: 110px;
+}
+
+.lobby-stub--mine .lobby-stub__name {
+  font-size: 2.2rem;
+  text-align: center;
+}
+
+.crisis {
+  display: grid;
+  gap: 6px;
+  padding: 10px max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px));
+  background: #fbe9e3;
+  border-bottom: 2px solid var(--danger);
+  color: var(--danger);
+}
+
+.crisis__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.screen-casting {
+  display: grid;
+  grid-template-columns: minmax(260px, 380px) minmax(0, 1fr);
+  grid-template-areas:
+    'stage board'
+    'ledger ledger';
+  gap: 28px;
+  align-items: center;
+}
+
+.screen-casting__stage {
+  grid-area: stage;
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+}
+
+.screen-casting__board {
+  grid-area: board;
+  display: grid;
+  gap: 18px;
+}
+
+.screen-ledger {
+  grid-area: ledger;
+}
+
+.clock-ticket__film {
+  font-size: clamp(1.4rem, 3.4vw, 2.2rem);
+}
+
+/* ---------- the live bid board ------------------------------------------- */
+
+.bid-board {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  text-align: center;
+  padding: 16px;
+  border-radius: 6px;
+  background: var(--paper);
+  background-image: var(--grain);
+  background-blend-mode: multiply;
+  box-shadow: 0 1px 0 rgba(58, 38, 32, 0.2), 0 12px 24px rgba(58, 38, 32, 0.12);
+}
+
+.bid-board__call {
+  font-size: 0.8rem;
+}
+
+.bid-board__price {
+  font-size: 3.6rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 0.95;
+}
+
+.bid-board__leader {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+}
+
+.bid-board__bar {
+  width: 100%;
+  height: 8px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.bid-board__bar span {
+  display: block;
+  height: 100%;
+  background: var(--grenadine);
+  transition: width 0.2s linear;
+}
+
+.bid-board--big {
+  padding: 28px;
+  gap: 14px;
+}
+
+.bid-board--big .bid-board__call {
+  font-size: 1.2rem;
+}
+
+.bid-board--big .bid-board__price {
+  font-size: clamp(5rem, 11vw, 9rem);
+}
+
+.bid-board--big .chip {
+  font-size: 1.4rem;
+  padding: 8px 20px;
+}
+
+.bid-board--big .bid-board__bar {
+  height: 14px;
+}
+
+/* ---------- the phone ----------------------------------------------------- */
+
+.phone-wrap {
+  min-height: 100vh;
+}
+
+.phone-band {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 20;
+  display: grid;
+  gap: 2px;
+  padding: 10px max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px));
+  box-shadow: 0 2px 0 rgba(58, 38, 32, 0.25);
+}
+
+.phone-band__name {
+  font-size: 1.35rem;
+}
+
+.phone-band__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+}
+
+.phone-band__meta b {
+  font-family: var(--f-ticket);
+  font-variation-settings: 'wdth' 80;
+  font-size: 1.05rem;
+}
+
+.phone-band__role {
+  padding: 1px 8px;
+  border: 1.5px solid currentColor;
+  border-radius: 2px;
+}
+
+.phone {
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding-block: 18px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+.phone-stack {
+  display: grid;
+  gap: 16px;
+}
+
+.phone--centre {
+  text-align: center;
+  justify-items: center;
+  padding-top: 18px;
+}
+
+.phone-stack > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.phone-title {
+  font-size: clamp(1.8rem, 9vw, 2.6rem);
+  text-wrap: balance;
+}
+
+.phone-genre {
+  font-size: clamp(2.6rem, 13vw, 4rem);
+  color: var(--grenadine);
+  text-shadow: 2px 2px 0 rgba(58, 38, 32, 0.8);
+}
+
+.phone-small {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
+.phone-clock {
+  font-family: var(--f-ticket);
+  font-variation-settings: 'wdth' 70;
+  font-weight: 900;
+  font-size: clamp(5rem, 30vw, 8rem);
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
+}
+
+.phone-clock.is-urgent {
+  animation: tick 1s steps(2, jump-none) infinite;
+}
+
+.phone-clock.is-over {
+  color: var(--paper);
+  background: var(--grenadine);
+  border-radius: 6px;
+  padding: 4px 24px 10px;
+}
+
+.btn-row--stack {
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+}
+
+.notice--lead {
+  border-color: var(--stamp);
+  color: var(--stamp);
+  background: #e5efe7;
+  font-weight: 600;
+  text-align: center;
+}
+
+.lot {
+  --tk-bg: var(--paper);
+  --tk-ink: var(--ink);
+  --s: 5px;
+  padding: 14px 22px;
+  display: grid;
+  gap: 4px;
+  text-align: center;
+}
+
+.lot--legacy {
+  --tk-bg: var(--vault);
+  --tk-ink: var(--gold);
+}
+
+.lot__kicker {
+  font-size: 0.7rem;
+}
+
+.lot__name {
+  min-height: 1.1em;
+}
+
+.lot__name .fit {
+  white-space: normal;
+}
+
+.bid-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.bid-btn {
+  min-height: 78px;
+  flex-direction: column;
+  gap: 0;
+  padding: 8px 6px;
+}
+
+.bid-btn small {
+  font-size: 0.75rem;
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+.bid-btn b {
+  font-family: var(--f-ticket);
+  font-variation-settings: 'wdth' 80;
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.phone-slots {
+  background: rgba(255, 252, 245, 0.55);
+  border-radius: 4px;
+  padding: 6px 12px;
+}
+
+.mini-ledger {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+  font-size: 0.85rem;
+}
+
+.mini-ledger li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(58, 38, 32, 0.2);
+}
+
+.mini-ledger li span:last-child {
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+}
+
+.deal-builder {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+}
+
+.deal-builder .money-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.deal-builder .stepper--small {
+  grid-template-columns: 34px minmax(0, 1fr) 34px;
+  width: 100%;
+}
+
+.offer-card {
+  display: grid;
+  gap: 8px;
+  text-align: left;
+}
+
+.offer-card p {
+  font-family: var(--f-wide);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.prompt-list--phone {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 1fr;
+  font-size: 0.95rem;
+}
+
+.prompt-list--phone li {
+  padding: 8px 12px;
+  background: rgba(255, 252, 245, 0.55);
+  border-radius: 4px;
+}
+
+@media (max-width: 920px) {
+  .lobby {
+    grid-template-columns: 1fr;
+  }
+
+  .screen-casting {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'stage'
+      'board'
+      'ledger';
   }
 }
 

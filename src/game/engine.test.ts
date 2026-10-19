@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest';
 import {
   RULES,
   cardTotal,
+  fireCommissioner,
+  foldStudio,
+  totalRounds,
   legacyPerReel,
   lockScores,
   nextPitch,
@@ -241,5 +244,42 @@ describe('a whole game', () => {
       }
       expect(champion(g)).not.toBeNull();
     }
+  });
+});
+
+describe('studios leaving', () => {
+  it('folds a studio mid-casting: fire sale, frozen points, no future turn', () => {
+    let g = make(5, [0, 1, 2, 3, 4]);
+    g = draw(g);
+    const leaving = 's3';
+    g = sell(g, leaving, 2);
+    const star = g.round.studios[leaving].cast[0];
+    g = foldStudio(g, leaving);
+    expect(g.round.studios[leaving]).toBeUndefined();
+    expect(g.round.talentDeck[0].id === star.id || g.round.legacyDeck[0].id === star.id).toBe(true);
+    expect(g.order.includes(leaving)).toBe(false);
+    expect(totalRounds(g)).toBe(4);
+    g = castEveryone(g);
+    expect(playing(g)).toHaveLength(3);
+  });
+
+  it('fires the Commissioner: next on the rota takes the chair and the genre is redrawn', () => {
+    let g = castEveryone(make(5, [0, 1, 2, 3, 4]));
+    expect(g.round.commissionerId).toBe('s1');
+    g = fireCommissioner(g);
+    expect(g.round.commissionerId).toBe('s2');
+    expect(g.round.studios['s2']).toBeUndefined();
+    expect(g.order.filter((x) => x === 's2')).toHaveLength(1);
+    expect(g.order.includes('s1')).toBe(false);
+    expect(playing(g)).toHaveLength(3);
+    g = castEveryone(g);
+    g = nextReel(scoreAndLock(g));
+    expect(g.round.commissionerId).toBe('s3');
+  });
+
+  it('ends the game when too few studios remain', () => {
+    let g = make(3, [0, 1, 2]);
+    g = foldStudio(g, 's2');
+    expect(g.phase).toBe('final');
   });
 });

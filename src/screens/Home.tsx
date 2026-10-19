@@ -1,10 +1,13 @@
 import type { Game } from '../game/types';
 import { totalRounds } from '../game/engine';
 import { FitText, Ticket } from '../components/Ticket';
+import { ShopStrip } from '../components/ShopStrip';
 
 export function Home({
   saved,
   onNew,
+  onHost,
+  onJoin,
   onContinue,
   onArchive,
   onRules,
@@ -13,6 +16,8 @@ export function Home({
 }: {
   saved: Game | null;
   onNew: () => void;
+  onHost?: () => void;
+  onJoin?: () => void;
   onContinue: () => void;
   onArchive: () => void;
   onRules: () => void;
@@ -21,6 +26,8 @@ export function Home({
 }) {
   const unfinished = saved && saved.phase !== 'final';
   return (
+    <>
+    <ShopStrip />
     <main className="page home">
       <Ticket className="hero-ticket" wrapClassName="hero-wrap">
         <div className="hero-ticket__main">
@@ -53,8 +60,34 @@ export function Home({
         </div>
       </Ticket>
 
-      <div className="home__actions">
-        {unfinished ? (
+      {onHost && onJoin ? (
+        <div className="home__actions">
+          <button className="btn btn--big btn--go" onClick={onHost}>
+            Host on the big screen
+          </button>
+          <button className="btn btn--big" onClick={onJoin}>
+            Join with your phone
+          </button>
+        </div>
+      ) : null}
+
+      <div className={`home__actions ${onHost && onJoin ? 'home__actions--quiet' : ''}`}>
+        {onHost && onJoin ? (
+          unfinished ? (
+            <>
+              <button className="link-btn" onClick={onContinue}>
+                Continue your pass-the-phone game (reel {saved.round.number} of {totalRounds(saved)})
+              </button>
+              <button className="link-btn" onClick={onNew}>
+                Start a new pass-the-phone game
+              </button>
+            </>
+          ) : (
+            <button className="link-btn" onClick={onNew}>
+              Only one phone? Pass it round instead
+            </button>
+          )
+        ) : unfinished ? (
           <>
             <button className="btn btn--big btn--go" onClick={onContinue}>
               Continue reel {saved.round.number} of {totalRounds(saved)}
@@ -87,5 +120,6 @@ export function Home({
         )}
       </nav>
     </main>
+    </>
   );
 }

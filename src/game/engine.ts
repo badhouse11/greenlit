@@ -129,8 +129,10 @@ export const reelLeaders = (g: Game) => {
 };
 
 /** Does this studio compete in any round after the current one? */
+export const isFolded = (g: Game, studioId: string) => !!g.studios.find((s) => s.id === studioId)?.folded;
+
 export const hasFuturePlay = (g: Game, studioId: string) =>
-  g.order.some((cid, idx) => idx > g.roundIndex && cid !== studioId);
+  !isFolded(g, studioId) && g.order.some((cid, idx) => idx > g.roundIndex && cid !== studioId);
 
 export const outstandingDebt = (g: Game, studioId: string) =>
   g.ious.filter((i) => i.fromId === studioId && !i.fromSettled).reduce((n, i) => n + i.amount, 0);
@@ -193,7 +195,7 @@ function setUpRound(input: Game, idx: number): Game {
 
   const studios: Record<string, RoundStudio> = {};
   for (const s of g.studios) {
-    if (s.id === commissionerId) continue;
+    if (s.id === commissionerId || s.folded) continue;
     let budget = RULES.startingBudget;
     for (const iou of g.ious) {
       if (iou.toId === s.id && !iou.toSettled) {
@@ -236,6 +238,83 @@ function setUpRound(input: Game, idx: number): Game {
     winnerId: null,
     logline: '',
   };
+  return g;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Studios leaving mid-game                                           */
+/* ------------------------------------------------------------------ */
+
+/** Returns a studio's stars to the top of their decks: the fire sale. */
+function fireSale(g: Game, studioId: string) {
+  const rs = g.round.studios[studioId];
+  if (!rs) return;
+  for (const c of [...rs.cast].reverse()) {
+    const card = { id: c.id, name: c.name, deck: c.deck };
+    (card.deck === 'legacy' ? g.round.legacyDeck : g.round.talentDeck).unshift(card);
+  }
+  delete g.round.studios[studioId];
+  delete g.round.scores[studioId];
+  const idx = g.round.pitchOrder.indexOf(studioId);
+  if (idx >= 0) {
+    g.round.pitchOrder.splice(idx, 1);
+    if (idx < g.round.pitchCursor) g.round.pitchCursor -= 1;
+    g.round.pitchCursor = Math.max(0, Math.min(g.round.pitchCursor, g.round.pitchOrder.length - 1));
+  }
+}
+
+/** Too few studios left to make a contest: roll the credits. */
+function settleAfterExit(g: Game) {
+  if (playing(g).length < 2) {
+    g.phase = 'final';
+    return;
+  }
+  if (g.phase === 'pitching' && g.round.pitchCursor >= g.round.pitchOrder.length) g.phase = 'scoring';
+}
+
+/** A studio leaves for good. Its stars go back under the hammer, its points freeze. */
+export function foldStudio(input: Game, studioId: string): Game {
+  if (studioId === input.round.commissionerId) throw new RuleError('That’s the Commissioner. Fire them instead.');
+  const s = input.studios.find((x) => x.id === studioId);
+  if (!s || s.folded) throw new RuleError('That studio has already folded.');
+  if (input.round.winnerId === studioId && ['oscar', 'ceremony'].includes(input.phase)) {
+    throw new RuleError('They’ve just been greenlit. Fold them at the start of the next reel.');
+  }
+  const g = clone(input);
+  g.studios.find((x) => x.id === studioId)!.folded = true;
+  g.order = g.order.filter((cid, idx) => idx <= g.roundIndex || cid !== studioId);
+  fireSale(g, studioId);
+  settleAfterExit(g);
+  return g;
+}
+
+/**
+ * The Commissioner has gone. The next studio on the rota takes the chair for this reel,
+ * using up its own turn. Its stars go back under the hammer and the genre is redrawn,
+ * so the new Commissioner gains nothing from having cast.
+ */
+export function fireCommissioner(input: Game): Game {
+  if (['oscar', 'ceremony', 'final'].includes(input.phase)) throw new RuleError('Too late. This reel is already decided.');
+  const g = clone(input);
+  const oldId = g.round.commissionerId;
+  g.studios.find((x) => x.id === oldId)!.folded = true;
+  g.order = g.order.filter((cid, idx) => idx <= g.roundIndex || cid !== oldId);
+
+  const competing = Object.keys(g.round.studios);
+  const laterIdx = g.order.findIndex((cid, idx) => idx > g.roundIndex && competing.includes(cid));
+  const nextId = laterIdx >= 0 ? g.order[laterIdx] : g.round.pitchOrder[0] ?? competing[0];
+  if (!nextId || competing.length < 3) {
+    g.phase = 'final';
+    return g;
+  }
+  if (laterIdx >= 0) g.order.splice(laterIdx, 1);
+  g.order[g.roundIndex] = nextId;
+  g.round.commissionerId = nextId;
+  fireSale(g, nextId);
+  const genre = pickGenre(g);
+  g.genresUsed.push(genre);
+  g.round.genre = genre;
+  settleAfterExit(g);
   return g;
 }
 

@@ -43,6 +43,7 @@ import { FilmTicket, LoyaltyCard, Sleeve, StarTicket, Stepper, StudioStub, Token
 import { Ticket } from '../components/Ticket';
 import { stock } from '../lib/palette';
 import { CAN_DOWNLOAD, downloadFilmTicket } from '../lib/exportTicket';
+import { ShopStrip } from '../components/ShopStrip';
 
 interface PlayProps {
   game: Game;
@@ -89,6 +90,8 @@ function Handover({ game, act }: PlayProps) {
   const s = stock(boss.colour);
   const adjusted = playing(game).filter((rs) => rs.startBudget !== RULES.startingBudget);
   return (
+    <>
+    <ShopStrip />
     <main className="page page--narrow centre-stack">
       <div className="t-wide">
         Reel {game.round.number} of {totalRounds(game)}
@@ -122,6 +125,7 @@ function Handover({ game, act }: PlayProps) {
 
       {game.roundIndex > 0 && <MiniStandings game={game} />}
     </main>
+    </>
   );
 }
 
@@ -1077,6 +1081,8 @@ function Final({ game, act, onEnd, onArchive }: PlayProps) {
   const judges = useMemo(() => game.studios.filter((s) => !tied.includes(s.id)), [game.studios, tied]);
 
   return (
+    <>
+    <ShopStrip />
     <main className="page centre-stack">
       <div className="t-wide">Final credits</div>
       {needsTieBreak ? (
@@ -1123,5 +1129,6 @@ function Final({ game, act, onEnd, onArchive }: PlayProps) {
         </button>
       </div>
     </main>
+    </>
   );
 }

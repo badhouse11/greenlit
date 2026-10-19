@@ -27,6 +27,16 @@ The repo already includes `netlify.toml`.
 
 Or drag-and-drop: run `npm run build` locally and drop the `dist` folder onto app.netlify.com/drop.
 
+## Everyone's phone (multiplayer)
+
+One device (TV, laptop or tablet) hosts the room as **the big screen**. Everyone else opens the site on their phone, taps **Join a game** and types the four-letter code. Bids are made from phones and shown live on every screen; the Commissioner's phone holds the secret genre and the scorecards.
+
+- **Room server:** `server/index.ts`, a Cloudflare Worker with one Durable Object per room. Config is in `wrangler.toml`. Deploy it with Cloudflare's "Import a repository" (Workers Builds), Worker name `greenlit-rooms`, deploy command `npx wrangler deploy`.
+- **Connecting the site:** in Netlify, add the environment variable `VITE_ROOM_SERVER` set to the Worker's address (e.g. `https://greenlit-rooms.yourname.workers.dev`), then redeploy. Without it, the site runs pass-the-phone mode only.
+- **Shop strip:** set `VITE_SHOP_URL` in Netlify to link the running strip to your shop.
+- **Dropouts:** phones rejoin automatically. A studio that goes quiet triggers crisis talks on the big screen; any phone can take it over, and after 3:00 the big screen can fold it (its stars go back under the hammer) or fire the Commissioner.
+- **Game logic** lives in `src/net/room-core.ts`, shared rules in `src/game/engine.ts`.
+
 ## How a game runs
 
 1. **Open the studios.** 3 to 8 studios, each with a name and a ticket colour. The game shuffles a Commissioner rota so everyone judges exactly once. One reel per player.

@@ -10,6 +10,7 @@ export interface Studio {
   id: string;
   name: string;
   colour: string; // key into PALETTE
+  folded?: boolean; // left the game; points frozen
 }
 
 export interface CastMember extends Card {
