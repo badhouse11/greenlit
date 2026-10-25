@@ -6,6 +6,7 @@ const STEPS = [
   { head: 'Auction', body: 'Everyone else bids on movie stars from their phone. $20M, five stars, no idea why.' },
   { head: 'Reveal', body: 'The genre drops. Your action-hero cast is now making a period drama.' },
   { head: 'Trade', body: 'One deal each to swap stars, sweeten it with cash, or borrow against your next film.' },
+  { head: 'Write it', body: 'Your phone walks you through your pitch, step by step, against the clock.' },
   { head: 'Pitch', body: 'Two minutes each to sell your film to the Commissioner, out loud.' },
   { head: 'The Oscar', body: 'The Commissioner scores casting, budget and plot in secret. Then the envelope opens.' },
 ];
@@ -91,8 +92,8 @@ export function Rules({ onBack }: { onBack: () => void }) {
               <strong>The commission.</strong> The Commissioner holds their phone to read the secret genre, then seals it. (Pass-the-phone: hand them the phone.)
             </li>
             <li>
-              <strong>The casting auction.</strong> The Commissioner draws the next star. Studios bid in $1M steps from their phones (or out loud, if you’re passing one phone round). A short countdown resets with every bid; when it runs out, the star is sold.
-              Nobody bites? Bin the card. Repeat until every studio has five. A few vault legends are hidden in every reel and turn up on their own, without warning.
+              <strong>The casting auction.</strong> Stars come up one at a time, on their own (the Commissioner can pause it). Studios bid in $1M steps from their phones, or tap Pass. A short countdown resets with every bid; when it runs out, the star is sold. If everyone passes, the card goes straight away.
+              Repeat until every studio has five. Gold cards are Oscar winners. Vault legends are hidden in every reel and turn up without warning. (Passing one phone round? The Commissioner draws each star and taps in the shouted bids.)
             </li>
             <li>
               <strong>The reveal.</strong> The Commissioner opens the envelope. Groans are expected.
@@ -102,7 +103,7 @@ export function Rules({ onBack }: { onBack: () => void }) {
               fine.
             </li>
             <li>
-              <strong>Pitch prep.</strong> A few prompts to get the films in shape, and the running order.
+              <strong>Pitch prep.</strong> Everyone writes their pitch on their own phone, one timed step at a time: the one-liner, the story, who plays who, the big moment, and last of all the title. Your notes stay on your phone while you pitch.
             </li>
             <li>
               <strong>The pitch.</strong> Each studio gets {RULES.pitchSeconds / 60} minutes on the clock to pitch a film in the revealed genre using all five stars. Out loud, with conviction.
@@ -165,7 +166,11 @@ export function Rules({ onBack }: { onBack: () => void }) {
               </tr>
               <tr>
                 <td>The vault</td>
-                <td>One hidden legend per competing studio, between two and five a reel. Where they fall in the deck is random and secret.</td>
+                <td>Two more hidden legends than there are competing studios, between three and eight a reel. Where they fall in the deck is random and secret.</td>
+              </tr>
+              <tr>
+                <td>Gold cards</td>
+                <td>Stars who have won a competitive acting Oscar (lead or supporting). A bit of prestige for your casting score, if the Commissioner is impressed.</td>
               </tr>
             </tbody>
           </table>

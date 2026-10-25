@@ -5,12 +5,14 @@ import { useTicker } from '../../net/useRoom';
 import type { View } from '../../net/protocol';
 import { AUCTION } from '../../net/protocol';
 import { RULES, cardTotal, champion, commissioner, leaders, maxReelScore, points, standings, studioById, tokens } from '../../game/engine';
+import { PREP_STEPS, prepStepLeft } from '../../net/protocol';
 import { stock } from '../../lib/palette';
-import { FilmTicket, LoyaltyCard, Sleeve, StarTicket, StudioStub, TokenRow } from '../../components/Cards';
+import { FilmTicket, Sleeve, StarTicket, StudioStub, TokenRow } from '../../components/Cards';
 import { Ticket } from '../../components/Ticket';
 import { ShopStrip } from '../../components/ShopStrip';
 import { BidBoard } from './PhoneView';
-import { PHASE_LABEL, PROMPTS, clockLeft, mmss, ordinal } from './shared';
+import { OnStage, PHASE_LABEL, ReelResults, clockLeft, mmss, ordinal } from './shared';
+import { usePrepClock } from './prep';
 
 interface Props {
   room: Room;
@@ -215,6 +217,7 @@ function Casting({ room, view }: Props) {
         {card ? (
           <div className={card.deck === 'legacy' ? 'vault-surprise' : 'slide-in'} key={card.id}>
             {card.deck === 'legacy' && <div className="vault-banner t-wide">From the vault</div>}
+            {card.deck !== 'legacy' && card.oscar && <div className="vault-banner vault-banner--oscar t-wide">Oscar winner</div>}
             <StarTicket card={card} />
           </div>
         ) : (
@@ -225,7 +228,8 @@ function Casting({ room, view }: Props) {
               </strong>
             ) : (
               <span>
-                {commissioner(g).name} draws the next star. {view.deck.legendsLeft > 0 && `${view.deck.legendsLeft} ${view.deck.legendsLeft === 1 ? 'legend is' : 'legends are'} still hidden in the deck.`}
+                {view.dealer.paused ? 'The auction is paused.' : 'Next star coming up…'}{' '}
+                {view.deck.legendsLeft > 0 && `${view.deck.legendsLeft} ${view.deck.legendsLeft === 1 ? 'legend is' : 'legends are'} still hidden in the deck.`}
               </span>
             )}
           </div>
@@ -240,7 +244,7 @@ function Casting({ room, view }: Props) {
           </div>
         ) : (
           <div className="centre-stack">
-            <p className="lede">Bid from your phones. Shouting is encouraged.</p>
+            <p className="lede">Bid or pass from your phones. Shouting is encouraged.</p>
           </div>
         )}
       </section>
@@ -303,29 +307,35 @@ function Trading({ view }: Props) {
   );
 }
 
-function Prep({ view }: Props) {
+function Prep({ room, view }: Props) {
   const g = view.game!;
+  const { left, used, running, roomStep } = usePrepClock(room, view);
+  const over = left === 0;
   return (
     <main className="page">
       <div className="page-head">
         <div>
-          <h1 className="page-title t-ticket">Get your pitches ready</h1>
+          <h1 className="page-title t-ticket">Write your pitches</h1>
           <p className="lede">
-            You’re making a <strong>{g.round.genre.toLowerCase()}</strong>. {RULES.pitchSeconds / 60} minutes each on the clock. {commissioner(g).name} scores casting, budget and plot.
+            You’re making a <strong>{g.round.genre.toLowerCase()}</strong>. Everyone is writing on their own phone, one step at a time. Then {RULES.pitchSeconds / 60} minutes each on the clock.
           </p>
         </div>
       </div>
       <div className="prep">
-        <ol className="prompt-list">
-          {PROMPTS.map((p) => (
-            <li key={p.head}>
-              <Ticket className="prompt" serrated bg="#F4E7CE">
-                <strong className="t-ticket">{p.head}</strong>
-                <span>{p.body}</span>
-              </Ticket>
-            </li>
-          ))}
-        </ol>
+        <div className="screen-prep">
+          <Ticket className="clock-ticket" bg="#F4E7CE">
+            <div className="clock-ticket__studio t-ticket">{over ? 'Pencils down' : running ? 'Pencils down in' : 'Clock paused'}</div>
+            {!over && <div className="clock">{mmss(left)}</div>}
+          </Ticket>
+          <ol className="screen-prep__steps">
+            {PREP_STEPS.map((step, i) => (
+              <li key={step.key} className={i < roomStep ? 'is-done' : i === roomStep ? 'is-now' : ''}>
+                <span className="t-ticket">{step.label}</span>
+                <span className="t-mono">{i === roomStep && !over ? mmss(prepStepLeft(used, i)) : `${step.minutes} min`}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
         <aside className="form-sheet prep__order">
           <h2 className="t-ticket" style={{ fontSize: '1.5rem' }}>
             Running order
@@ -369,16 +379,8 @@ function Pitching({ room, view }: Props) {
         <div className="clock-bar" aria-hidden="true">
           <span style={{ width: `${(left / (RULES.pitchSeconds * 1000)) * 100}%` }} />
         </div>
-        <div className="clock-ticket__film t-ticket">{rs.title.trim() || 'Untitled'}</div>
-        <div className="cast-line clock-ticket__cast">
-          {rs.cast.map((c) => (
-            <span key={c.id}>
-              {c.name}
-              {c.deck === 'legacy' ? ' ★' : ''}
-            </span>
-          ))}
-        </div>
       </Ticket>
+      <OnStage g={g} rs={rs} big />
       <p className="muted">{running ? 'The clock is running.' : left === 0 ? 'Time’s up.' : 'Start the clock from the pitching phone or the Commissioner’s.'}</p>
     </main>
   );
@@ -437,17 +439,7 @@ function Ceremony({ view }: Props) {
         Reel {g.round.number} · {g.round.genre}
       </div>
       <div className="ceremony__ticket">{film && <FilmTicket film={film} stamped slam />}</div>
-      <section className="reel-cards">
-        <h2 className="t-ticket">This reel’s scorecards</h2>
-        <div className="loyalty-grid">
-          {[...g.round.pitchOrder]
-            .sort((x, y) => cardTotal(g.round.scores[y]) - cardTotal(g.round.scores[x]))
-            .map((id) => (
-              <LoyaltyCard key={id} studio={studioById(g, id)} title={g.round.studios[id].title.trim() || `Untitled ${g.round.genre} Project`} rs={g.round.studios[id]} card={g.round.scores[id]} />
-            ))}
-        </div>
-      </section>
-      <Standings g={g} />
+      <ReelResults g={g} big />
     </main>
   );
 }

@@ -23,7 +23,7 @@ export function StarTicket({
       serrated
       frame={false}
       wrapClassName={className}
-      className={`star ${legacy ? 'star--legacy' : 'star--talent'} ${print ? 'pcard' : ''}`}
+      className={`star ${legacy ? 'star--legacy' : 'star--talent'} ${card.oscar ? 'star--oscar' : ''} ${print ? 'pcard' : ''}`}
     >
       <div className="star__side star__side--left" aria-hidden="true">
         {serial}
@@ -33,11 +33,11 @@ export function StarTicket({
           <span>Admit one star</span>
           <span>No. {num}</span>
         </div>
-        <div className="star__presents t-wide">{legacy ? 'From the vault' : 'Now casting'}</div>
+        <div className="star__presents t-wide">{legacy ? 'From the vault' : card.oscar ? 'Oscar winner' : 'Now casting'}</div>
         <div className="star__name t-ticket">
           <FitText text={card.name} max={print ? 34 : 60} />
         </div>
-        <div className="star__presents t-wide">{legacy ? '★ A late, great legend ★' : 'The talent deck'}</div>
+        <div className="star__presents t-wide">{legacy ? (card.oscar ? '★ Legend · Oscar winner ★' : '★ A late, great legend ★') : card.oscar ? '★ Academy Award winner ★' : 'The talent deck'}</div>
         <div className="star__meta">
           <div>
             Deck<b>{legacy ? 'L' : 'T'}</b>
@@ -105,6 +105,7 @@ export function StudioStub({
                 <span>{i + 1}</span>
                 <span>
                   {c ? c.name : 'Open slot'}
+                  {c?.oscar && <span className="oscar-mark">Oscar</span>}
                   {c?.deck === 'legacy' && <span className="legacy-mark">Vault</span>}
                 </span>
                 <span>{c ? `$${c.price}M` : ''}</span>

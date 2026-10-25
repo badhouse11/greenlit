@@ -1,7 +1,7 @@
 {
   "deck": "legacy",
   "title": "The Legacy Vault",
-  "note": "Legendary late performers. Same rules as talent once drawn. gender is f or m.",
+  "note": "Legendary late performers. Same rules as talent once drawn. gender is f or m. oscar: true marks a competitive acting Oscar winner (lead or supporting): they print as gold cards.",
   "cards": [
     {
       "id": "L001",
@@ -11,12 +11,14 @@
     {
       "id": "L002",
       "name": "Marlon Brando",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "L003",
       "name": "Audrey Hepburn",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "L004",
@@ -26,12 +28,14 @@
     {
       "id": "L005",
       "name": "Robin Williams",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "L006",
       "name": "Heath Ledger",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "L007",
@@ -41,7 +45,8 @@
     {
       "id": "L008",
       "name": "Maggie Smith",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "L009",
@@ -56,17 +61,20 @@
     {
       "id": "L011",
       "name": "Elizabeth Taylor",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "L012",
       "name": "Sidney Poitier",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "L013",
       "name": "Paul Newman",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "L014",
@@ -81,7 +89,8 @@
     {
       "id": "L016",
       "name": "Humphrey Bogart",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "L017",
@@ -96,22 +105,26 @@
     {
       "id": "L019",
       "name": "Grace Kelly",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "L020",
       "name": "John Wayne",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "L021",
       "name": "Katharine Hepburn",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "L022",
       "name": "Bette Davis",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "L023",
@@ -131,7 +144,8 @@
     {
       "id": "L026",
       "name": "Philip Seymour Hoffman",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "L027",
@@ -156,7 +170,8 @@
     {
       "id": "L031",
       "name": "Gene Hackman",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "L032",
@@ -166,7 +181,8 @@
     {
       "id": "L033",
       "name": "Diane Keaton",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "L034",
@@ -176,7 +192,8 @@
     {
       "id": "L035",
       "name": "Ingrid Bergman",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "L036",
@@ -186,7 +203,8 @@
     {
       "id": "L037",
       "name": "Vivien Leigh",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "L038",
@@ -206,7 +224,8 @@
     {
       "id": "L041",
       "name": "Olivia de Havilland",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "L042",
@@ -246,7 +265,8 @@
     {
       "id": "L049",
       "name": "Joan Crawford",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "L050",
@@ -281,7 +301,8 @@
     {
       "id": "L056",
       "name": "Ginger Rogers",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "L057",
@@ -301,7 +322,8 @@
     {
       "id": "L060",
       "name": "Hattie McDaniel",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "L061",
@@ -321,7 +343,8 @@
     {
       "id": "L064",
       "name": "Glenda Jackson",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "L065",
@@ -341,7 +364,8 @@
     {
       "id": "L068",
       "name": "Anne Bancroft",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "L069",
@@ -356,12 +380,14 @@
     {
       "id": "L071",
       "name": "Sean Connery",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "L072",
       "name": "Christopher Plummer",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "L073",
@@ -381,17 +407,20 @@
     {
       "id": "L076",
       "name": "Clark Gable",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "L077",
       "name": "Gregory Peck",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "L078",
       "name": "James Stewart",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "L079",
@@ -406,7 +435,8 @@
     {
       "id": "L081",
       "name": "Spencer Tracy",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "L082",
@@ -421,7 +451,8 @@
     {
       "id": "L084",
       "name": "Jack Lemmon",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "L085",
@@ -436,7 +467,8 @@
     {
       "id": "L087",
       "name": "Alec Guinness",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "L088",
@@ -471,6 +503,313 @@
     {
       "id": "L094",
       "name": "James Earl Jones",
+      "gender": "m"
+    },
+    {
+      "id": "L095",
+      "name": "Jessica Tandy",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "L096",
+      "name": "Joan Fontaine",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "L097",
+      "name": "Claudette Colbert",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "L098",
+      "name": "Veronica Lake",
+      "gender": "f"
+    },
+    {
+      "id": "L099",
+      "name": "Hedy Lamarr",
+      "gender": "f"
+    },
+    {
+      "id": "L100",
+      "name": "Josephine Baker",
+      "gender": "f"
+    },
+    {
+      "id": "L101",
+      "name": "Mary Pickford",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "L102",
+      "name": "Louise Brooks",
+      "gender": "f"
+    },
+    {
+      "id": "L103",
+      "name": "Carole Lombard",
+      "gender": "f"
+    },
+    {
+      "id": "L104",
+      "name": "Jayne Mansfield",
+      "gender": "f"
+    },
+    {
+      "id": "L105",
+      "name": "Gloria Swanson",
+      "gender": "f"
+    },
+    {
+      "id": "L106",
+      "name": "Lillian Gish",
+      "gender": "f"
+    },
+    {
+      "id": "L107",
+      "name": "Ruby Dee",
+      "gender": "f"
+    },
+    {
+      "id": "L108",
+      "name": "Madeline Kahn",
+      "gender": "f"
+    },
+    {
+      "id": "L109",
+      "name": "Anna May Wong",
+      "gender": "f"
+    },
+    {
+      "id": "L110",
+      "name": "Barbara Windsor",
+      "gender": "f"
+    },
+    {
+      "id": "L111",
+      "name": "Diana Dors",
+      "gender": "f"
+    },
+    {
+      "id": "L112",
+      "name": "Margaret Rutherford",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "L113",
+      "name": "Joan Plowright",
+      "gender": "f"
+    },
+    {
+      "id": "L114",
+      "name": "Lana Turner",
+      "gender": "f"
+    },
+    {
+      "id": "L115",
+      "name": "Jane Russell",
+      "gender": "f"
+    },
+    {
+      "id": "L116",
+      "name": "Susan Hayward",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "L117",
+      "name": "Judy Holliday",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "L118",
+      "name": "Simone Signoret",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "L119",
+      "name": "Anna Magnani",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "L120",
+      "name": "Patricia Neal",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "L121",
+      "name": "Geraldine Page",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "L122",
+      "name": "Olympia Dukakis",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "L123",
+      "name": "Bob Hoskins",
+      "gender": "m"
+    },
+    {
+      "id": "L124",
+      "name": "Richard Harris",
+      "gender": "m"
+    },
+    {
+      "id": "L125",
+      "name": "Albert Finney",
+      "gender": "m"
+    },
+    {
+      "id": "L126",
+      "name": "Oliver Reed",
+      "gender": "m"
+    },
+    {
+      "id": "L127",
+      "name": "Ian Holm",
+      "gender": "m"
+    },
+    {
+      "id": "L128",
+      "name": "Pete Postlethwaite",
+      "gender": "m"
+    },
+    {
+      "id": "L129",
+      "name": "Anthony Perkins",
+      "gender": "m"
+    },
+    {
+      "id": "L130",
+      "name": "Montgomery Clift",
+      "gender": "m"
+    },
+    {
+      "id": "L131",
+      "name": "Henry Fonda",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "L132",
+      "name": "Laurence Olivier",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "L133",
+      "name": "Rock Hudson",
+      "gender": "m"
+    },
+    {
+      "id": "L134",
+      "name": "Tony Curtis",
+      "gender": "m"
+    },
+    {
+      "id": "L135",
+      "name": "Jerry Lewis",
+      "gender": "m"
+    },
+    {
+      "id": "L136",
+      "name": "Frank Sinatra",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "L137",
+      "name": "Sammy Davis Jr.",
+      "gender": "m"
+    },
+    {
+      "id": "L138",
+      "name": "Toshiro Mifune",
+      "gender": "m"
+    },
+    {
+      "id": "L139",
+      "name": "Boris Karloff",
+      "gender": "m"
+    },
+    {
+      "id": "L140",
+      "name": "Vincent Price",
+      "gender": "m"
+    },
+    {
+      "id": "L141",
+      "name": "Peter Cushing",
+      "gender": "m"
+    },
+    {
+      "id": "L142",
+      "name": "Walter Matthau",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "L143",
+      "name": "Yul Brynner",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "L144",
+      "name": "Charlton Heston",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "L145",
+      "name": "Lee Marvin",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "L146",
+      "name": "Burt Lancaster",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "L147",
+      "name": "Gary Cooper",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "L148",
+      "name": "James Cagney",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "L149",
+      "name": "Errol Flynn",
+      "gender": "m"
+    },
+    {
+      "id": "L150",
+      "name": "Leonard Nimoy",
+      "gender": "m"
+    },
+    {
+      "id": "L151",
+      "name": "Bill Paxton",
       "gender": "m"
     }
   ]

@@ -141,7 +141,7 @@ export function Setup({
           <label className="toggle">
             <input type="checkbox" checked={directorsCut} onChange={(e) => setDirectorsCut(e.target.checked)} />
             <span>
-              <strong>Director’s cut genres.</strong> Adds Heist, Biopic, Superhero, Christmas Film, Sports, Coming-of-Age, Period Drama and Film Noir to the commission pile.
+              <strong>Director’s cut genres.</strong> Adds Heist, Biopic, Superhero, Christmas Film, Sports, Coming-of-Age and Period Drama to the commission pile.
             </span>
           </label>
         </section>

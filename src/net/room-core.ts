@@ -34,8 +34,8 @@ import {
   validateTrade,
 } from '../game/engine';
 import { PALETTE_KEYS } from '../lib/palette';
-import type { Action, Auction, ClientMsg, Clock, LobbyStudio, Offer, OscarStage, Role, RoomEvent, View } from './protocol';
-import { AUCTION } from './protocol';
+import type { Action, Auction, ClientMsg, Clock, Dealer, LobbyStudio, Offer, OscarStage, PitchNotes, Role, RoomEvent, View } from './protocol';
+import { AUCTION, PREP_MS, emptyNotes } from './protocol';
 
 export interface Seat {
   role: 'screen' | 'player';
@@ -56,6 +56,9 @@ export interface RoomState {
   game: Game | null;
   auction: Auction | null;
   clock: Clock;
+  prep?: Clock;
+  dealer?: Dealer;
+  notes?: Record<string, PitchNotes>; // private to each studio
   oscar: { stage: OscarStage; at: number };
   offers: Offer[];
   lastSeen: Record<string, number>;
@@ -79,6 +82,9 @@ const PITCH_MS = RULES.pitchSeconds * 1000;
 const HISTORY_MAX = 10;
 const MAX_TITLE = 60;
 const MAX_LOGLINE = 160;
+const NOTE_LIMITS: Record<Exclude<keyof PitchNotes, 'roles'>, number> = { oneLiner: 200, start: 400, middle: 400, end: 400, bigMoment: 300 };
+const MAX_ROLE = 120;
+const FAR = 8.64e15; // a paused lot's clock is parked out of reach
 
 const clone = <T>(v: T): T => structuredClone(v);
 const token = () => Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -94,6 +100,9 @@ export function newRoom(code: string, now: number): RoomState {
     game: null,
     auction: null,
     clock: { remainingMs: PITCH_MS, runningSince: null },
+    prep: { remainingMs: PREP_MS, runningSince: null },
+    dealer: { paused: false, nextAt: null },
+    notes: {},
     oscar: { stage: 'table', at: 0 },
     offers: [],
     lastSeen: {},
@@ -105,7 +114,16 @@ export function newRoom(code: string, now: number): RoomState {
 }
 
 export class RoomCore {
-  constructor(public state: RoomState) {}
+  constructor(public state: RoomState) {
+    // Rooms saved before these existed.
+    state.prep ??= { remainingMs: PREP_MS, runningSince: null };
+    state.dealer ??= { paused: false, nextAt: null };
+    state.notes ??= {};
+  }
+
+  private get dealer(): Dealer {
+    return this.state.dealer!;
+  }
 
   /* ------------------------------------------------------------------ */
   /*  Helpers                                                            */
@@ -316,6 +334,9 @@ export class RoomCore {
     this.state.auction = null;
     this.state.offers = [];
     this.state.clock = { remainingMs: PITCH_MS, runningSince: null };
+    this.state.prep = { remainingMs: PREP_MS, runningSince: null };
+    this.state.dealer = { paused: false, nextAt: null };
+    this.state.notes = {};
     this.state.oscar = { stage: 'table', at: 0 };
   }
 
@@ -350,35 +371,63 @@ export class RoomCore {
         this.requireRunner(m);
         this.requirePhase('commission');
         this.setGame(setPhase(g, 'casting'));
+        this.state.dealer = { paused: false, nextAt: now + AUCTION.firstDealMs };
         break;
 
-      case 'draw': {
+      case 'draw':
+        // Deal the next star now, without waiting for the dealer.
         this.requireRunner(m);
         this.requirePhase('casting');
         if (this.state.auction) throw new Denied('There’s already a star under the hammer.');
-        this.snapshot('draw');
-        const next = draw(g);
-        this.setGame(next);
-        const card = next.round.onTable!;
-        this.state.auction = { cardId: card.id, high: null, endsAt: now + AUCTION.openMs, bids: 0 };
-        if (card.deck === 'legacy') this.say(`The vault opens. ${card.name} is in the room.`, 'vault');
+        this.deal(now);
         break;
-      }
 
       case 'bid':
         this.bid(m, action.amount, now);
         break;
 
+      case 'pass':
+        this.pass(m, now);
+        break;
+
+      case 'dealPause': {
+        this.requireRunner(m);
+        this.requirePhase('casting');
+        this.dealer.paused = true;
+        const a = this.state.auction;
+        if (a && a.pausedLeft == null) {
+          a.pausedLeft = Math.max(0, a.endsAt - now);
+          a.endsAt = FAR;
+        }
+        this.say('Cut! The auction is paused.');
+        break;
+      }
+
+      case 'dealResume': {
+        this.requireRunner(m);
+        this.requirePhase('casting');
+        this.dealer.paused = false;
+        const a = this.state.auction;
+        if (a && a.pausedLeft != null) {
+          a.endsAt = now + Math.max(a.pausedLeft, 5000);
+          a.pausedLeft = null;
+        } else if (!a) {
+          this.dealer.nextAt = now + 1500;
+        }
+        this.say('Action! The auction is back on.');
+        break;
+      }
+
       case 'hammer':
         this.requireRunner(m);
-        this.resolveAuction();
+        this.resolveAuction(now);
         break;
 
       case 'bin':
         this.requireRunner(m);
         if (!this.state.auction) throw new Denied('Nobody is on the table.');
         if (this.state.auction.high) throw new Denied('There’s a bid on the table. Hammer it instead.');
-        this.resolveAuction();
+        this.resolveAuction(now);
         break;
 
       case 'openEnvelope':
@@ -428,14 +477,31 @@ export class RoomCore {
         this.requirePhase('trading');
         this.state.offers = [];
         this.setGame(setPhase(g, 'prep'));
+        this.state.prep = { remainingMs: PREP_MS, runningSince: now };
         break;
 
-      case 'firstPitch':
+      case 'prepPause':
+      case 'prepResume': {
+        this.requireRunner(m);
+        this.requirePhase('prep');
+        const c = this.state.prep!;
+        if (action.a === 'prepPause' && c.runningSince) {
+          this.state.prep = { remainingMs: Math.max(0, c.remainingMs - (now - c.runningSince)), runningSince: null };
+        } else if (action.a === 'prepResume' && !c.runningSince && c.remainingMs > 0) {
+          c.runningSince = now;
+        }
+        break;
+      }
+
+      case 'firstPitch': {
         this.requireRunner(m);
         this.requirePhase('prep');
         this.setGame(setPhase(g, 'pitching'));
         this.state.clock = { remainingMs: PITCH_MS, runningSince: null };
+        const pc = this.state.prep!;
+        this.state.prep = { remainingMs: Math.max(0, pc.remainingMs - (pc.runningSince ? now - pc.runningSince : 0)), runningSince: null };
         break;
+      }
 
       case 'clockStart':
       case 'clockPause':
@@ -455,6 +521,13 @@ export class RoomCore {
         return { changed: true };
       }
 
+      case 'notes': {
+        this.requirePhase('prep', 'pitching', 'scoring');
+        if (m.role !== 'player' || !m.studioId || !g.round.studios[m.studioId]) throw new Denied('Only a pitching studio keeps notes.');
+        this.saveNotes(m.studioId, action.notes);
+        return { changed: true };
+      }
+
       case 'score':
         this.requireCommissioner(m);
         this.requirePhase('scoring');
@@ -466,7 +539,13 @@ export class RoomCore {
         this.requirePhase('scoring');
         if (!Object.values(g.round.scores).some((c) => cardTotal(c) > 0)) throw new Denied('Punch at least one stamp first.');
         this.snapshot('seal');
-        this.setGame(lockScores(g, action.vote));
+        {
+          let next = lockScores(g, action.vote);
+          // The winner's one-liner goes on its ticket in the archive.
+          const line = next.round.winnerId ? this.state.notes?.[next.round.winnerId]?.oneLiner.trim() : '';
+          if (line) next = editWinningFilm(next, { logline: line.slice(0, MAX_LOGLINE) });
+          this.setGame(next);
+        }
         this.state.oscar = { stage: 'table', at: 0 };
         break;
 
@@ -549,6 +628,7 @@ export class RoomCore {
         if (!last) throw new Denied('Nothing to undo.');
         this.state.game = last.game;
         this.state.offers = [];
+        if (last.game.phase === 'casting') this.state.dealer = { paused: true, nextAt: null };
         if (last.label === 'seal') this.state.oscar = { stage: 'table', at: 0 };
         if (last.label === 'next reel') this.state.oscar = { stage: 'winner', at: 0 };
         this.say('Undone. The studio lawyers have shredded the evidence.');
@@ -577,6 +657,7 @@ export class RoomCore {
       return;
     }
     if (a.high && !g.round.studios[a.high.studioId]) a.high = null;
+    if (a.passed) a.passed = a.passed.filter((id) => g.round.studios[id]);
   }
 
   private backToLobby() {
@@ -606,6 +687,8 @@ export class RoomCore {
     if (!rs) throw new Denied('The Commissioner doesn’t bid.');
     if (slotsLeft(rs) <= 0) throw new Denied('Full house. You’ve got your five.');
     if (a.high?.studioId === m.studioId) throw new Denied('You’re already the top bid.');
+    if (a.pausedLeft != null) throw new Denied('The auction is paused.');
+    if (a.passed?.includes(m.studioId)) throw new Denied('You passed on this one.');
     const floor = a.high ? a.high.amount + 1 : RULES.minBid;
     const value = Math.floor(Number(amount));
     if (!Number.isFinite(value) || value < floor) throw new Denied(`The bid is already $${floor - 1}M. Go higher.`);
@@ -615,13 +698,43 @@ export class RoomCore {
     a.endsAt = Math.max(a.endsAt, now + AUCTION.bidMs);
 
     // Nobody else can (or needs to) top it: close it quickly.
-    const rivals = eligibleBidders(g).filter((r) => r.studioId !== m.studioId);
+    const rivals = eligibleBidders(g).filter((r) => r.studioId !== m.studioId && !a.passed?.includes(r.studioId));
     const canBeat = rivals.some((r) => maxBid(r) > value);
     if (!canBeat) a.endsAt = Math.min(a.endsAt, now + (rivals.length === 0 ? 600 : AUCTION.settledMs));
   }
 
+  /** Turns the next card. Vault legends announce themselves. */
+  private deal(now: number) {
+    const g = this.g;
+    if (castingComplete(g) || g.round.onTable) return;
+    this.snapshot('draw');
+    const next = draw(g);
+    this.setGame(next);
+    const card = next.round.onTable!;
+    this.state.auction = { cardId: card.id, high: null, endsAt: now + AUCTION.openMs, bids: 0, passed: [], pausedLeft: null };
+    this.dealer.nextAt = null;
+    if (card.deck === 'legacy') this.say(`The vault opens. ${card.name} is in the room.`, 'vault');
+  }
+
+  /** Not for me. Once every studio that could bid has passed, the card goes. */
+  private pass(m: Meta, now: number) {
+    const g = this.g;
+    this.requirePhase('casting');
+    const a = this.state.auction;
+    if (!a || !g.round.onTable) throw new Denied('Nobody is under the hammer.');
+    if (m.role !== 'player' || !m.studioId) throw new Denied('Only studios can pass.');
+    const rs = g.round.studios[m.studioId];
+    if (!rs) throw new Denied('The Commissioner doesn’t bid.');
+    if (a.high?.studioId === m.studioId) throw new Denied('You’re the top bid. You can’t pass now.');
+    a.passed = [...new Set([...(a.passed ?? []), m.studioId])];
+    const still = eligibleBidders(g).filter((r) => r.studioId !== a.high?.studioId && !a.passed!.includes(r.studioId));
+    if (still.length === 0 && a.pausedLeft == null) {
+      a.endsAt = Math.min(a.endsAt, now + (a.high ? AUCTION.settledMs : AUCTION.allPassedMs));
+    }
+  }
+
   /** Sell to the top bid, or bin the card if nobody bid. */
-  private resolveAuction() {
+  private resolveAuction(now = this.now) {
     const a = this.state.auction;
     const g = this.g;
     if (!a || !g.round.onTable) throw new Denied('Nobody is under the hammer.');
@@ -640,6 +753,20 @@ export class RoomCore {
       this.say(`No takers. ${card.name} goes back to their trailer.`);
     }
     this.state.auction = null;
+    if (!castingComplete(this.g)) this.dealer.nextAt = now + AUCTION.dealGapMs;
+  }
+
+  private saveNotes(studioId: string, patch: Partial<PitchNotes>) {
+    const notes = (this.state.notes ??= {});
+    const mine = (notes[studioId] ??= emptyNotes());
+    for (const key of Object.keys(NOTE_LIMITS) as (keyof typeof NOTE_LIMITS)[]) {
+      const v = patch?.[key];
+      if (typeof v === 'string') mine[key] = v.slice(0, NOTE_LIMITS[key]);
+    }
+    if (patch?.roles && typeof patch.roles === 'object') {
+      const cast = new Set(this.g.round.studios[studioId].cast.map((c) => c.id));
+      for (const [id, v] of Object.entries(patch.roles)) if (cast.has(id) && typeof v === 'string') mine.roles[id] = v.slice(0, MAX_ROLE);
+    }
   }
 
   private offer(m: Meta, to: string, fromGives: TradeSide, toGives: TradeSide) {
@@ -678,7 +805,9 @@ export class RoomCore {
   /* ------------------------------------------------------------------ */
   nextAlarm(): number | null {
     const times: number[] = [];
-    if (this.state.auction) times.push(this.state.auction.endsAt);
+    if (this.state.auction && this.state.auction.pausedLeft == null) times.push(this.state.auction.endsAt);
+    const d = this.state.dealer;
+    if (!this.state.auction && this.state.game?.phase === 'casting' && d && !d.paused && d.nextAt != null) times.push(d.nextAt);
     if (this.state.game?.phase === 'oscar' && this.state.oscar.stage === 'drumroll') times.push(this.state.oscar.at);
     return times.length ? Math.min(...times) : null;
   }
@@ -686,11 +815,21 @@ export class RoomCore {
   /** Runs anything that is due. Returns true if the room changed. */
   tick(now: number): boolean {
     let changed = false;
-    if (this.state.auction && now >= this.state.auction.endsAt - 20) {
+    if (this.state.auction && this.state.auction.pausedLeft == null && now >= this.state.auction.endsAt - 20) {
       try {
-        this.resolveAuction();
+        this.resolveAuction(now);
       } catch {
         this.state.auction = null;
+      }
+      changed = true;
+    }
+    const d = this.state.dealer;
+    if (!this.state.auction && this.state.game?.phase === 'casting' && d && !d.paused && d.nextAt != null && now >= d.nextAt - 20) {
+      d.nextAt = null;
+      try {
+        this.deal(now);
+      } catch {
+        /* casting closed */
       }
       changed = true;
     }
@@ -762,6 +901,9 @@ export class RoomCore {
       deck,
       auction: s.auction,
       clock: s.clock,
+      prep: s.prep!,
+      dealer: s.dealer!,
+      notes: m.role === 'player' && m.studioId ? s.notes?.[m.studioId] ?? null : null,
       oscar: s.oscar,
       offers,
       event: s.event,

@@ -5,6 +5,7 @@ export interface Card {
   name: string;
   deck: DeckKind;
   gender?: 'f' | 'm';
+  oscar?: boolean; // won a competitive acting Oscar: a gold card
 }
 
 export interface Studio {

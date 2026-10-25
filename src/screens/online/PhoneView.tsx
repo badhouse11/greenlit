@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { KeyboardEvent, MouseEvent, PointerEvent, ReactNode } from 'react';
-import type { Game, RoundStudio, TradeSide } from '../../game/types';
+import type { Card, Game, RoundStudio, TradeSide } from '../../game/types';
 import type { Room } from '../../net/useRoom';
 import { useTicker } from '../../net/useRoom';
 import type { Offer, View } from '../../net/protocol';
@@ -26,8 +26,9 @@ import {
 import { stock } from '../../lib/palette';
 import { FilmTicket, LoyaltyCard, Sleeve, Stepper, TokenRow } from '../../components/Cards';
 import { FitText, Ticket } from '../../components/Ticket';
-import { AUCTION } from '../../net/protocol';
-import { PROMPTS, ShareInvite, auctionState, clockLeft, mmss, ordinal } from './shared';
+import { AUCTION, PREP_STEPS } from '../../net/protocol';
+import { GoogleHelp, Intro, OnStage, ReelResults, ShareInvite, auctionState, clockLeft, mmss, ordinal, useIntro } from './shared';
+import { NotesSheet, PrepNotes, usePrepClock } from './prep';
 
 interface Props {
   room: Room;
@@ -57,6 +58,7 @@ export function PhoneView({ room, view }: Props) {
 
 function PhoneShell({ room, view, isComm, rs }: Props & { isComm: boolean; rs?: RoundStudio }) {
   const [menu, setMenu] = useState(false);
+  const intro = useIntro();
   const g = view.game!;
   return (
     <div className="phone-wrap">
@@ -65,7 +67,18 @@ function PhoneShell({ room, view, isComm, rs }: Props & { isComm: boolean; rs?: 
       <main className="phone">{isComm ? <CommissionerPhone room={room} view={view} /> : <PlayerPhone room={room} view={view} rs={rs} />}</main>
       {g.phase === 'reveal' && <PhoneReveal room={room} view={view} isComm={isComm} />}
       {g.phase === 'oscar' && <PhoneOscar room={room} view={view} isComm={isComm} />}
-      {menu && <RoomMenu room={room} view={view} onClose={() => setMenu(false)} />}
+      {menu && (
+        <RoomMenu
+          room={room}
+          view={view}
+          onClose={() => setMenu(false)}
+          onIntro={() => {
+            setMenu(false);
+            intro.open();
+          }}
+        />
+      )}
+      {intro.show && g.phase !== 'reveal' && g.phase !== 'oscar' && <Intro onClose={intro.close} />}
     </div>
   );
 }
@@ -183,16 +196,7 @@ function CommissionerPhone({ room, view }: { room: Room; view: View }) {
         </section>
       );
     case 'prep':
-      return (
-        <section className="phone-stack">
-          <h1 className="t-ticket phone-title">Pitch prep</h1>
-          <p className="lede">Give them a minute. The prompts and running order are on the big screen.</p>
-          <RunningOrder g={g} />
-          <button className="btn btn--big btn--hot" onClick={() => act({ a: 'firstPitch' })}>
-            Lights. Camera. First pitch
-          </button>
-        </section>
-      );
+      return <CommissionerPrep room={room} view={view} />;
     case 'pitching':
       return <PitchControls room={room} view={view} commissionerMode />;
     case 'scoring':
@@ -203,11 +207,10 @@ function CommissionerPhone({ room, view }: { room: Room; view: View }) {
       return (
         <section className="phone-stack">
           <GreenlitFilm view={view} />
+          <ReelResults g={g} />
           <button className="btn btn--big" onClick={() => act({ a: 'nextReel' })}>
             {g.roundIndex === g.order.length - 1 ? 'Roll the final credits' : `On to reel ${g.round.number + 1}`}
           </button>
-          <AllScorecards g={g} />
-          <PhoneStandings g={g} />
         </section>
       );
     case 'final':
@@ -221,8 +224,10 @@ function CommissionerCasting({ room, view, peek }: { room: Room; view: View; pee
   const g = view.game!;
   const a = view.auction;
   const card = g.round.onTable;
-  useTicker(!!a, 200);
+  const paused = view.dealer.paused;
   const done = castingComplete(g);
+  useTicker(!!a || (!done && !paused), 200);
+  const nextIn = view.dealer.nextAt ? Math.max(0, view.dealer.nextAt - room.serverNow()) : 0;
   return (
     <section className="phone-stack">
       <button className="btn btn--ghost btn--small" {...peek.handlers}>
@@ -230,15 +235,16 @@ function CommissionerCasting({ room, view, peek }: { room: Room; view: View; pee
       </button>
       {card && a ? (
         <>
-          <LotCard name={card.name} legacy={card.deck === 'legacy'} />
+          <LotCard card={card} />
           <BidBoard view={view} now={room.serverNow()} />
           <div className="btn-row btn-row--stack">
-            <button className="btn btn--big btn--go" disabled={!a.high} onClick={() => room.act({ a: 'hammer' })}>
-              {a.high ? `Hammer it: sold for $${a.high.amount}M` : 'Waiting for a bid'}
-            </button>
-            {!a.high && (
+            {a.high ? (
+              <button className="btn btn--big btn--go" onClick={() => room.act({ a: 'hammer' })}>
+                Sell it now for ${a.high.amount}M
+              </button>
+            ) : (
               <button className="btn btn--ghost" onClick={() => room.act({ a: 'bin' })}>
-                No takers. Bin the card
+                Skip this card
               </button>
             )}
           </div>
@@ -252,13 +258,52 @@ function CommissionerCasting({ room, view, peek }: { room: Room; view: View; pee
         </>
       ) : (
         <>
-          <p className="lede">Draw the next star. Somewhere in this deck, {view.deck.legendsLeft === 1 ? 'a legend is' : `${view.deck.legendsLeft} legends are`} waiting.</p>
+          <p className="lede">
+            {paused ? 'The auction is paused.' : nextIn > 0 ? `Next star in ${Math.ceil(nextIn / 1000)}…` : 'Next star coming up…'}{' '}
+            {view.deck.legendsLeft > 0 && `${view.deck.legendsLeft} ${view.deck.legendsLeft === 1 ? 'legend is' : 'legends are'} still hiding in the deck.`}
+          </p>
           <button className="btn btn--big btn--hot" onClick={() => room.act({ a: 'draw' })}>
-            Draw the next star
+            Next star now
           </button>
         </>
       )}
+      {!done && (
+        <button className="btn btn--ghost" onClick={() => room.act({ a: paused ? 'dealResume' : 'dealPause' })}>
+          {paused ? 'Resume the auction' : 'Pause the auction'}
+        </button>
+      )}
+      <p className="phone-small">Stars come up on their own. Pause it if the room needs a breather.</p>
       <MiniLedger g={g} />
+    </section>
+  );
+}
+
+function CommissionerPrep({ room, view }: { room: Room; view: View }) {
+  const g = view.game!;
+  const { left, running, roomStep } = usePrepClock(room, view);
+  const over = left === 0;
+  return (
+    <section className="phone-stack">
+      <h1 className="t-ticket phone-title">Pitch prep</h1>
+      <p className="lede">Everyone is writing their pitch on their own phone, one step at a time.</p>
+      <div className={`phone-clock ${over ? 'is-over' : ''}`} role="timer">
+        {mmss(left)}
+      </div>
+      <p className="phone-small" style={{ textAlign: 'center' }}>
+        {over ? 'Time’s up.' : `Now on: ${PREP_STEPS[roomStep]?.label ?? 'the last step'}.`}
+      </p>
+      <div className="btn-row btn-row--stack">
+        {!over && (
+          <button className="btn btn--ghost" onClick={() => room.act({ a: running ? 'prepPause' : 'prepResume' })}>
+            {running ? 'Pause the clock' : 'Resume the clock'}
+          </button>
+        )}
+        <button className={`btn btn--big ${over ? 'btn--hot' : ''}`} onClick={() => room.act({ a: 'firstPitch' })}>
+          {over ? 'Lights. Camera. First pitch' : 'Everyone’s ready: start the pitches'}
+        </button>
+      </div>
+      <h2 className="t-ticket phone-h2">Running order</h2>
+      <RunningOrder g={g} />
     </section>
   );
 }
@@ -295,23 +340,7 @@ function PlayerPhone({ room, view, rs }: { room: Room; view: View; rs?: RoundStu
     case 'trading':
       return <TradingPhone room={room} view={view} rs={rs} />;
     case 'prep':
-      return (
-        <section className="phone-stack">
-          <h1 className="t-ticket phone-title">Get your pitch ready</h1>
-          <p className="lede">
-            A <strong>{g.round.genre.toLowerCase()}</strong> starring all five. You pitch {ordinal(g.round.pitchOrder.indexOf(view.you.studioId!) + 1).toLowerCase()}.
-          </p>
-          <TitleField room={room} rs={rs} />
-          <MyCast rs={rs} />
-          <ol className="prompt-list prompt-list--phone">
-            {PROMPTS.map((p) => (
-              <li key={p.head}>
-                <strong>{p.head}.</strong> {p.body}
-              </li>
-            ))}
-          </ol>
-        </section>
-      );
+      return <PrepNotes room={room} view={view} rs={rs} />;
     case 'pitching':
       return <PitchControls room={room} view={view} />;
     case 'scoring':
@@ -343,23 +372,31 @@ function PlayerCasting({ room, view, rs }: { room: Room; view: View; rs: RoundSt
   if (!card || !a) {
     return (
       <section className="phone-stack">
-        <p className="lede">{full ? 'Full house. You’ve got your five. Sit back and enjoy the bidding.' : `Waiting for ${commissioner(g).name} to draw the next star.`}</p>
+        <p className="lede">
+          {full ? 'Full house. You’ve got your five. Sit back and enjoy the bidding.' : view.dealer.paused ? 'The auction is paused.' : 'Next star coming up…'}
+        </p>
         <MyCast rs={rs} />
         <MiniLedger g={g} />
       </section>
     );
   }
   const leading = a.high?.studioId === me;
+  const passed = !!a.passed?.includes(me);
+  const paused = a.pausedLeft != null;
   const floor = (a.high?.amount ?? 0) + 1;
   const steps = [0, 1, 4].map((extra) => floor + extra);
   return (
     <section className="phone-stack">
-      <LotCard name={card.name} legacy={card.deck === 'legacy'} />
+      <LotCard card={card} />
       <BidBoard view={view} now={room.serverNow()} />
       {full ? (
         <p className="notice">Full house. You can’t bid on this one.</p>
       ) : leading ? (
         <p className="notice notice--lead">You’re the top bid. Hold your nerve.</p>
+      ) : passed ? (
+        <p className="notice">You passed on this one.</p>
+      ) : paused ? (
+        <p className="notice">The auction is paused.</p>
       ) : (
         <>
           <div className="bid-buttons">
@@ -375,6 +412,9 @@ function PlayerCasting({ room, view, rs }: { room: Room; view: View; rs: RoundSt
               </button>
             ))}
           </div>
+          <button className="btn pass-btn" onClick={() => room.act({ a: 'pass' })}>
+            Pass
+          </button>
           <p className="phone-small">
             Your max bid is ${limit}M{limit < floor ? ', so this one is out of reach.' : ' (keeping $1M for each empty slot).'}
           </p>
@@ -620,8 +660,17 @@ function PitchControls({ room, view, commissionerMode = false }: { room: Room; v
           </button>
         </div>
       )}
-      {rs && <TitleField room={room} rs={rs} />}
-      {onStage && rs && <MyCast rs={rs} />}
+      {onStage && rs ? (
+        <NotesSheet notes={view.notes} rs={rs} title={rs.title.trim() || `Untitled ${g.round.genre} Project`} />
+      ) : (
+        <OnStage g={g} rs={g.round.studios[onId]} />
+      )}
+      {onStage && rs && (
+        <details className="example">
+          <summary>Change your title</summary>
+          <TitleField room={room} rs={rs} />
+        </details>
+      )}
     </section>
   );
 }
@@ -699,11 +748,12 @@ function CeremonyPhone({ room, view, rs }: { room: Room; view: View; rs: RoundSt
           <input id="logline" className="input" placeholder="In a world where…" value={logline} maxLength={160} onChange={(e) => setLogline(e.target.value)} />
         </label>
       )}
-      <LoyaltyCard studio={studioById(g, me)} title={rs.title.trim() || `Untitled ${g.round.genre} Project`} rs={rs} card={g.round.scores[me]} />
-      <p className="phone-small">
-        {cardTotal(g.round.scores[me])} of {maxReelScore()} stamps this reel. {points(g, me)} points overall.
-      </p>
-      <PhoneStandings g={g} />
+      <ReelResults g={g} me={me} />
+      {rs && (
+        <p className="phone-small">
+          You scored {cardTotal(g.round.scores[me])} of {maxReelScore()} this reel. {points(g, me)} points overall.
+        </p>
+      )}
     </section>
   );
 }
@@ -768,18 +818,6 @@ function GreenlitFilm({ view }: { view: View }) {
         Reel {g.round.number} · {g.round.genre}
       </div>
       <FilmTicket film={film} stamped slam compact />
-    </div>
-  );
-}
-
-function AllScorecards({ g }: { g: Game }) {
-  return (
-    <div className="loyalty-grid">
-      {[...g.round.pitchOrder]
-        .sort((x, y) => cardTotal(g.round.scores[y]) - cardTotal(g.round.scores[x]))
-        .map((id) => (
-          <LoyaltyCard key={id} studio={studioById(g, id)} title={g.round.studios[id].title.trim() || `Untitled ${g.round.genre} Project`} rs={g.round.studios[id]} card={g.round.scores[id]} />
-        ))}
     </div>
   );
 }
@@ -936,7 +974,7 @@ function CrisisBanner({ room, view }: Props) {
   );
 }
 
-function RoomMenu({ room, view, onClose }: Props & { onClose: () => void }) {
+function RoomMenu({ room, view, onClose, onIntro }: Props & { onClose: () => void; onIntro: () => void }) {
   const g = view.game!;
   const hostName = view.host.studioId ? g.studios.find((s) => s.id === view.host.studioId)?.name : null;
   const canHost = view.you.isHost || view.host.away;
@@ -981,6 +1019,9 @@ function RoomMenu({ room, view, onClose }: Props & { onClose: () => void }) {
             </button>
           </div>
         )}
+        <button className="btn btn--ghost" onClick={onIntro}>
+          How to play
+        </button>
         <button className="btn" onClick={onClose}>
           Back to the game
         </button>
@@ -992,14 +1033,24 @@ function RoomMenu({ room, view, onClose }: Props & { onClose: () => void }) {
 /* ---------------------------------------------------------------------- */
 /*  Small pieces                                                           */
 /* ---------------------------------------------------------------------- */
-export function LotCard({ name, legacy }: { name: string; legacy: boolean }) {
+export function LotCard({ card }: { card: Card }) {
+  const legacy = card.deck === 'legacy';
+  const kicker = legacy ? (card.oscar ? 'Vault · Oscar winner' : 'From the vault') : card.oscar ? 'Oscar winner' : 'Now casting';
   return (
-    <Ticket serrated frame={false} className={`lot ${legacy ? 'lot--legacy' : ''}`} wrapClassName={legacy ? 'vault-surprise' : 'slide-in'}>
-      <div className="lot__kicker t-wide">{legacy ? 'From the vault' : 'Now casting'}</div>
-      <div className="lot__name t-ticket">
-        <FitText text={name} max={44} min={16} />
-      </div>
-    </Ticket>
+    <div className="lot-wrap" key={card.id}>
+      <Ticket
+        serrated
+        frame={false}
+        className={`lot ${legacy ? 'lot--legacy' : ''} ${card.oscar ? 'lot--oscar' : ''}`}
+        wrapClassName={legacy ? 'vault-surprise' : 'slide-in'}
+      >
+        <div className="lot__kicker t-wide">{kicker}</div>
+        <div className="lot__name t-ticket">
+          <FitText text={card.name} max={44} min={16} />
+        </div>
+      </Ticket>
+      <GoogleHelp name={card.name} />
+    </div>
   );
 }
 
@@ -1024,6 +1075,7 @@ export function BidBoard({ view, now, big = false }: { view: View; now: number; 
       <div className="bid-board__bar" aria-hidden="true">
         <span style={{ width: `${s.fraction * 100}%` }} />
       </div>
+      {!!a.passed?.length && <div className="bid-board__passed">Passed: {a.passed.map((id) => studioById(view.game!, id).name).join(', ')}</div>}
     </div>
   );
 }
@@ -1038,6 +1090,7 @@ function MyCast({ rs }: { rs: RoundStudio }) {
             <span>{i + 1}</span>
             <span>
               {c ? c.name : 'Open slot'}
+              {c?.oscar && <span className="oscar-mark">Oscar</span>}
               {c?.deck === 'legacy' && <span className="legacy-mark">Vault</span>}
             </span>
             <span>{c ? `$${c.price}M` : ''}</span>

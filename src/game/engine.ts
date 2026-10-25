@@ -37,12 +37,20 @@ export const CATEGORIES: { key: ScoreCategory; label: string; hint: string }[] =
   { key: 'plot', label: 'Plot', hint: 'Is it a film you’d actually greenlight?' },
 ];
 
-/** Legends hidden in each reel: one per competing studio, between two and five. */
-export const legacyPerReel = (competitors: number) => Math.min(5, Math.max(2, competitors));
+/** Legends hidden in each reel: two more than the competing studios, between three and eight. */
+export const legacyPerReel = (competitors: number) => Math.min(8, Math.max(3, competitors + 2));
 
 const asGender = (g: unknown): 'f' | 'm' | undefined => (g === 'f' || g === 'm' ? g : undefined);
-export const TALENT: Card[] = talentData.cards.map((c) => ({ id: c.id, name: c.name, gender: asGender(c.gender), deck: 'talent' as const }));
-export const LEGACY: Card[] = legacyData.cards.map((c) => ({ id: c.id, name: c.name, gender: asGender(c.gender), deck: 'legacy' as const }));
+type RawCard = { id: string; name: string; gender?: string; oscar?: boolean };
+const toCard = (deck: Card['deck']) => (c: RawCard): Card => ({
+  id: c.id,
+  name: c.name,
+  gender: asGender(c.gender),
+  deck,
+  ...(c.oscar ? { oscar: true } : {}),
+});
+export const TALENT: Card[] = (talentData.cards as RawCard[]).map(toCard('talent'));
+export const LEGACY: Card[] = (legacyData.cards as RawCard[]).map(toCard('legacy'));
 export const GENRES: { id: string; name: string; pack: string }[] = genreData.cards;
 
 /* ------------------------------------------------------------------ */
@@ -270,7 +278,8 @@ function fireSale(g: Game, studioId: string) {
   const rs = g.round.studios[studioId];
   if (!rs) return;
   for (const c of [...rs.cast].reverse()) {
-    const card = { id: c.id, name: c.name, deck: c.deck };
+    const { price, ...card } = c;
+    void price;
     (card.deck === 'legacy' ? g.round.legacyDeck : g.round.talentDeck).unshift(card);
   }
   delete g.round.studios[studioId];

@@ -29,6 +29,9 @@ import {
   setPhase,
   slotsLeft,
   validateTrade,
+  TALENT,
+  LEGACY,
+  GENRES,
 } from './engine';
 import type { Game } from './types';
 
@@ -124,6 +127,44 @@ describe('the draw', () => {
     g = nextReel(scoreAndLock(g));
     const top = g.round.talentDeck.slice(0, 60);
     expect(top.some((c) => seen.has(c.id))).toBe(false);
+  });
+});
+
+describe('gold cards', () => {
+  it('marks Oscar winners and keeps the mark through a sale and a fire sale', () => {
+    let g = draw(make(4, [0, 1, 2, 3]));
+    let guard = 0;
+    while (!g.round.onTable?.oscar) {
+      if (guard++ > 200) throw new Error('no Oscar winner drawn');
+      g = draw(bin(g));
+    }
+    const id = playing(g)[0].studioId;
+    g = sell(g, id, 1);
+    expect(g.round.studios[id].cast[0].oscar).toBe(true);
+    expect(TALENT.some((c) => c.oscar)).toBe(true);
+    expect(TALENT.find((c) => c.name === 'Ryan Gosling')?.oscar).toBeUndefined();
+    expect(TALENT.find((c) => c.name === 'Emma Stone')?.oscar).toBe(true);
+    expect(LEGACY.find((c) => c.name === 'Audrey Hepburn')?.oscar).toBe(true);
+  });
+
+  it('keeps gender and gold on a folded studio’s stars', () => {
+    let g = make(5, [0, 1, 2, 3, 4]);
+    const star = TALENT.find((c) => c.oscar)!;
+    g = { ...g, round: { ...g.round, talentDeck: [star, ...g.round.talentDeck.filter((c) => c.id !== star.id)], nextGender: star.gender } };
+    g = sell(draw(g), 's3', 2);
+    g = foldStudio(g, 's3');
+    expect(g.round.talentDeck[0].oscar).toBe(true);
+    expect(g.round.talentDeck[0].gender).toBe(star.gender);
+  });
+});
+
+describe('the decks', () => {
+  it('has no duplicate names or ids, and no Film Noir', () => {
+    const all = [...TALENT, ...LEGACY];
+    expect(new Set(all.map((c) => c.id)).size).toBe(all.length);
+    expect(new Set(all.map((c) => c.name.toLowerCase())).size).toBe(all.length);
+    expect(all.every((c) => c.gender === 'f' || c.gender === 'm')).toBe(true);
+    expect(GENRES.some((x) => x.name === 'Film Noir')).toBe(false);
   });
 });
 

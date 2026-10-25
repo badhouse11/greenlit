@@ -1,22 +1,25 @@
 {
   "deck": "talent",
   "title": "The Talent Deck",
-  "note": "Living stars. Edit freely: add, remove or rename. Ids must stay unique. gender is f or m: draws alternate between them.",
+  "note": "Living stars. Edit freely: add, remove or rename. Ids must stay unique. gender is f or m: draws alternate between them. oscar: true marks a competitive acting Oscar winner (lead or supporting): they print as gold cards.",
   "cards": [
     {
       "id": "T001",
       "name": "Leonardo DiCaprio",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T002",
       "name": "Meryl Streep",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T003",
       "name": "Brad Pitt",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T004",
@@ -36,7 +39,8 @@
     {
       "id": "T007",
       "name": "Denzel Washington",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T008",
@@ -51,7 +55,8 @@
     {
       "id": "T010",
       "name": "Emma Stone",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T011",
@@ -61,12 +66,14 @@
     {
       "id": "T012",
       "name": "Cillian Murphy",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T013",
       "name": "Jennifer Lawrence",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T014",
@@ -76,17 +83,20 @@
     {
       "id": "T015",
       "name": "Cate Blanchett",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T016",
       "name": "Joaquin Phoenix",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T017",
       "name": "Anne Hathaway",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T018",
@@ -96,12 +106,14 @@
     {
       "id": "T019",
       "name": "Tom Hanks",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T020",
       "name": "Julia Roberts",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T021",
@@ -116,22 +128,26 @@
     {
       "id": "T023",
       "name": "Will Smith",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T024",
       "name": "Nicole Kidman",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T025",
       "name": "Robert Downey Jr.",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T026",
       "name": "Natalie Portman",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T027",
@@ -141,17 +157,20 @@
     {
       "id": "T028",
       "name": "Angelina Jolie",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T029",
       "name": "George Clooney",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T030",
       "name": "Sandra Bullock",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T031",
@@ -161,22 +180,26 @@
     {
       "id": "T032",
       "name": "Viola Davis",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T033",
       "name": "Morgan Freeman",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T034",
       "name": "Kate Winslet",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T035",
       "name": "Christian Bale",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T036",
@@ -201,12 +224,14 @@
     {
       "id": "T040",
       "name": "Daniel Day-Lewis",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T041",
       "name": "Judi Dench",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T042",
@@ -226,17 +251,20 @@
     {
       "id": "T045",
       "name": "Whoopi Goldberg",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T046",
       "name": "Al Pacino",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T047",
       "name": "Robert De Niro",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T048",
@@ -281,22 +309,26 @@
     {
       "id": "T056",
       "name": "Michelle Yeoh",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T057",
       "name": "Nicolas Cage",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T058",
       "name": "Anthony Hopkins",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T059",
       "name": "Helen Mirren",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T060",
@@ -306,7 +338,8 @@
     {
       "id": "T061",
       "name": "Emma Thompson",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T062",
@@ -316,7 +349,8 @@
     {
       "id": "T063",
       "name": "Colin Firth",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T064",
@@ -361,17 +395,20 @@
     {
       "id": "T072",
       "name": "Zoe Saldaña",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T073",
       "name": "Halle Berry",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T074",
       "name": "Charlize Theron",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T075",
@@ -426,17 +463,20 @@
     {
       "id": "T085",
       "name": "Daniel Kaluuya",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T086",
       "name": "Lupita Nyong'o",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T087",
       "name": "Michael B. Jordan",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T088",
@@ -461,7 +501,8 @@
     {
       "id": "T092",
       "name": "Tilda Swinton",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T093",
@@ -471,17 +512,20 @@
     {
       "id": "T094",
       "name": "Javier Bardem",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T095",
       "name": "Penélope Cruz",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T096",
       "name": "Gary Oldman",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T097",
@@ -496,7 +540,8 @@
     {
       "id": "T099",
       "name": "Olivia Colman",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T100",
@@ -506,12 +551,14 @@
     {
       "id": "T101",
       "name": "Jodie Foster",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T102",
       "name": "Reese Witherspoon",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T103",
@@ -551,7 +598,8 @@
     {
       "id": "T110",
       "name": "Jamie Lee Curtis",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T111",
@@ -571,7 +619,8 @@
     {
       "id": "T114",
       "name": "Julianne Moore",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T115",
@@ -586,17 +635,20 @@
     {
       "id": "T117",
       "name": "Rachel Weisz",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T118",
       "name": "Octavia Spencer",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T119",
       "name": "Regina King",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T120",
@@ -616,12 +668,14 @@
     {
       "id": "T123",
       "name": "Jessica Chastain",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T124",
       "name": "Gwyneth Paltrow",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T125",
@@ -641,7 +695,8 @@
     {
       "id": "T128",
       "name": "Jane Fonda",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T129",
@@ -651,17 +706,20 @@
     {
       "id": "T130",
       "name": "Goldie Hawn",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T131",
       "name": "Kathy Bates",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T132",
       "name": "Frances McDormand",
-      "gender": "f"
+      "gender": "f",
+      "oscar": true
     },
     {
       "id": "T133",
@@ -756,17 +814,20 @@
     {
       "id": "T151",
       "name": "Jamie Foxx",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T152",
       "name": "Jeff Bridges",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T153",
       "name": "Russell Crowe",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T154",
@@ -816,7 +877,8 @@
     {
       "id": "T163",
       "name": "Matthew McConaughey",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T164",
@@ -831,7 +893,8 @@
     {
       "id": "T166",
       "name": "Jack Nicholson",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T167",
@@ -856,11 +919,714 @@
     {
       "id": "T171",
       "name": "Ke Huy Quan",
-      "gender": "m"
+      "gender": "m",
+      "oscar": true
     },
     {
       "id": "T172",
       "name": "Dev Patel",
+      "gender": "m"
+    },
+    {
+      "id": "T173",
+      "name": "Carey Mulligan",
+      "gender": "f"
+    },
+    {
+      "id": "T174",
+      "name": "Jessie Buckley",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T175",
+      "name": "Vanessa Kirby",
+      "gender": "f"
+    },
+    {
+      "id": "T176",
+      "name": "Rosamund Pike",
+      "gender": "f"
+    },
+    {
+      "id": "T177",
+      "name": "Thandiwe Newton",
+      "gender": "f"
+    },
+    {
+      "id": "T178",
+      "name": "Naomie Harris",
+      "gender": "f"
+    },
+    {
+      "id": "T179",
+      "name": "Michaela Coel",
+      "gender": "f"
+    },
+    {
+      "id": "T180",
+      "name": "Phoebe Waller-Bridge",
+      "gender": "f"
+    },
+    {
+      "id": "T181",
+      "name": "Gemma Arterton",
+      "gender": "f"
+    },
+    {
+      "id": "T182",
+      "name": "Emilia Clarke",
+      "gender": "f"
+    },
+    {
+      "id": "T183",
+      "name": "Daisy Ridley",
+      "gender": "f"
+    },
+    {
+      "id": "T184",
+      "name": "Aimee Lou Wood",
+      "gender": "f"
+    },
+    {
+      "id": "T185",
+      "name": "Marianne Jean-Baptiste",
+      "gender": "f"
+    },
+    {
+      "id": "T186",
+      "name": "Sophie Okonedo",
+      "gender": "f"
+    },
+    {
+      "id": "T187",
+      "name": "Imelda Staunton",
+      "gender": "f"
+    },
+    {
+      "id": "T188",
+      "name": "Julie Walters",
+      "gender": "f"
+    },
+    {
+      "id": "T189",
+      "name": "Kristin Scott Thomas",
+      "gender": "f"
+    },
+    {
+      "id": "T190",
+      "name": "Juliette Binoche",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T191",
+      "name": "Marion Cotillard",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T192",
+      "name": "Léa Seydoux",
+      "gender": "f"
+    },
+    {
+      "id": "T193",
+      "name": "Isabelle Huppert",
+      "gender": "f"
+    },
+    {
+      "id": "T194",
+      "name": "Priyanka Chopra Jonas",
+      "gender": "f"
+    },
+    {
+      "id": "T195",
+      "name": "Deepika Padukone",
+      "gender": "f"
+    },
+    {
+      "id": "T196",
+      "name": "Gong Li",
+      "gender": "f"
+    },
+    {
+      "id": "T197",
+      "name": "Zhang Ziyi",
+      "gender": "f"
+    },
+    {
+      "id": "T198",
+      "name": "Hailee Steinfeld",
+      "gender": "f"
+    },
+    {
+      "id": "T199",
+      "name": "Margaret Qualley",
+      "gender": "f"
+    },
+    {
+      "id": "T200",
+      "name": "Mia Goth",
+      "gender": "f"
+    },
+    {
+      "id": "T201",
+      "name": "Ayo Edebiri",
+      "gender": "f"
+    },
+    {
+      "id": "T202",
+      "name": "Rachel Zegler",
+      "gender": "f"
+    },
+    {
+      "id": "T203",
+      "name": "Keke Palmer",
+      "gender": "f"
+    },
+    {
+      "id": "T204",
+      "name": "Taraji P. Henson",
+      "gender": "f"
+    },
+    {
+      "id": "T205",
+      "name": "Angela Bassett",
+      "gender": "f"
+    },
+    {
+      "id": "T206",
+      "name": "Queen Latifah",
+      "gender": "f"
+    },
+    {
+      "id": "T207",
+      "name": "Maya Rudolph",
+      "gender": "f"
+    },
+    {
+      "id": "T208",
+      "name": "Rebel Wilson",
+      "gender": "f"
+    },
+    {
+      "id": "T209",
+      "name": "Kate McKinnon",
+      "gender": "f"
+    },
+    {
+      "id": "T210",
+      "name": "Allison Janney",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T211",
+      "name": "Laura Dern",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T212",
+      "name": "Susan Sarandon",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T213",
+      "name": "Geena Davis",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T214",
+      "name": "Mikey Madison",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T215",
+      "name": "Brie Larson",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T216",
+      "name": "Hilary Swank",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T217",
+      "name": "Marisa Tomei",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T218",
+      "name": "Holly Hunter",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T219",
+      "name": "Sissy Spacek",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T220",
+      "name": "Julie Andrews",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T221",
+      "name": "Barbra Streisand",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T222",
+      "name": "Cher",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T223",
+      "name": "Da'Vine Joy Randolph",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T224",
+      "name": "Ariana DeBose",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T225",
+      "name": "Renée Zellweger",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T226",
+      "name": "Charlotte Rampling",
+      "gender": "f"
+    },
+    {
+      "id": "T227",
+      "name": "Sally Field",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T228",
+      "name": "Jessica Lange",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T229",
+      "name": "Anjelica Huston",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T230",
+      "name": "Catherine Zeta-Jones",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T231",
+      "name": "Alicia Vikander",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T232",
+      "name": "Anna Kendrick",
+      "gender": "f"
+    },
+    {
+      "id": "T233",
+      "name": "Elle Fanning",
+      "gender": "f"
+    },
+    {
+      "id": "T234",
+      "name": "Aubrey Plaza",
+      "gender": "f"
+    },
+    {
+      "id": "T235",
+      "name": "Kerry Washington",
+      "gender": "f"
+    },
+    {
+      "id": "T236",
+      "name": "Letitia Wright",
+      "gender": "f"
+    },
+    {
+      "id": "T237",
+      "name": "Rebecca Ferguson",
+      "gender": "f"
+    },
+    {
+      "id": "T238",
+      "name": "Jennifer Hudson",
+      "gender": "f",
+      "oscar": true
+    },
+    {
+      "id": "T239",
+      "name": "Jodie Comer",
+      "gender": "f"
+    },
+    {
+      "id": "T240",
+      "name": "Helena Bonham Carter",
+      "gender": "f"
+    },
+    {
+      "id": "T241",
+      "name": "Gillian Anderson",
+      "gender": "f"
+    },
+    {
+      "id": "T242",
+      "name": "Kate Hudson",
+      "gender": "f"
+    },
+    {
+      "id": "T243",
+      "name": "Lily Gladstone",
+      "gender": "f"
+    },
+    {
+      "id": "T244",
+      "name": "Andrew Scott",
+      "gender": "m"
+    },
+    {
+      "id": "T245",
+      "name": "Colin Farrell",
+      "gender": "m"
+    },
+    {
+      "id": "T246",
+      "name": "Brendan Gleeson",
+      "gender": "m"
+    },
+    {
+      "id": "T247",
+      "name": "Brendan Fraser",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "T248",
+      "name": "Michael Fassbender",
+      "gender": "m"
+    },
+    {
+      "id": "T249",
+      "name": "James McAvoy",
+      "gender": "m"
+    },
+    {
+      "id": "T250",
+      "name": "Ncuti Gatwa",
+      "gender": "m"
+    },
+    {
+      "id": "T251",
+      "name": "John Boyega",
+      "gender": "m"
+    },
+    {
+      "id": "T252",
+      "name": "Riz Ahmed",
+      "gender": "m"
+    },
+    {
+      "id": "T253",
+      "name": "Richard E. Grant",
+      "gender": "m"
+    },
+    {
+      "id": "T254",
+      "name": "Michael Caine",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "T255",
+      "name": "Stephen Graham",
+      "gender": "m"
+    },
+    {
+      "id": "T256",
+      "name": "Martin Freeman",
+      "gender": "m"
+    },
+    {
+      "id": "T257",
+      "name": "Mads Mikkelsen",
+      "gender": "m"
+    },
+    {
+      "id": "T258",
+      "name": "Gael García Bernal",
+      "gender": "m"
+    },
+    {
+      "id": "T259",
+      "name": "Diego Luna",
+      "gender": "m"
+    },
+    {
+      "id": "T260",
+      "name": "Song Kang-ho",
+      "gender": "m"
+    },
+    {
+      "id": "T261",
+      "name": "Shah Rukh Khan",
+      "gender": "m"
+    },
+    {
+      "id": "T262",
+      "name": "Hiroyuki Sanada",
+      "gender": "m"
+    },
+    {
+      "id": "T263",
+      "name": "Donnie Yen",
+      "gender": "m"
+    },
+    {
+      "id": "T264",
+      "name": "Colman Domingo",
+      "gender": "m"
+    },
+    {
+      "id": "T265",
+      "name": "Sterling K. Brown",
+      "gender": "m"
+    },
+    {
+      "id": "T266",
+      "name": "Mahershala Ali",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "T267",
+      "name": "Jeffrey Wright",
+      "gender": "m"
+    },
+    {
+      "id": "T268",
+      "name": "Forest Whitaker",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "T269",
+      "name": "Don Cheadle",
+      "gender": "m"
+    },
+    {
+      "id": "T270",
+      "name": "Woody Harrelson",
+      "gender": "m"
+    },
+    {
+      "id": "T271",
+      "name": "Steve Buscemi",
+      "gender": "m"
+    },
+    {
+      "id": "T272",
+      "name": "John Goodman",
+      "gender": "m"
+    },
+    {
+      "id": "T273",
+      "name": "Christopher Walken",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "T274",
+      "name": "Sam Rockwell",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "T275",
+      "name": "Jeremy Allen White",
+      "gender": "m"
+    },
+    {
+      "id": "T276",
+      "name": "Jesse Plemons",
+      "gender": "m"
+    },
+    {
+      "id": "T277",
+      "name": "Kieran Culkin",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "T278",
+      "name": "Josh O'Connor",
+      "gender": "m"
+    },
+    {
+      "id": "T279",
+      "name": "Ben Stiller",
+      "gender": "m"
+    },
+    {
+      "id": "T280",
+      "name": "Steve Martin",
+      "gender": "m"
+    },
+    {
+      "id": "T281",
+      "name": "Kevin Costner",
+      "gender": "m"
+    },
+    {
+      "id": "T282",
+      "name": "Eddie Redmayne",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "T283",
+      "name": "Adrien Brody",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "T284",
+      "name": "Sean Penn",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "T285",
+      "name": "Dustin Hoffman",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "T286",
+      "name": "J. K. Simmons",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "T287",
+      "name": "Christoph Waltz",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "T288",
+      "name": "Benicio del Toro",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "T289",
+      "name": "Rami Malek",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "T290",
+      "name": "Mark Rylance",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "T291",
+      "name": "Ben Kingsley",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "T292",
+      "name": "Jeremy Irons",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "T293",
+      "name": "Geoffrey Rush",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "T294",
+      "name": "Jim Broadbent",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "T295",
+      "name": "Tommy Lee Jones",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "T296",
+      "name": "Michael Douglas",
+      "gender": "m",
+      "oscar": true
+    },
+    {
+      "id": "T297",
+      "name": "Kurt Russell",
+      "gender": "m"
+    },
+    {
+      "id": "T298",
+      "name": "Sean Bean",
+      "gender": "m"
+    },
+    {
+      "id": "T299",
+      "name": "Timothy Spall",
+      "gender": "m"
+    },
+    {
+      "id": "T300",
+      "name": "Ben Whishaw",
+      "gender": "m"
+    },
+    {
+      "id": "T301",
+      "name": "Daniel Radcliffe",
+      "gender": "m"
+    },
+    {
+      "id": "T302",
+      "name": "Taika Waititi",
+      "gender": "m"
+    },
+    {
+      "id": "T303",
+      "name": "Kumail Nanjiani",
       "gender": "m"
     }
   ]

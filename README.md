@@ -45,10 +45,10 @@ If the host's phone goes quiet for 20 seconds, any other studio can step in as h
 
 1. **Open the studios.** 3 to 8 studios, each with a name and a ticket colour. The game shuffles a Commissioner rota so everyone judges exactly once. One reel per player.
 2. **The commission.** Pass the device to the Commissioner. They press and hold to read the secret genre, then seal it.
-3. **Casting auction.** Draw the next star. Bids are shouted in the room. The Commissioner taps the winning studio, sets the fee and signs off the sale, or bins the card if nobody bites. A few vault legends are hidden at random points in every reel and surface on their own.
+3. **Casting auction.** On everyone's phones, stars come up on their own; studios bid or pass, and the Commissioner can pause. Passing one phone round, the Commissioner draws each star and taps in the shouted bids. Gold cards are Oscar winners. Vault legends are hidden at random points in every reel and surface on their own.
 4. **The reveal.** The envelope opens for everyone.
 5. **Trading floor.** One deal per studio: swap stars, add cash, or borrow against the next picture (IOUs). Both studios sign before it goes through.
-6. **Pitch prep.** A screen of prompts (title, logline, use all five stars, own the genre, the money shot, the budget) and the running order.
+6. **Pitch prep.** On everyone's phones: an 8-minute timed walkthrough (one-liner, story, who plays who, the big moment, then the title), with an example under each step. The notes stay private on each studio's phone while it pitches. Passing one phone round: a screen of prompts.
 7. **The pitches.** Each studio gets a 2-minute clock. Titles go on the tickets.
 8. **Scoring.** In private, the Commissioner punches each studio's loyalty card: up to 5 stamps each for casting, budget and plot (15 max). A tie at the top needs the Commissioner's casting vote.
 9. **The Oscar.** "Commissioner, put the phone on the table." Open the envelope, a drumroll pause, then the winner. Everyone banks their stamps as points; the winner is greenlit, takes a stub and goes in the archive.
@@ -67,7 +67,8 @@ After the final reel: final standings by points (greenlight stubs break a tie, t
 | Trades | One completed deal per studio per reel; equal numbers of stars each way |
 | IOUs | Up to $15M owed at once. Taken off the debtor's budget the next time it competes (not while it's Commissioner) and paid to the other studio the next time *it* competes. No IOUs once a studio has no picture left |
 | Commissioner | Doesn't pitch or score themselves; casting vote on a tie |
-| The vault | One hidden legend per competing studio (2–5 a reel), at secret random draws, always before casting closes |
+| The vault | Two more hidden legends than competing studios (3–8 a reel), at secret random draws, always before casting closes |
+| Gold cards | `oscar: true` on a card marks a competitive acting Oscar winner (lead or supporting) |
 | The draw | Alternates actor, actress, actor, actress (each card has a `gender` of `f` or `m`); last reel's stars go to the bottom of the deck |
 | Scoring | 0–5 stamps each for casting, budget, plot. Every studio banks its stamps as points; most points after the final reel wins |
 | Decks | Star decks reshuffle every reel; no repeats within a reel. Genres don't repeat within a game |
@@ -78,9 +79,9 @@ Every rule number lives in one place: `RULES` at the top of `src/game/engine.ts`
 
 The decks are plain JSON, so you can change them without touching the code:
 
-- `src/data/talent.json` – 172 living stars
-- `src/data/legacy.json` – 94 legends for the vault
-- `src/data/genres.json` – 16 core genres plus 8 "director's cut" genres (switch them on at setup)
+- `src/data/talent.json` – 303 living stars
+- `src/data/legacy.json` – 151 legends for the vault
+- `src/data/genres.json` – 16 core genres plus 7 "director's cut" genres (switch them on at setup)
 
 Add, remove or rename cards freely. Each card just needs a unique `id`.
 

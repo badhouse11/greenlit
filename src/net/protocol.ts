@@ -17,6 +17,54 @@ export interface Auction {
   high: { studioId: string; amount: number } | null;
   endsAt: number; // server clock, ms
   bids: number; // how many bids so far, for the screen's ticker
+  passed?: string[]; // studios that have passed on this star
+  pausedLeft?: number | null; // set while the dealer is paused: time left on the lot
+}
+
+/** The automatic dealer: a new star comes up a few seconds after the last one goes. */
+export interface Dealer {
+  paused: boolean;
+  nextAt: number | null; // server clock, ms
+}
+
+/** A studio's private pitch notes, written on its own phone during pitch prep. */
+export interface PitchNotes {
+  oneLiner: string;
+  start: string;
+  middle: string;
+  end: string;
+  roles: Record<string, string>; // card id -> who they play
+  bigMoment: string;
+}
+
+export const emptyNotes = (): PitchNotes => ({ oneLiner: '', start: '', middle: '', end: '', roles: {}, bigMoment: '' });
+
+export type PrepStepKey = 'oneLiner' | 'story' | 'roles' | 'bigMoment' | 'title';
+
+/** Pitch prep, one timed step at a time. The title comes last, once you know your film. */
+export const PREP_STEPS: { key: PrepStepKey; label: string; minutes: number }[] = [
+  { key: 'oneLiner', label: 'The one-liner', minutes: 1 },
+  { key: 'story', label: 'The story', minutes: 3 },
+  { key: 'roles', label: 'Who plays who', minutes: 2 },
+  { key: 'bigMoment', label: 'The big moment', minutes: 1 },
+  { key: 'title', label: 'The title', minutes: 1 },
+];
+export const PREP_MS = PREP_STEPS.reduce((n, s) => n + s.minutes * 60000, 0);
+
+/** Which step the room's prep clock is on, from the time used so far. PREP_STEPS.length = pencils down. */
+export function prepStepAt(usedMs: number): number {
+  let edge = 0;
+  for (let i = 0; i < PREP_STEPS.length; i++) {
+    edge += PREP_STEPS[i].minutes * 60000;
+    if (usedMs < edge) return i;
+  }
+  return PREP_STEPS.length;
+}
+
+/** Time left in the given step, from the time used so far. */
+export function prepStepLeft(usedMs: number, step: number): number {
+  const edge = PREP_STEPS.slice(0, step + 1).reduce((n, s) => n + s.minutes * 60000, 0);
+  return Math.max(0, edge - usedMs);
 }
 
 export interface Clock {
@@ -53,6 +101,9 @@ export interface View {
   deck: { talent: number; legendsLeft: number };
   auction: Auction | null;
   clock: Clock;
+  prep: Clock; // the pitch prep clock
+  dealer: Dealer;
+  notes: PitchNotes | null; // this device's own pitch notes only
   oscar: { stage: OscarStage; at: number };
   offers: Offer[];
   event: RoomEvent | null;
@@ -65,6 +116,9 @@ export type Action =
   | { a: 'toCasting' }
   | { a: 'draw' }
   | { a: 'bid'; amount: number }
+  | { a: 'pass' }
+  | { a: 'dealPause' }
+  | { a: 'dealResume' }
   | { a: 'hammer' }
   | { a: 'bin' }
   | { a: 'openEnvelope' }
@@ -80,6 +134,9 @@ export type Action =
   | { a: 'clockReset' }
   | { a: 'nextPitch' }
   | { a: 'title'; title: string }
+  | { a: 'notes'; notes: Partial<PitchNotes> }
+  | { a: 'prepPause' }
+  | { a: 'prepResume' }
   | { a: 'score'; studioId: string; cat: ScoreCategory; value: number }
   | { a: 'seal'; vote?: string }
   | { a: 'oscarOpen' }
@@ -112,6 +169,9 @@ export const AUCTION = {
   openMs: 15000, // time for the first bid before the card is binned
   bidMs: 8000, // each new bid resets the clock to at least this
   settledMs: 2500, // nobody else can afford to outbid: sold quickly
+  allPassedMs: 900, // everyone passed and nobody bid: binned almost at once
+  dealGapMs: 3000, // breather between one star going and the next coming up
+  firstDealMs: 2500, // after the commission is sealed
   oscarDrumrollMs: 3400,
   graceMs: 180000, // crisis talks before a studio can be folded
   hostAwayMs: 20000, // the host's phone has been gone this long: anyone can step in
