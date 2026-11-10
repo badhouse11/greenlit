@@ -248,7 +248,7 @@ function Casting({ room, view }: Props) {
           </div>
         )}
       </section>
-      <section className="ledger screen-ledger">
+      <section className={`ledger screen-ledger ${studios.length > 7 ? 'ledger--crowd' : ''}`}>
         {studios.map((rs) => (
           <StudioStub key={rs.studioId} studio={studioById(g, rs.studioId)} rs={rs} badge={a?.high?.studioId === rs.studioId ? 'Top bid' : undefined} />
         ))}
@@ -298,7 +298,7 @@ function Trading({ view }: Props) {
           ))}
         </div>
       )}
-      <div className="ledger">
+      <div className={`ledger ${Object.keys(g.round.studios).length > 7 ? 'ledger--crowd' : ''}`}>
         {Object.values(g.round.studios).map((rs) => (
           <StudioStub key={rs.studioId} studio={studioById(g, rs.studioId)} rs={rs} badge={rs.traded ? 'Dealt' : undefined} />
         ))}

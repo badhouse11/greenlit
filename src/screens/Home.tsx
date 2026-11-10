@@ -41,7 +41,7 @@ export function Home({
           </p>
           <div className="hero-ticket__meta" aria-label="At a glance">
             <div>
-              Studios<b>3–8</b>
+              Studios<b>3–12</b>
             </div>
             <div>
               Budget<b>$20M</b>

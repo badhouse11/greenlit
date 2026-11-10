@@ -38,7 +38,7 @@ export function Rules({ onBack }: { onBack: () => void }) {
           </p>
           <div className="explainer__facts">
             <span>
-              <b>3–8</b> players
+              <b>3–12</b> players
             </span>
             <span>
               <b>45–90</b> minutes

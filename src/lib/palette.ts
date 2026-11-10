@@ -8,6 +8,10 @@ export const PALETTE: Record<string, { name: string; bg: string; ink: string; ed
   bubblegum: { name: 'Bubblegum', bg: '#E8939F', ink: '#5B1F2B', edge: '#CB7280' },
   mustard: { name: 'Mustard', bg: '#D8B23A', ink: '#4A3510', edge: '#B79222' },
   latte: { name: 'Café Latte', bg: '#78614D', ink: '#F3D9A8', edge: '#5E4A3A' },
+  pistachio: { name: 'Pistachio', bg: '#C3CC8E', ink: '#3B4418', edge: '#A3AD6B' },
+  tangerine: { name: 'Tangerine', bg: '#E8834A', ink: '#4A1D08', edge: '#C56530' },
+  bellhop: { name: 'Bellhop Teal', bg: '#4F8A86', ink: '#F4E7CE', edge: '#3B6E6A' },
+  velvet: { name: 'Plum Velvet', bg: '#7B4A68', ink: '#F7DDE6', edge: '#5F3650' },
 };
 
 export const PALETTE_KEYS = Object.keys(PALETTE);

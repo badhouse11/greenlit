@@ -189,7 +189,7 @@ function Pips({ n }: { n: number }) {
 export function ReelResults({ g, me, big = false }: { g: Game; me?: string | null; big?: boolean }) {
   const ids = [...g.round.pitchOrder].sort((x, y) => cardTotal(g.round.scores[y]) - cardTotal(g.round.scores[x]));
   return (
-    <section className={`results ${big ? 'results--big' : ''}`} aria-labelledby="results-h">
+    <section className={`results ${big ? 'results--big' : ''} ${big && ids.length > 6 ? 'results--crowd' : ''}`} aria-labelledby="results-h">
       <h2 id="results-h" className="t-ticket results__h">
         How the reel scored
       </h2>

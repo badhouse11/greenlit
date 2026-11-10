@@ -43,7 +43,7 @@ If the host's phone goes quiet for 20 seconds, any other studio can step in as h
 
 ## How a game runs
 
-1. **Open the studios.** 3 to 8 studios, each with a name and a ticket colour. The game shuffles a Commissioner rota so everyone judges exactly once. One reel per player.
+1. **Open the studios.** 3 to 12 studios, each with a name and a ticket colour. The game shuffles a Commissioner rota so everyone judges exactly once. One reel per player.
 2. **The commission.** Pass the device to the Commissioner. They press and hold to read the secret genre, then seal it.
 3. **Casting auction.** On everyone's phones, stars come up on their own; studios bid or pass, and the Commissioner can pause. Passing one phone round, the Commissioner draws each star and taps in the shouted bids. Gold cards are Oscar winners. Vault legends are hidden at random points in every reel and surface on their own.
 4. **The reveal.** The envelope opens for everyone.
@@ -106,7 +106,7 @@ The print shop (not linked from the home screen for now) lays out every card at 
 
 Fonts load from Google Fonts: **Archivo** (condensed heavy, the ticket titles), **Jost** (the wide-spaced Futura-style captions) and **DM Mono** (serial numbers and ledgers). If you buy a licence for Beth Mathews' *Parts List*, swap it in via `--f-mono` or `--f-wide` in `src/styles/global.css`.
 
-The eight studio ticket stocks (Grenadine, Beeswax, Darlington, Powder Blue, Lobby Lilac, Bubblegum, Mustard, Café Latte) are in `src/lib/palette.ts`.
+The twelve studio ticket stocks (Grenadine, Beeswax, Darlington, Powder Blue, Lobby Lilac, Bubblegum, Mustard, Café Latte, Pistachio, Tangerine, Bellhop Teal, Plum Velvet) are in `src/lib/palette.ts`.
 
 ## Structure
 

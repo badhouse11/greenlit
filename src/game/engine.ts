@@ -26,7 +26,7 @@ export const RULES = {
   maxIouPerStudio: 15, // keeps at least $5M for five $1M stars next round
   tradesPerStudio: 1,
   minStudios: 3,
-  maxStudios: 8,
+  maxStudios: 12,
   stampsPerCategory: 5, // loyalty-card punches per scoring category
   pitchSeconds: 120,
 } as const;

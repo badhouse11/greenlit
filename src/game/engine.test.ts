@@ -35,7 +35,7 @@ import {
 } from './engine';
 import type { Game } from './types';
 
-const names = ['Badhouse Pictures', 'Moonlight Films', 'Golden Age', 'The Last Take', 'Velvet Rope', 'Kitsch & Co'];
+const names = ['Badhouse Pictures', 'Moonlight Films', 'Golden Age', 'The Last Take', 'Velvet Rope', 'Kitsch & Co', 'Second Unit', 'Dolly Zoom', 'Final Cut', 'Back Lot', 'Day for Night', 'Craft Services'];
 const make = (n: number, order?: number[]) =>
   createGame(
     names.slice(0, n).map((name) => ({ name, colour: 'grenadine' })),
@@ -95,7 +95,7 @@ describe('auction rules', () => {
   });
 
   it('never deals the same star twice in a round', () => {
-    const g = castEveryone(make(8));
+    const g = castEveryone(make(12));
     const ids = g.round.sales.map((s) => s.card.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
@@ -170,10 +170,10 @@ describe('the decks', () => {
 
 describe('the vault', () => {
   it('hides a fixed number of legends per reel and always surfaces them', () => {
-    for (let n = 3; n <= 8; n++) {
+    for (let n = 3; n <= 12; n++) {
       for (let k = 0; k < 10; k++) {
-        const g = castEveryone(make(Math.min(n, 6)));
-        const competitors = Math.min(n, 6) - 1;
+        const g = castEveryone(make(n));
+        const competitors = n - 1;
         const legends = g.round.sales.filter((s) => s.card.deck === 'legacy').length;
         expect(legends).toBe(legacyPerReel(competitors));
         expect(g.round.legacySlots).toHaveLength(legacyPerReel(competitors));
@@ -295,7 +295,7 @@ describe('trading floor and IOUs', () => {
 
 describe('a whole game', () => {
   it('rotates the commissioner once each and crowns a champion', () => {
-    for (let n = 3; n <= 6; n++) {
+    for (const n of [3, 4, 5, 6, 8, 12]) {
       let g = make(n);
       const seen: string[] = [];
       for (let r = 0; r < n; r++) {

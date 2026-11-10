@@ -4192,3 +4192,53 @@ a.shop-strip:hover {
   line-height: 1.4;
   font-size: 0.95rem;
 }
+
+/* ---------- a big table (8+ studios) on the TV: tighter stubs ------------- */
+.ledger--crowd {
+  grid-template-columns: repeat(auto-fill, minmax(178px, 1fr));
+  gap: 10px;
+}
+
+.ledger--crowd .stub {
+  padding: 10px 12px 8px;
+  gap: 4px;
+}
+
+.ledger--crowd .stub__name {
+  font-size: 1.05rem;
+}
+
+.ledger--crowd .stub__money {
+  font-size: 0.62rem;
+}
+
+.ledger--crowd .stub__money b {
+  font-size: 1.5rem;
+}
+
+.ledger--crowd .slots li {
+  font-size: 0.68rem;
+  padding: 2px 0;
+}
+
+.ledger--crowd .badge {
+  font-size: 0.55rem;
+}
+
+/* A big table's results on the TV: two columns so it fits the screen */
+.results--big.results--crowd {
+  width: min(1500px, 100%);
+}
+
+.results--big.results--crowd .results__list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.results--big.results--crowd .results__row {
+  padding: 10px 14px;
+  font-size: 1.05rem;
+}
+
+.results--big.results--crowd .results__total b {
+  font-size: 1.8rem;
+}
