@@ -24,8 +24,14 @@ const joinUrl = () => `${window.location.host}`;
 /* ====================================================================== */
 /*  The big screen                                                         */
 /* ====================================================================== */
-export function ScreenView({ room, view }: Props) {
-  if (!view.game) return <Lobby room={room} view={view} />;
+export function ScreenView({ room, view, onLeave }: Props & { onLeave: () => void }) {
+  if (!view.game)
+    return (
+      <>
+        <Lobby room={room} view={view} />
+        <ScreenFoot onLeave={onLeave} />
+      </>
+    );
   const g = view.game;
   const showStrip = ['handover', 'final'].includes(g.phase);
   return (
@@ -42,7 +48,18 @@ export function ScreenView({ room, view }: Props) {
       {showStrip && <ShopStrip />}
       <CrisisTalks room={room} view={view} />
       <ScreenPhase room={room} view={view} />
+      <ScreenFoot onLeave={onLeave} />
     </div>
+  );
+}
+
+function ScreenFoot({ onLeave }: { onLeave: () => void }) {
+  return (
+    <footer className="screen-foot no-print">
+      <button className="link-btn leave-link" onClick={onLeave}>
+        Stop showing this game
+      </button>
+    </footer>
   );
 }
 

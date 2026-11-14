@@ -10,45 +10,29 @@ import { Ticket } from '../../components/Ticket';
 import { ScreenView } from './ScreenView';
 import { PhoneView } from './PhoneView';
 import { ConnectionBadge, ErrorToast, EventToast, ShareInvite } from './shared';
+import { forgetRoom, putRoomInAddress, rememberRoom } from '../../net/lastRoom';
 
-const START_KEY = 'greenlit.startedRoom';
-const readStarted = () => {
-  try {
-    return localStorage.getItem(START_KEY);
-  } catch {
-    return null;
-  }
-};
-const writeStarted = (code: string | null) => {
-  try {
-    if (code) localStorage.setItem(START_KEY, code);
-    else localStorage.removeItem(START_KEY);
-  } catch {
-    /* fine */
-  }
-};
+/** Leaving: forget the room on this phone, so nothing drags you back into it. */
+export type Leave = (next?: 'start') => void;
 
 /* ====================================================================== */
 /*  Start a game: this phone opens the room, hosts it and plays            */
 /* ====================================================================== */
-export function StartRoom({ onExit }: { onExit: () => void }) {
-  const [code, setCode] = useState(() => readStarted() ?? makeRoomCode());
+export function StartRoom({ onExit }: { onExit: Leave }) {
+  // Always a brand-new room. Getting back into an old one is "Back to your game" on the home screen.
+  const [code, setCode] = useState(() => makeRoomCode());
   const [fatal, setFatal] = useState<string | null>(null);
   const onFatal = useCallback((message: string) => {
     if (/taken/i.test(message)) {
       setCode(makeRoomCode());
       return;
     }
-    writeStarted(null);
     setFatal(message);
   }, []);
-  useEffect(() => {
-    if (!fatal) writeStarted(code);
-  }, [code, fatal]);
-  if (!MULTIPLAYER_READY) return <NotReady onExit={onExit} />;
+  if (!MULTIPLAYER_READY) return <NotReady onExit={() => onExit()} />;
   if (fatal) {
     return (
-      <Message title="That room has closed" onExit={onExit}>
+      <Message title="That room has closed" onExit={() => onExit()}>
         <button
           className="btn btn--big"
           onClick={() => {
@@ -67,10 +51,7 @@ export function StartRoom({ onExit }: { onExit: () => void }) {
       code={code}
       create
       onFatal={onFatal}
-      onExit={() => {
-        writeStarted(null);
-        onExit();
-      }}
+      onExit={onExit}
     />
   );
 }
@@ -78,15 +59,16 @@ export function StartRoom({ onExit }: { onExit: () => void }) {
 /* ====================================================================== */
 /*  Join a game, or watch one on a big screen                              */
 /* ====================================================================== */
-export function JoinRoom({ initialCode, watch = false, onExit }: { initialCode?: string; watch?: boolean; onExit: () => void }) {
+export function JoinRoom({ initialCode, watch = false, onExit }: { initialCode?: string; watch?: boolean; onExit: Leave }) {
   const [code, setCode] = useState<string | null>(initialCode && isRoomCode(initialCode) ? initialCode : null);
   const [typed, setTyped] = useState(initialCode ?? '');
   const [fatal, setFatal] = useState<string | null>(null);
   const onFatal = useCallback((message: string) => {
+    if (code) forgetRoom(code);
     setFatal(message);
     setCode(null);
   }, []);
-  if (!MULTIPLAYER_READY) return <NotReady onExit={onExit} />;
+  if (!MULTIPLAYER_READY) return <NotReady onExit={() => onExit()} />;
   if (code) return <Connected key={code} code={code} watch={watch} onFatal={onFatal} onExit={onExit} />;
   const submit = (e: FormEvent) => {
     e.preventDefault();
@@ -127,7 +109,7 @@ export function JoinRoom({ initialCode, watch = false, onExit }: { initialCode?:
           {fatal}
         </div>
       )}
-      <button className="link-btn" onClick={onExit}>
+      <button className="link-btn" onClick={() => onExit()}>
         Back
       </button>
     </main>
@@ -148,11 +130,27 @@ function Connected({
   create?: boolean;
   watch?: boolean;
   onFatal: (m: string) => void;
-  onExit: () => void;
+  onExit: Leave;
 }) {
   const room = useRoom(code, { create, onFatal });
   const view = room.view;
   const asked = useRef(false);
+  const [leaving, setLeaving] = useState<null | 'home' | 'start'>(null);
+
+  // Remember the room once we're properly in it, and put it in the address bar so a refresh comes back here.
+  // (A player only counts once they've taken a seat: opening a room and backing out leaves nothing behind.)
+  const inRoom = !!view && (view.you.role === 'screen' || (view.you.role === 'player' && !!view.you.studioId));
+  useEffect(() => {
+    if (!inRoom) return;
+    rememberRoom(code);
+    if (!watch) putRoomInAddress(code);
+  }, [inRoom, code, watch]);
+
+  const leave: Leave = (next) => {
+    forgetRoom(code);
+    onExit(next);
+  };
+  const askLeave = (next?: 'start') => setLeaving(next ?? 'home');
 
   // A big screen announces itself once it has said hello.
   useEffect(() => {
@@ -170,7 +168,7 @@ function Connected({
       </main>
     );
   } else if (view.you.role === 'screen') {
-    body = <ScreenView room={room} view={view} />;
+    body = <ScreenView room={room} view={view} onLeave={() => leave()} />;
   } else if (watch) {
     body = (
       <main className="page page--narrow centre-stack">
@@ -178,15 +176,25 @@ function Connected({
       </main>
     );
   } else if (view.you.role === 'player' && view.game) {
-    body = <PhoneView room={room} view={view} />;
+    body = <PhoneView room={room} view={view} onLeave={askLeave} />;
   } else if (!view.game) {
-    body = <LobbyPhone room={room} view={view} onExit={onExit} />;
+    body = <LobbyPhone room={room} view={view} onExit={() => leave()} onLeave={() => askLeave()} />;
   } else {
-    body = <Guest room={room} view={view} onExit={onExit} />;
+    body = <Guest room={room} view={view} onExit={() => leave()} />;
   }
   return (
     <>
       {body}
+      {leaving && view && (
+        <LeaveSheet
+          code={code}
+          inGame={!!view.game && view.you.role === 'player'}
+          isHost={view.you.isHost}
+          next={leaving}
+          onStay={() => setLeaving(null)}
+          onLeave={() => leave(leaving === 'start' ? 'start' : undefined)}
+        />
+      )}
       <ConnectionBadge status={room.status} />
       <EventToast event={view?.event ?? null} />
       <ErrorToast message={room.error} onDone={room.clearError} />
@@ -287,7 +295,7 @@ function StudioForm({ room, view, onDone, editing }: { room: Room; view: View; o
   );
 }
 
-function LobbyPhone({ room, view, onExit }: { room: Room; view: View; onExit: () => void }) {
+function LobbyPhone({ room, view, onExit, onLeave }: { room: Room; view: View; onExit: () => void; onLeave: () => void }) {
   const mine = view.lobby.find((l) => l.id === view.you.studioId);
   const [edit, setEdit] = useState(false);
   const [directorsCut, setDirectorsCut] = useState(false);
@@ -351,7 +359,39 @@ function LobbyPhone({ room, view, onExit }: { room: Room; view: View; onExit: ()
       <button className="link-btn" onClick={() => setEdit(true)}>
         Change your studio’s name or colour
       </button>
+      <button className="link-btn leave-link" onClick={onLeave}>
+        Leave this room
+      </button>
     </main>
+  );
+}
+
+/* ---------------------------------------------------------------------- */
+/*  Leaving a game: always possible, always clean                          */
+/* ---------------------------------------------------------------------- */
+function LeaveSheet({ code, inGame, isHost, next, onStay, onLeave }: { code: string; inGame: boolean; isHost: boolean; next: 'home' | 'start'; onStay: () => void; onLeave: () => void }) {
+  return (
+    <div className="scrim" role="dialog" aria-modal="true" aria-labelledby="leave-h" onClick={onStay}>
+      <div className="form-sheet dialog leave-sheet" onClick={(e) => e.stopPropagation()}>
+        <h2 id="leave-h" className="t-ticket">
+          {next === 'start' ? 'Start a new game?' : 'Leave this game?'}
+        </h2>
+        <p>
+          {inGame
+            ? `This phone leaves room ${code}. Your studio stays in the game, so you can come back with the code if you change your mind.`
+            : `This phone leaves room ${code}.`}
+          {inGame && isHost ? ' Someone else can take over as host from their Room menu.' : ''}
+        </p>
+        <div className="btn-row btn-row--stack">
+          <button className="btn btn--big btn--hot" onClick={onLeave}>
+            {next === 'start' ? 'Leave and start a new game' : 'Leave the game'}
+          </button>
+          <button className="btn btn--ghost" onClick={onStay}>
+            Stay in the game
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 

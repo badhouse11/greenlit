@@ -9,6 +9,8 @@ export function Home({
   onHost,
   onJoin,
   onWatch,
+  rejoinCode,
+  onRejoin,
   onContinue,
   onArchive,
   onRules,
@@ -19,6 +21,8 @@ export function Home({
   onHost?: () => void;
   onJoin?: () => void;
   onWatch?: () => void;
+  rejoinCode?: string;
+  onRejoin?: () => void;
   onContinue: () => void;
   onArchive: () => void;
   onRules: () => void;
@@ -60,6 +64,12 @@ export function Home({
         </div>
       </Ticket>
 
+      {rejoinCode && onRejoin && (
+        <button className="rejoin-ticket" onClick={onRejoin}>
+          <span className="t-wide">Still playing?</span>
+          <b className="t-ticket">Back to your game · room {rejoinCode}</b>
+        </button>
+      )}
       {onHost && onJoin ? (
         <div className="home__actions">
           <button className="btn btn--big btn--go" onClick={onHost}>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import type { KeyboardEvent, MouseEvent, PointerEvent, ReactNode } from 'react';
 import type { Card, Game, RoundStudio, TradeSide } from '../../game/types';
 import type { Room } from '../../net/useRoom';
@@ -35,25 +35,52 @@ interface Props {
   view: View;
 }
 
+/** Leave the game from anywhere on the phone: home, or straight into a fresh game. */
+type AskLeave = (next?: 'start') => void;
+const LeaveCtx = createContext<AskLeave>(() => undefined);
+
+function LeaveFoot() {
+  const leave = useContext(LeaveCtx);
+  return (
+    <footer className="phone-foot">
+      <button className="link-btn leave-link" onClick={() => leave()}>
+        Leave game
+      </button>
+      <span aria-hidden="true">·</span>
+      <button className="link-btn leave-link" onClick={() => leave('start')}>
+        Start a new game
+      </button>
+    </footer>
+  );
+}
+
 /* ====================================================================== */
 /*  The phone in your hand                                                */
 /* ====================================================================== */
-export function PhoneView({ room, view }: Props) {
+export function PhoneView({ room, view, onLeave }: Props & { onLeave: AskLeave }) {
   const g = view.game!;
   const me = view.you.studioId!;
   const studio = g.studios.find((s) => s.id === me);
-  if (!studio) return <main className="phone"><p className="lede">Your studio isn’t in this game.</p></main>;
-  if (studio.folded) {
-    return (
+  let body: ReactNode;
+  if (!studio) {
+    body = (
+      <main className="phone phone--centre">
+        <p className="lede">Your studio isn’t in this game.</p>
+        <LeaveFoot />
+      </main>
+    );
+  } else if (studio.folded) {
+    body = (
       <main className="phone phone--centre">
         <h1 className="t-ticket phone-title">{studio.name} has folded</h1>
         <p className="lede">Your points are frozen at {points(g, me)}. Stay for the drinks.</p>
+        <LeaveFoot />
       </main>
     );
+  } else {
+    body = <PhoneShell room={room} view={view} isComm={g.round.commissionerId === me} rs={g.round.studios[me]} />;
   }
-  const isComm = g.round.commissionerId === me;
-  const rs = g.round.studios[me];
-  return <PhoneShell room={room} view={view} isComm={isComm} rs={rs} />;
+  return <LeaveCtx.Provider value={onLeave}>{body}</LeaveCtx.Provider>;
 }
 
 function PhoneShell({ room, view, isComm, rs }: Props & { isComm: boolean; rs?: RoundStudio }) {
@@ -64,7 +91,10 @@ function PhoneShell({ room, view, isComm, rs }: Props & { isComm: boolean; rs?: 
     <div className="phone-wrap">
       <PhoneBand view={view} isComm={isComm} rs={rs} onMenu={() => setMenu(true)} />
       <CrisisBanner room={room} view={view} />
-      <main className="phone">{isComm ? <CommissionerPhone room={room} view={view} /> : <PlayerPhone room={room} view={view} rs={rs} />}</main>
+      <main className="phone">
+        {isComm ? <CommissionerPhone room={room} view={view} /> : <PlayerPhone room={room} view={view} rs={rs} />}
+        <LeaveFoot />
+      </main>
       {g.phase === 'reveal' && <PhoneReveal room={room} view={view} isComm={isComm} />}
       {g.phase === 'oscar' && <PhoneOscar room={room} view={view} isComm={isComm} />}
       {menu && (
@@ -804,7 +834,17 @@ function FinalPhone({ room, view }: Props) {
       ) : (
         <p className="phone-small">The host can start another game with the same studios.</p>
       )}
+      <NewGameButton />
     </section>
+  );
+}
+
+function NewGameButton() {
+  const leave = useContext(LeaveCtx);
+  return (
+    <button className="btn btn--ghost" onClick={() => leave('start')}>
+      Start a brand-new game
+    </button>
   );
 }
 
@@ -1025,6 +1065,7 @@ function RoomMenu({ room, view, onClose, onIntro }: Props & { onClose: () => voi
         <button className="btn" onClick={onClose}>
           Back to the game
         </button>
+        <LeaveFoot />
       </div>
     </div>
   );

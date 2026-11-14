@@ -4242,3 +4242,59 @@ a.shop-strip:hover {
 .results--big.results--crowd .results__total b {
   font-size: 1.8rem;
 }
+
+/* ---------- leaving a game, getting back to one -------------------------- */
+.phone-foot,
+.screen-foot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-top: 28px;
+  padding: 14px 0 6px;
+  border-top: 1px dashed rgba(58, 38, 32, 0.3);
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
+.screen-foot {
+  margin: 40px auto 0;
+  max-width: 1200px;
+}
+
+.leave-link {
+  color: var(--ink-soft);
+}
+
+.room-menu .phone-foot {
+  margin-top: 6px;
+}
+
+.leave-sheet h2 {
+  margin: 0 0 8px;
+  font-size: 1.6rem;
+}
+
+.rejoin-ticket {
+  display: grid;
+  gap: 2px;
+  width: min(520px, 100%);
+  margin: 0 auto 14px;
+  padding: 12px 16px;
+  border: 2px dashed var(--ink);
+  border-radius: 4px;
+  background: rgba(255, 252, 245, 0.6);
+  color: var(--ink);
+  text-align: center;
+  cursor: pointer;
+}
+
+.rejoin-ticket .t-wide {
+  font-size: 0.66rem;
+  opacity: 0.75;
+}
+
+.rejoin-ticket b {
+  font-size: 1.15rem;
+}

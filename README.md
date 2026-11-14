@@ -79,8 +79,8 @@ Every rule number lives in one place: `RULES` at the top of `src/game/engine.ts`
 
 The decks are plain JSON, so you can change them without touching the code:
 
-- `src/data/talent.json` – 303 living stars
-- `src/data/legacy.json` – 151 legends for the vault
+- `src/data/talent.json` – the 100 most recognisable living stars (50 actresses, 50 actors)
+- `src/data/legacy.json` – 82 instantly recognisable legends for the vault
 - `src/data/genres.json` – 16 core genres plus 7 "director's cut" genres (switch them on at setup)
 
 Add, remove or rename cards freely. Each card just needs a unique `id`.

@@ -10,6 +10,7 @@ import { Rules } from './screens/Rules';
 import { PrintShop } from './screens/PrintShop';
 import { JoinRoom, StartRoom } from './screens/online/OnlineRoom';
 import { MULTIPLAYER_READY } from './net/useRoom';
+import { clearRoomFromAddress, lastRoom } from './net/lastRoom';
 
 /** A link like greenlit.app/?room=ABCD drops a phone straight into that room. */
 const linkedRoom = (() => {
@@ -20,7 +21,7 @@ const linkedRoom = (() => {
   }
 })();
 
-export type View = 'home' | 'setup' | 'game' | 'archive' | 'rules' | 'print' | 'start' | 'join' | 'watch';
+export type View = 'home' | 'setup' | 'game' | 'archive' | 'rules' | 'print' | 'start' | 'join' | 'watch' | 'rejoin';
 
 export interface Toast {
   text: string;
@@ -51,6 +52,8 @@ export default function App() {
   const [returnTo, setReturnTo] = useState<View>('home');
   const [archive, setArchive] = useState<GreenlitFilm[]>(() => loadArchive());
   const [toast, setToast] = useState<Toast | null>(null);
+  const [roomKey, setRoomKey] = useState(0); // a fresh key mounts a fresh room
+  const [rejoin, setRejoin] = useState(() => lastRoom());
   const toastTimer = useRef<number | undefined>(undefined);
 
   const say = useCallback((t: Toast) => {
@@ -134,6 +137,14 @@ export default function App() {
 
   const inGame = view === 'game' && game;
 
+  /** Out of a multiplayer room: home, or straight into a brand-new one. */
+  const leaveRoom = (next?: 'start') => {
+    clearRoomFromAddress();
+    setRejoin(lastRoom());
+    setRoomKey((k) => k + 1);
+    setView(next === 'start' ? 'start' : 'home');
+  };
+
   return (
     <div className="app">
       {inGame && (
@@ -165,6 +176,8 @@ export default function App() {
           onHost={MULTIPLAYER_READY ? () => setView('start') : undefined}
           onJoin={MULTIPLAYER_READY ? () => setView('join') : undefined}
           onWatch={MULTIPLAYER_READY ? () => setView('watch') : undefined}
+          rejoinCode={MULTIPLAYER_READY ? rejoin?.code : undefined}
+          onRejoin={() => setView('rejoin')}
           onContinue={() => setView('game')}
           onArchive={() => openAside('archive')}
           onRules={() => openAside('rules')}
@@ -177,17 +190,10 @@ export default function App() {
         <Archive films={archive} onBack={() => setView(returnTo)} onRemove={removeFilm} onClear={clearArchive} />
       )}
       {view === 'rules' && <Rules onBack={() => setView(returnTo)} />}
-      {view === 'start' && <StartRoom onExit={() => setView('home')} />}
-      {view === 'watch' && <JoinRoom watch onExit={() => setView('home')} />}
-      {view === 'join' && (
-        <JoinRoom
-          initialCode={linkedRoom ?? undefined}
-          onExit={() => {
-            if (linkedRoom) window.history.replaceState(null, '', window.location.pathname);
-            setView('home');
-          }}
-        />
-      )}
+      {view === 'start' && <StartRoom key={roomKey} onExit={leaveRoom} />}
+      {view === 'watch' && <JoinRoom key={roomKey} watch onExit={leaveRoom} />}
+      {view === 'join' && <JoinRoom key={roomKey} initialCode={roomKey === 0 ? linkedRoom ?? undefined : undefined} onExit={leaveRoom} />}
+      {view === 'rejoin' && rejoin && <JoinRoom key={`re${roomKey}`} initialCode={rejoin.code} onExit={leaveRoom} />}
       {view === 'print' && <PrintShop onBack={() => setView(returnTo)} />}
 
       {toast && (
