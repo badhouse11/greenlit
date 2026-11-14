@@ -66,7 +66,7 @@ export function Rules({ onBack }: { onBack: () => void }) {
         <h2 className="t-ticket explainer__h">Three ways to play</h2>
         <div className="explainer__ways">
           {WAYS.map((w) => (
-            <Ticket key={w.head} className="explainer__way" serrated bg="#F4E7CE">
+            <Ticket key={w.head} className="explainer__way" serrated bg="#FBF4E6">
               <strong className="t-ticket">{w.head}</strong>
               <span>{w.body}</span>
             </Ticket>

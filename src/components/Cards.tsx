@@ -2,6 +2,7 @@ import type { Card, GreenlitFilm, RoundStudio, ScoreCategory, Scorecard, Studio 
 import { CATEGORIES, RULES, cardTotal, isSkint, maxBid, maxReelScore, slotsLeft } from '../game/engine';
 import { stock } from '../lib/palette';
 import { FitText, Ticket, serialFor } from './Ticket';
+import { Stamp } from './Stamp';
 
 /* ---------------------------------------------------------------------- */
 /*  Star ticket: one living star (cream stock) or one vault legend (black) */
@@ -83,6 +84,7 @@ export function StudioStub({
   return (
     <Ticket bg={s.bg} ink={s.ink} className="stub">
       <div className="stub__head">
+        <Stamp colour={studio.colour} size={34} className="stub__stamp" />
         <div className="stub__name t-ticket">{studio.name}</div>
         {shown && <span className={`badge ${shown.alarm ? 'badge--alarm' : ''}`}>{shown.text}</span>}
       </div>

@@ -44,6 +44,7 @@ import { Ticket } from '../components/Ticket';
 import { stock } from '../lib/palette';
 import { CAN_DOWNLOAD, downloadFilmTicket } from '../lib/exportTicket';
 import { ShopStrip } from '../components/ShopStrip';
+import { Stamp } from '../components/Stamp';
 
 interface PlayProps {
   game: Game;
@@ -106,7 +107,7 @@ function Handover({ game, act }: PlayProps) {
       </button>
 
       {adjusted.length > 0 && (
-        <Ticket className="stub" bg="#F4E7CE" wrapClassName="" style={{ width: 'min(520px, 100%)', textAlign: 'left' }}>
+        <Ticket className="stub" bg="#FBF4E6" wrapClassName="" style={{ width: 'min(520px, 100%)', textAlign: 'left' }}>
           <h2 className="t-ticket" style={{ fontSize: '1.4rem' }}>
             Debts called in
           </h2>
@@ -416,7 +417,7 @@ function Reveal({ game, act }: PlayProps) {
         ) : (
           <div className="reveal__after" style={{ display: 'grid', gap: 16, justifyItems: 'center' }}>
             <p style={{ opacity: 0.85 }}>You have your cast. Now make the film.</p>
-            <button className="btn btn--big" style={{ ['--b-bg' as string]: '#F4E7CE', ['--b-ink' as string]: '#1D1814' }} onClick={() => act((g) => setPhase(g, 'trading'))}>
+            <button className="btn btn--big" style={{ ['--b-bg' as string]: '#FBF4E6', ['--b-ink' as string]: '#1A1F25' }} onClick={() => act((g) => setPhase(g, 'trading'))}>
               Open the trading floor
             </button>
           </div>
@@ -633,7 +634,7 @@ function Trading({ game, act }: PlayProps) {
           </h2>
           <div className="memo-list">
             {game.round.trades.map((t) => (
-              <Ticket key={t.id} className="memo" serrated bg="#F4E7CE">
+              <Ticket key={t.id} className="memo" serrated bg="#FBF4E6">
                 <strong>{studioById(game, t.a).name}</strong> gave {describeDone(game, t.aGives, t.round)}. <strong>{studioById(game, t.b).name}</strong> gave{' '}
                 {describeDone(game, t.bGives, t.round)}.
               </Ticket>
@@ -708,7 +709,7 @@ function Prep({ game, act }: PlayProps) {
         <ol className="prompt-list">
           {PROMPTS.map((p) => (
             <li key={p.head}>
-              <Ticket className="prompt" serrated bg="#F4E7CE">
+              <Ticket className="prompt" serrated bg="#FBF4E6">
                 <strong className="t-ticket">{p.head}</strong>
                 <span>{p.body}</span>
               </Ticket>
@@ -727,7 +728,7 @@ function Prep({ game, act }: PlayProps) {
                 <li key={id}>
                   <span className="t-mono">{ordinal(i + 1)}</span>
                   <span>
-                    <span className="dot" style={{ background: stock(st.colour).bg }} />
+                    <Stamp colour={st.colour} badge size={22} className="dot-stamp" />
                     {st.name}
                   </span>
                 </li>

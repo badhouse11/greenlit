@@ -104,9 +104,13 @@ The print shop (not linked from the home screen for now) lays out every card at 
 
 ### Type and colour
 
-Fonts load from Google Fonts: **Archivo** (condensed heavy, the ticket titles), **Jost** (the wide-spaced Futura-style captions) and **DM Mono** (serial numbers and ledgers). If you buy a licence for Beth Mathews' *Parts List*, swap it in via `--f-mono` or `--f-wide` in `src/styles/global.css`.
+The look is a 1980s video rental shop: cream paper, slanted red/green/amber/teal stripes, chunky bordered buttons and the on-screen text a VCR shows, with a sunset gradient on timers and down the side of the star cards.
 
-The twelve studio ticket stocks (Grenadine, Beeswax, Darlington, Powder Blue, Lobby Lilac, Bubblegum, Mustard, Café Latte, Pistachio, Tangerine, Bellhop Teal, Plum Velvet) are in `src/lib/palette.ts`.
+- **Headlines:** Owners XXWide in print. On screen the site uses **Archivo** at its widest setting as a free stand-in; once you have the Owners web licence, add its font files and it takes over automatically (`--f-ticket` in `src/styles/global.css` already lists it first).
+- **Screen text:** **VT323**, the VCR on-screen font, for captions, numbers and messages.
+- **Body:** Archivo.
+- **Colours:** red #E5331F, green #006633, amber #F9A204, teal #026C80, ink #1A1F25, cream #F2E6CF. Tokens are at the top of `src/styles/global.css`.
+- **Studios:** twelve studio sets in `src/lib/palette.ts`, each a main colour, two support colours and a stamp. The stamps are drawn in `src/components/Stamp.tsx`.
 
 ## Structure
 

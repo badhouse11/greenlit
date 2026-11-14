@@ -4,6 +4,7 @@ import { RULES, createGame, shuffle } from '../game/engine';
 import { PALETTE, PALETTE_KEYS, STUDIO_NAMES, stock } from '../lib/palette';
 import { Ticket } from '../components/Ticket';
 import { useConfirm } from '../components/Confirm';
+import { Stamp } from '../components/Stamp';
 
 interface Row {
   name: string;
@@ -112,13 +113,14 @@ export function Setup({
                     {PALETTE_KEYS.map((k) => (
                       <button
                         key={k}
-                        className="swatch"
-                        style={{ background: PALETTE[k].bg }}
+                        className="swatch swatch--stamp"
                         aria-pressed={row.colour === k}
-                        aria-label={PALETTE[k].name}
-                        title={PALETTE[k].name}
+                        aria-label={`${PALETTE[k].name}: ${PALETTE[k].stampName}`}
+                        title={`${PALETTE[k].name}: ${PALETTE[k].stampName}`}
                         onClick={() => update(i, { colour: k })}
-                      />
+                      >
+                        <Stamp colour={k} badge size={34} />
+                      </button>
                     ))}
                   </div>
                   <button
@@ -147,7 +149,7 @@ export function Setup({
         </section>
 
         <aside style={{ display: 'grid', gap: 18 }}>
-          <Ticket className="stub" bg="#F4E7CE">
+          <Ticket className="stub" bg="#FBF4E6">
             <h2 className="t-ticket" style={{ fontSize: '1.6rem' }}>
               Commissioner rota
             </h2>
@@ -156,7 +158,7 @@ export function Setup({
                 <li key={r}>
                   <span className="t-mono">Reel {String(r + 1).padStart(2, '0')}</span>
                   <span>
-                    <span className="dot" style={{ background: stock(rows[idx]?.colour).bg }} />
+                    <Stamp colour={rows[idx]?.colour} badge size={22} className="dot-stamp" />
                     {rows[idx]?.name || `Studio ${idx + 1}`}
                   </span>
                 </li>

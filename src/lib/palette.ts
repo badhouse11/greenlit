@@ -1,17 +1,32 @@
-/** Studio ticket stocks. Each studio prints on its own colour. */
-export const PALETTE: Record<string, { name: string; bg: string; ink: string; edge: string }> = {
-  grenadine: { name: 'Grenadine', bg: '#D44720', ink: '#FFF1DC', edge: '#A9341A' },
-  beeswax: { name: 'Beeswax', bg: '#E9A752', ink: '#5A2A14', edge: '#C38431' },
-  darlington: { name: 'Darlington', bg: '#ACCAB2', ink: '#2F4A3A', edge: '#8AAE93' },
-  powder: { name: 'Powder Blue', bg: '#9DBFD4', ink: '#22405A', edge: '#7AA1BA' },
-  lilac: { name: 'Lobby Lilac', bg: '#BBA4CC', ink: '#3E2A55', edge: '#9D85B2' },
-  bubblegum: { name: 'Bubblegum', bg: '#E8939F', ink: '#5B1F2B', edge: '#CB7280' },
-  mustard: { name: 'Mustard', bg: '#D8B23A', ink: '#4A3510', edge: '#B79222' },
-  latte: { name: 'Café Latte', bg: '#78614D', ink: '#F3D9A8', edge: '#5E4A3A' },
-  pistachio: { name: 'Pistachio', bg: '#C3CC8E', ink: '#3B4418', edge: '#A3AD6B' },
-  tangerine: { name: 'Tangerine', bg: '#E8834A', ink: '#4A1D08', edge: '#C56530' },
-  bellhop: { name: 'Bellhop Teal', bg: '#4F8A86', ink: '#F4E7CE', edge: '#3B6E6A' },
-  velvet: { name: 'Plum Velvet', bg: '#7B4A68', ink: '#F7DDE6', edge: '#5F3650' },
+/**
+ * Studio sets. Each studio gets a main colour, two support colours and its own stamp.
+ * The keys stay the same as the original ticket stocks so saved games still load.
+ */
+export type StampKey = 'iris' | 'canister' | 'horizon' | 'spools' | 'chrome' | 'reel' | 'zigzag' | 'quarters' | 'sprocket' | 'lens' | 'clapper' | 'play';
+
+export interface StudioSet {
+  name: string; // the colour's name
+  bg: string; // main colour
+  ink: string; // text on the main colour
+  edge: string; // a darker shade, for edges
+  support: [string, string];
+  stamp: StampKey;
+  stampName: string;
+}
+
+export const PALETTE: Record<string, StudioSet> = {
+  grenadine: { name: 'Rewind Red', bg: '#E5331F', ink: '#FBF4E6', edge: '#B5240F', support: ['#F9A204', '#1A1F25'], stamp: 'iris', stampName: 'The Iris' },
+  darlington: { name: 'Rental Green', bg: '#006633', ink: '#F2E6CF', edge: '#004A25', support: ['#7CC4A0', '#F9A204'], stamp: 'canister', stampName: 'The Canister' },
+  beeswax: { name: 'Amber', bg: '#F9A204', ink: '#1A1F25', edge: '#C47F00', support: ['#E5331F', '#FBF4E6'], stamp: 'horizon', stampName: 'The Horizon' },
+  powder: { name: 'Tape Teal', bg: '#026C80', ink: '#F2E6CF', edge: '#014F5E', support: ['#6FB7D9', '#F9A204'], stamp: 'spools', stampName: 'The Spools' },
+  mustard: { name: 'Sunset', bg: '#FF6A13', ink: '#1A1F25', edge: '#D2510A', support: ['#FFC72C', '#7A2943'], stamp: 'chrome', stampName: 'The Chrome' },
+  lilac: { name: 'Plum', bg: '#7A2943', ink: '#F7DDE6', edge: '#5C1D31', support: ['#E85A8C', '#F9A204'], stamp: 'reel', stampName: 'The Reel' },
+  bubblegum: { name: 'Hot Pink', bg: '#E85A8C', ink: '#1A1F25', edge: '#C73D6F', support: ['#FBF4E6', '#7A2943'], stamp: 'zigzag', stampName: 'The Zigzag' },
+  tangerine: { name: 'Sky', bg: '#6FB7D9', ink: '#1A1F25', edge: '#4E98BC', support: ['#026C80', '#FBF4E6'], stamp: 'quarters', stampName: 'The Quarters' },
+  pistachio: { name: 'Mint', bg: '#7CC4A0', ink: '#1A1F25', edge: '#5AA67F', support: ['#006633', '#FBF4E6'], stamp: 'sprocket', stampName: 'The Sprocket' },
+  bellhop: { name: 'Midnight', bg: '#1A1F25', ink: '#F2E6CF', edge: '#000000', support: ['#E5331F', '#F9A204'], stamp: 'lens', stampName: 'The Lens' },
+  latte: { name: 'Café', bg: '#78614D', ink: '#F3D9A8', edge: '#5E4A3A', support: ['#F9A204', '#1A1F25'], stamp: 'clapper', stampName: 'The Clapper' },
+  velvet: { name: 'Cream', bg: '#FBF4E6', ink: '#1A1F25', edge: '#D9CBB0', support: ['#E5331F', '#026C80'], stamp: 'play', stampName: 'The Play' },
 };
 
 export const PALETTE_KEYS = Object.keys(PALETTE);

@@ -4,25 +4,33 @@
    ========================================================================== */
 
 :root {
-  --rose: #eac6bf;
-  --rose-deep: #dcaea5;
-  --paper: #f4e7ce;
-  --paper-deep: #e8d6b5;
-  --ink: #3a2620;
-  --ink-soft: #6e5446;
-  --manila: #c99a45;
-  --manila-dark: #a67a2c;
-  --index: #f2cbc5;
-  --index-line: #c9746a;
-  --grenadine: #d44720;
-  --stamp: #2c6a49;
-  --vault: #1d1814;
-  --gold: #d2a94e;
-  --danger: #b5321a;
+  /* GREENLIT · Be Kind, Rewind (with a lick of Rewind's sunset) */
+  --rose: #f2e6cf; /* the page: rental-shop cream */
+  --rose-deep: #e9dbbd;
+  --paper: #fbf4e6;
+  --paper-deep: #efe2c8;
+  --ink: #1a1f25;
+  --ink-soft: #4a4f57;
+  --manila: #f9a204; /* the genre sleeve */
+  --manila-dark: #c47f00;
+  --index: #fbf4e6;
+  --index-line: #e5331f;
+  --grenadine: #e5331f; /* red */
+  --stamp: #006633; /* green */
+  --amber: #f9a204;
+  --teal: #026c80;
+  --vault: #0e0a09;
+  --gold: #e2b95c;
+  --danger: #c42a17;
+  --sunset: linear-gradient(90deg, #ffc72c, #ff6a13, #ee3124, #c1272d, #7a2943);
+  --sunset-v: repeating-linear-gradient(180deg, #ffc72c 0 20%, #ff6a13 20% 40%, #ee3124 40% 60%, #c1272d 60% 80%, #7a2943 80% 100%);
+  --stripes: linear-gradient(115deg, transparent 0 18%, #e5331f 18% 32%, transparent 32% 38%, #006633 38% 52%, transparent 52% 58%, #f9a204 58% 72%, transparent 72% 78%, #026c80 78% 92%, transparent 92%);
 
-  --f-ticket: 'Archivo', 'Arial Narrow', sans-serif;
-  --f-wide: 'Jost', 'Futura', 'Century Gothic', sans-serif;
-  --f-mono: 'DM Mono', 'Courier New', monospace;
+  /* Headlines: Owners XXWide in print; Archivo Expanded on screen until the web licence is in. */
+  --f-ticket: 'Owners XXWide', 'Archivo', 'Arial Black', sans-serif;
+  --f-wide: 'VT323', 'Courier New', monospace; /* the VCR's on-screen text */
+  --f-mono: 'VT323', 'Courier New', monospace;
+  --f-body: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
 
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .23 0 0 0 0 .15 0 0 0 0 .12 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
   --shadow: drop-shadow(0 1px 0 rgba(58, 38, 32, 0.22)) drop-shadow(0 10px 16px rgba(58, 38, 32, 0.16));
@@ -48,7 +56,7 @@ body {
   background-image: var(--grain), radial-gradient(120% 90% at 50% 0%, #f0d3cc 0%, var(--rose) 55%, var(--rose-deep) 100%);
   background-attachment: fixed;
   color: var(--ink);
-  font-family: var(--f-wide);
+  font-family: var(--f-body);
   font-size: 17px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -91,7 +99,7 @@ p {
 
 .t-ticket {
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 72;
+  font-stretch: 100%;
   font-weight: 850;
   text-transform: uppercase;
   line-height: 0.92;
@@ -172,7 +180,7 @@ p {
 
 .marquee__mark {
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 112;
+  font-stretch: 115%;
   font-weight: 900;
   font-size: 1.15rem;
   letter-spacing: 0.04em;
@@ -480,7 +488,7 @@ p {
 .star__meta b {
   display: block;
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 80;
+  font-stretch: 100%;
   font-weight: 800;
   font-size: 1.35rem;
   line-height: 1.1;
@@ -611,7 +619,7 @@ p {
 
 .stub__money b {
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 75;
+  font-stretch: 100%;
   font-weight: 900;
   font-size: 2.3rem;
   line-height: 1;
@@ -778,7 +786,7 @@ p {
 .sleeve__title {
   font-size: clamp(1.6rem, 5vw, 2.3rem);
   margin: 6px 0 14px;
-  font-variation-settings: 'wdth' 100;
+  font-stretch: 115%;
   letter-spacing: 0.08em;
 }
 
@@ -800,7 +808,7 @@ p {
 
 .sleeve__lines strong {
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 80;
+  font-stretch: 100%;
   font-size: 1rem;
   font-weight: 800;
 }
@@ -889,7 +897,7 @@ p {
   place-items: center;
   padding: 4px 12px;
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 75;
+  font-stretch: 100%;
   font-weight: 900;
   font-size: 2rem;
 }
@@ -1012,7 +1020,7 @@ p {
 .wordmark {
   font-family: var(--f-ticket);
   font-weight: 900;
-  font-variation-settings: 'wdth' 125;
+  font-stretch: 125%;
   font-size: clamp(3.6rem, 13vw, 9.5rem);
   line-height: 0.82;
   letter-spacing: 0.01em;
@@ -1066,7 +1074,7 @@ p {
 .hero-ticket__meta b {
   display: block;
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 75;
+  font-stretch: 100%;
   font-weight: 900;
   font-size: 1.8rem;
   line-height: 1.1;
@@ -1089,7 +1097,7 @@ p {
 
 .hero-ticket__stub .vert--big {
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 70;
+  font-stretch: 100%;
   font-weight: 900;
   font-size: 2.2rem;
   letter-spacing: 0.04em;
@@ -1147,7 +1155,7 @@ p {
 
 .studio-row .input--line {
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 75;
+  font-stretch: 100%;
   font-weight: 850;
   font-size: 1.45rem;
   text-transform: uppercase;
@@ -1308,7 +1316,7 @@ p {
 
 .deck-btn strong {
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 80;
+  font-stretch: 100%;
   font-weight: 850;
   font-size: 1.15rem;
   text-transform: uppercase;
@@ -1463,7 +1471,7 @@ p {
 .trade__swap {
   align-self: center;
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 70;
+  font-stretch: 100%;
   font-weight: 900;
   font-size: 2.6rem;
 }
@@ -1562,7 +1570,7 @@ p {
 
 .signature .scrawl {
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 62;
+  font-stretch: 100%;
   font-style: italic;
   font-size: 1.4rem;
   color: var(--stamp);
@@ -1583,7 +1591,7 @@ p {
 
 .memo strong {
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 80;
+  font-stretch: 100%;
   font-size: 1.1rem;
   text-transform: uppercase;
 }
@@ -1618,7 +1626,7 @@ p {
 
 .pitch-card .input--line {
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 80;
+  font-stretch: 100%;
   font-weight: 800;
   font-size: 1.25rem;
   text-transform: uppercase;
@@ -1710,7 +1718,7 @@ p {
 
 .film__stub .vert--big {
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 70;
+  font-stretch: 100%;
   font-weight: 900;
   font-size: 1.6rem;
 }
@@ -1740,7 +1748,7 @@ p {
   border: 5px double var(--stamp);
   color: var(--stamp);
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 100;
+  font-stretch: 115%;
   font-weight: 900;
   font-size: clamp(2rem, 5vw, 3.2rem);
   letter-spacing: 0.06em;
@@ -1819,7 +1827,7 @@ p {
 
 .standing__score {
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 75;
+  font-stretch: 100%;
   font-weight: 900;
   font-size: 2rem;
 }
@@ -2244,7 +2252,7 @@ p {
 
 .clock {
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 70;
+  font-stretch: 100%;
   font-weight: 900;
   font-size: clamp(5.5rem, 26vw, 10rem);
   line-height: 0.9;
@@ -2285,7 +2293,7 @@ p {
 
 .clock-ticket .input--line {
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 80;
+  font-stretch: 100%;
   font-weight: 800;
   font-size: 1.3rem;
   text-transform: uppercase;
@@ -2404,7 +2412,7 @@ p {
 
 .loyalty__total b {
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 75;
+  font-stretch: 100%;
   font-weight: 900;
   font-size: 2.2rem;
   line-height: 1;
@@ -2434,7 +2442,7 @@ p {
 
 .standing__score small {
   font-size: 0.9rem;
-  font-variation-settings: 'wdth' 90;
+  font-stretch: 115%;
 }
 
 /* ---------- the Oscar ------------------------------------------------------ */
@@ -2895,7 +2903,7 @@ a.shop-strip:hover {
 
 .join-form--studio .input--line {
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 75;
+  font-stretch: 100%;
   font-weight: 850;
   font-size: 1.5rem;
   text-transform: uppercase;
@@ -3163,7 +3171,7 @@ a.shop-strip:hover {
 
 .phone-band__meta b {
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 80;
+  font-stretch: 100%;
   font-size: 1.05rem;
 }
 
@@ -3216,7 +3224,7 @@ a.shop-strip:hover {
 
 .phone-clock {
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 70;
+  font-stretch: 100%;
   font-weight: 900;
   font-size: clamp(5rem, 30vw, 8rem);
   line-height: 0.9;
@@ -3299,7 +3307,7 @@ a.shop-strip:hover {
 
 .bid-btn b {
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 80;
+  font-stretch: 100%;
   font-size: 1.7rem;
   line-height: 1;
 }
@@ -3432,7 +3440,7 @@ a.shop-strip:hover {
 
 .explainer__facts b {
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 80;
+  font-stretch: 100%;
   font-size: 1.3rem;
 }
 
@@ -3622,7 +3630,7 @@ a.shop-strip:hover {
 
 .phone-standings__list b {
   font-family: var(--f-ticket);
-  font-variation-settings: 'wdth' 80;
+  font-stretch: 100%;
   font-size: 1.5rem;
 }
 
@@ -4297,4 +4305,985 @@ a.shop-strip:hover {
 
 .rejoin-ticket b {
   font-size: 1.15rem;
+}
+
+/* ==========================================================================
+   VHS THEME · "Be Kind, Rewind" with a lick of "Rewind"
+   Cream rental-shop paper, slanted red/green/amber/teal stripes, chunky
+   bordered buttons, VCR on-screen text, sunset timers and star-card spines.
+   Everything below overrides the older box-office styles above it.
+   ========================================================================== */
+
+body {
+  background-color: var(--rose);
+  background-image: radial-gradient(rgba(26, 31, 37, 0.08) 0.7px, transparent 0.9px);
+  background-size: 4px 4px;
+  background-attachment: fixed;
+}
+
+/* ---------- type ---------------------------------------------------------- */
+.t-ticket {
+  font-family: var(--f-ticket);
+  font-variation-settings: normal;
+  font-stretch: 112%;
+  font-weight: 900;
+  letter-spacing: -0.005em;
+  line-height: 0.95;
+}
+
+.page-title,
+.phone-title,
+.wordmark,
+.lot__name,
+.star__name,
+.sleeve__title,
+.intro__h,
+.leave-sheet h2 {
+  font-stretch: 125%;
+}
+
+/* VT323 is a small pixel face: font-size-adjust brings it up to the size of the type around it. */
+.t-wide,
+.t-mono {
+  font-family: var(--f-wide);
+  font-size-adjust: 0.62;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.t-mono {
+  text-transform: none;
+}
+
+.star__side,
+.star__top,
+.star__meta,
+.sleeve__card-head,
+.sleeve__lines,
+.hero-ticket__meta,
+.hero-ticket__stub .vert,
+.phone-band__meta,
+.marquee__reel,
+.order-list .t-mono {
+  font-family: var(--f-mono);
+  font-size-adjust: 0.62;
+  letter-spacing: 0.05em;
+}
+
+.star__meta b,
+.sleeve__lines strong,
+.hero-ticket__meta b,
+.phone-band__meta b,
+.bid-btn b {
+  font-family: var(--f-ticket);
+  font-variation-settings: normal;
+  font-stretch: 110%;
+  font-weight: 900;
+  font-size-adjust: none;
+}
+
+.lede {
+  color: var(--ink-soft);
+}
+
+.vhs-stripes {
+  background: var(--stripes);
+}
+
+/* ---------- top bar and the shop strip ------------------------------------ */
+.marquee {
+  background: var(--ink);
+  color: var(--paper);
+  border-bottom: 0;
+  box-shadow: 0 4px 0 var(--amber);
+}
+
+.marquee__mark {
+  font-family: var(--f-ticket);
+  font-variation-settings: normal;
+  font-stretch: 125%;
+}
+
+.marquee__reel {
+  font-size: 0.9rem;
+}
+
+.marquee__reel::before {
+  content: '▶ ';
+  color: var(--amber);
+}
+
+.marquee button.tool {
+  font-family: var(--f-wide);
+  font-size-adjust: 0.62;
+  text-transform: uppercase;
+  border: 2px solid rgba(251, 244, 230, 0.5);
+  border-radius: 6px;
+}
+
+.shop-strip {
+  background: var(--ink);
+  color: var(--amber);
+  font-family: var(--f-wide);
+  font-size: 0.82rem;
+  font-size-adjust: 0.62;
+  letter-spacing: 0.12em;
+  border-bottom: 3px solid transparent;
+  border-image: var(--stripes) 1;
+}
+
+/* ---------- buttons ---------------------------------------------------------- */
+.btn {
+  --b-bg: var(--ink);
+  --b-ink: var(--paper);
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  font-family: var(--f-ticket);
+  font-variation-settings: normal;
+  font-stretch: 112%;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.btn:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+.btn:active:not(:disabled) {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0 var(--ink);
+  animation: vhs-glitch 0.28s steps(2) 1;
+}
+
+.btn--go {
+  --b-bg: var(--stamp);
+  --b-ink: #f2e6cf;
+}
+
+.btn--hot {
+  --b-bg: var(--grenadine);
+  --b-ink: var(--paper);
+}
+
+.btn--ghost {
+  --b-ink: var(--ink);
+  background: var(--paper);
+  border-color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.btn--ghost:hover:not(:disabled) {
+  background: #fffaf0;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.btn--big {
+  min-height: 62px;
+  font-size: 1.05rem;
+}
+
+.btn--small {
+  font-size: 0.82rem;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.btn:disabled {
+  box-shadow: none;
+}
+
+.home__actions .btn--big:nth-child(2):not(.btn--go):not(.btn--ghost) {
+  --b-bg: var(--amber);
+  --b-ink: var(--ink);
+}
+
+.link-btn {
+  text-decoration-thickness: 2px;
+}
+
+@keyframes vhs-glitch {
+  0% { filter: none; }
+  25% { filter: hue-rotate(40deg) saturate(1.7); translate: -2px 1px; }
+  50% { translate: 2px -1px; }
+  75% { filter: hue-rotate(-30deg); translate: -1px 0; }
+  100% { filter: none; translate: 0 0; }
+}
+
+/* ---------- panels, notices, toasts ------------------------------------------ */
+.form-sheet {
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+.notice {
+  border: 3px solid var(--ink);
+  border-radius: 10px;
+  background: var(--paper);
+}
+
+.notice--lead {
+  border-color: var(--stamp);
+  background: #e3f0e6;
+}
+
+.toast {
+  font-family: var(--f-wide);
+  font-size: 1.05rem;
+  font-size-adjust: 0.62;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 10px;
+  border: 3px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.toast::before {
+  content: '▶ ';
+  color: var(--amber);
+}
+
+.toast--sold::before {
+  content: 'SOLD ▶ ';
+}
+
+.toast--vault::before {
+  content: '◀◀ ';
+}
+
+.toast--vault {
+  background: var(--ink);
+  color: var(--amber);
+  border-color: var(--amber);
+}
+
+.input,
+.select,
+.textarea {
+  border-color: var(--ink);
+  border-radius: 8px;
+}
+
+/* ---------- home: the logo card -------------------------------------------- */
+.hero-ticket {
+  --tk-bg: var(--paper);
+  --tk-ink: var(--ink);
+}
+
+.hero-ticket {
+  outline: 3px solid var(--ink);
+  outline-offset: -3px;
+}
+
+.hero-ticket__main {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-ticket__corner {
+  position: absolute;
+  top: 0;
+  right: -40px;
+  width: min(300px, 70%);
+  height: 44px;
+}
+
+.hero-ticket__kicker {
+  margin-top: 26px;
+}
+
+.wordmark {
+  font-family: var(--f-ticket);
+  font-variation-settings: normal;
+  font-stretch: 125%;
+  color: var(--ink);
+  text-shadow: none;
+}
+
+.hero-ticket__rule {
+  height: 14px;
+  width: 100%;
+}
+
+.hero-ticket__line {
+  font-family: var(--f-wide);
+  font-size-adjust: 0.62;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.hero-ticket__meta {
+  border-color: var(--ink);
+}
+
+.rejoin-ticket {
+  border: 3px dashed var(--ink);
+  background: var(--paper);
+}
+
+/* ---------- studio stamps --------------------------------------------------- */
+.studio-stamp {
+  flex: none;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.dot-stamp {
+  margin-right: 8px;
+  vertical-align: -6px;
+}
+
+.phone-band__stamp {
+  flex: none;
+}
+
+.phone-band__top {
+  align-items: center;
+  gap: 10px;
+}
+
+.studio-row__stamp {
+  flex: none;
+}
+
+.lobby-stub__stamp,
+.stub__stamp {
+  flex: none;
+}
+
+.stub__head {
+  align-items: center;
+}
+
+.swatches--stamps {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  width: 100%;
+}
+
+.swatch.swatch--stamp {
+  width: auto;
+  height: auto;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  padding: 2px;
+  display: grid;
+  place-items: center;
+  box-shadow: none;
+}
+
+.swatch--stamp .studio-stamp {
+  width: 100%;
+  height: auto;
+  max-width: 56px;
+}
+
+.swatch.swatch--stamp[aria-pressed='true'] {
+  outline: 3px solid var(--ink);
+  outline-offset: 1px;
+  transform: translateY(-2px);
+}
+
+.swatch.swatch--stamp:disabled {
+  opacity: 0.25;
+}
+
+.swatches:not(.swatches--stamps) .swatch--stamp .studio-stamp {
+  width: 30px;
+  height: 30px;
+}
+
+.swatches:not(.swatches--stamps) {
+  flex-wrap: wrap;
+}
+
+.swatch-caption {
+  text-align: center;
+  font-size: 1rem;
+  margin: -4px 0 0;
+}
+
+/* ---------- star cards: cream with a sunset spine, gold for Oscars, black for the vault ---------- */
+.star-card {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 0 0 3px var(--ink) inset, 4px 4px 0 var(--ink);
+  min-width: 0;
+}
+
+.star-card__spine {
+  flex: none;
+  width: 18px;
+  background: var(--sunset-v);
+}
+
+.star-card__body {
+  flex: 1;
+  min-width: 0;
+  padding: 14px 18px 16px;
+  display: grid;
+  gap: 4px;
+  text-align: left;
+}
+
+.star-card .lot__kicker {
+  font-size: 1.05rem;
+  letter-spacing: 0.06em;
+}
+
+.star-card .lot__name {
+  min-height: 1.2em;
+}
+
+.star-card--oscar {
+  background: linear-gradient(135deg, #e9c25a, #f6de8d 45%, #d9a93c);
+  color: #2a1b0e;
+  box-shadow: 0 0 0 3px #2a1b0e inset, 4px 4px 0 var(--ink);
+}
+
+.star-card--oscar .star-card__spine {
+  background: #2a1b0e;
+}
+
+.star-card--oscar .lot__kicker::before,
+.star-card--oscar .lot__kicker::after {
+  content: ' ★ ';
+}
+
+.star-card--vault {
+  background: var(--vault);
+  color: #f4ebdd;
+  box-shadow: 0 0 0 3px var(--amber) inset, 4px 4px 0 var(--ink);
+}
+
+.star-card--vault .star-card__spine {
+  background: var(--amber);
+}
+
+.star-card--vault .lot__kicker {
+  color: var(--amber);
+}
+
+.star-card--vault .lot__name,
+.bid-board__price {
+  text-shadow: 2px 0 0 rgba(229, 51, 31, 0.85), -2px 0 0 rgba(2, 108, 128, 0.8);
+}
+
+/* The TV's and pass-the-phone star tickets get the same treatment. */
+.star--talent {
+  --tk-bg: var(--paper);
+  --tk-ink: var(--ink);
+  background: var(--sunset-v) left / 16px 100% no-repeat, var(--tk-bg);
+}
+
+.star--talent .star__name .fit {
+  text-shadow: none;
+}
+
+.star--talent.star--oscar {
+  --tk-bg: #ecc864;
+  --tk-ink: #2a1b0e;
+  background: linear-gradient(#2a1b0e, #2a1b0e) left / 16px 100% no-repeat, linear-gradient(135deg, #e9c25a, #f6de8d 45%, #d9a93c);
+}
+
+.star--legacy {
+  --tk-bg: var(--vault);
+  --tk-ink: var(--amber);
+  background: linear-gradient(var(--amber), var(--amber)) left / 16px 100% no-repeat, var(--tk-bg);
+}
+
+.star--legacy .star__name .fit {
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  color: #f4ebdd;
+  text-shadow: 2px 0 0 rgba(229, 51, 31, 0.85), -2px 0 0 rgba(2, 108, 128, 0.8);
+}
+
+.star--back {
+  --tk-bg: var(--ink);
+  --tk-ink: var(--amber);
+}
+
+.oscar-mark {
+  background: #e2b95c;
+  color: #2a1b0e;
+  font-family: var(--f-wide);
+  font-size-adjust: 0.62;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+}
+
+.legacy-mark {
+  font-family: var(--f-wide);
+  font-size-adjust: 0.62;
+}
+
+.vault-banner {
+  font-family: var(--f-wide);
+  font-size-adjust: 0.62;
+  background: var(--ink);
+  color: var(--amber);
+}
+
+/* ---------- VHS texture -------------------------------------------------------- */
+.scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.2) 0 1px, transparent 1px 3px);
+}
+
+.tracking {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 26px;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.1) 40%, rgba(255, 255, 255, 0.03) 60%, transparent);
+  animation: vhs-track 6s linear infinite;
+}
+
+@keyframes vhs-track {
+  from { top: -30px; }
+  to { top: 100%; }
+}
+
+@keyframes vhs-blink {
+  50% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tracking,
+  .rec i,
+  .btn:active:not(:disabled) {
+    animation: none;
+  }
+}
+
+/* ---------- bid tickets ------------------------------------------------------ */
+.bid-tix {
+  --tix-band: var(--grenadine);
+  position: relative;
+  min-height: 98px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 0 0 2px;
+  border: 0;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  filter: drop-shadow(3px 3px 0 var(--ink));
+  -webkit-mask: radial-gradient(circle 9px at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 9px at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
+  mask: radial-gradient(circle 9px at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 9px at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
+  box-shadow: inset 0 0 0 3px var(--ink);
+  border-radius: 6px;
+}
+
+.bid-tix--1 {
+  --tix-band: var(--amber);
+}
+
+.bid-tix--2 {
+  --tix-band: var(--teal);
+}
+
+.bid-tix__band {
+  height: 12px;
+  background: var(--tix-band);
+  border-bottom: 3px solid var(--ink);
+}
+
+.bid-tix__amt {
+  font-size: 1.75rem;
+  line-height: 1;
+  text-align: center;
+}
+
+.bid-tix__serial {
+  font-family: var(--f-wide);
+  font-size-adjust: 0.62;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  text-align: center;
+  border-top: 2px dashed var(--ink);
+  margin: 0 8px;
+  padding: 3px 0 5px;
+}
+
+.bid-tix:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  animation: vhs-glitch 0.28s steps(2) 1;
+}
+
+.bid-tix:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.pass-btn {
+  --b-bg: var(--paper);
+  --b-ink: var(--ink);
+  color: var(--ink);
+  font-family: var(--f-wide);
+  font-size-adjust: 0.62;
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+/* ---------- the live bid board: a TV in the corner of the shop ---------------- */
+.bid-board {
+  position: relative;
+  overflow: hidden;
+  background: var(--ink);
+  background-image: none;
+  color: var(--paper);
+  border-radius: 14px;
+  box-shadow: 5px 5px 0 var(--stamp);
+  justify-items: stretch;
+  text-align: left;
+  padding: 14px 18px 18px;
+}
+
+.bid-board__osd {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 1.1rem;
+}
+
+.bid-board__call {
+  font-size: inherit;
+}
+
+.rec {
+  color: var(--grenadine);
+}
+
+.rec i {
+  font-style: normal;
+  animation: vhs-blink 1.1s steps(2) infinite;
+}
+
+.bid-board__price {
+  font-size: clamp(2.4rem, 13vw, 3.7rem);
+  color: var(--paper);
+  font-stretch: 125%;
+}
+
+.bid-board__leader .muted {
+  color: rgba(251, 244, 230, 0.7);
+  font-family: var(--f-wide);
+  font-size-adjust: 0.62;
+  text-transform: uppercase;
+}
+
+.bid-board .chip--studio {
+  border: 2px solid var(--paper);
+}
+
+.bid-board__bar {
+  height: 12px;
+  border: 0;
+  background: #2c333c;
+}
+
+.bid-board__bar span {
+  background: var(--sunset);
+}
+
+.bid-board__passed {
+  font-family: var(--f-wide);
+  font-size-adjust: 0.62;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.bid-board--big .bid-board__osd {
+  font-size: 1.6rem;
+}
+
+.bid-board--big .bid-board__price {
+  font-size: clamp(5rem, 11vw, 9rem);
+}
+
+.bid-board--big .bid-board__bar {
+  height: 18px;
+}
+
+/* ---------- clocks: the VCR counter ------------------------------------------- */
+.clock,
+.phone-clock {
+  font-family: var(--f-wide);
+  font-size-adjust: 0.62;
+  font-weight: 400;
+  font-variation-settings: normal;
+  letter-spacing: 0.02em;
+}
+
+.clock-bar {
+  border: 0;
+  background: rgba(26, 31, 37, 0.15);
+}
+
+.clock-bar span {
+  background: var(--sunset);
+}
+
+.prep-timer {
+  font-family: var(--f-wide);
+  font-size-adjust: 0.62;
+  font-size: 1.15rem;
+  text-transform: uppercase;
+  border-radius: 10px;
+}
+
+/* ---------- the genre sleeve: same sleeve, rental-shop colours ------------------ */
+.sleeve__card {
+  background: var(--paper);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  border-bottom: 0;
+}
+
+.sleeve__card::before {
+  background: repeating-linear-gradient(180deg, transparent 0 30px, rgba(26, 31, 37, 0.18) 30px 32px);
+}
+
+.sleeve__card-head {
+  border-bottom: 2px dashed var(--ink);
+}
+
+.sleeve__card-head span:last-child {
+  color: var(--grenadine);
+}
+
+.sleeve__genre--hidden {
+  color: rgba(26, 31, 37, 0.55);
+}
+
+.reveal .sleeve__genre:not(.sleeve__genre--hidden) {
+  color: var(--grenadine);
+}
+
+.sleeve__body {
+  background: var(--amber);
+  color: var(--ink);
+  background-image: var(--stripes), var(--grain);
+  background-size: 62% 22px, auto;
+  background-position: right top, 0 0;
+  background-repeat: no-repeat, repeat;
+  background-blend-mode: normal, multiply;
+}
+
+.sleeve__lines div {
+  border-top-color: var(--ink);
+}
+
+/* ---------- lists, stubs and results ------------------------------------------ */
+.results__row {
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  border-radius: 10px;
+}
+
+.results__row.is-winner {
+  border-color: var(--stamp);
+  background: #e9f2e6;
+  box-shadow: 4px 4px 0 var(--stamp);
+}
+
+.results__badge {
+  font-family: var(--f-wide);
+  font-size-adjust: 0.62;
+  font-size: 0.82rem;
+  font-weight: 400;
+}
+
+.pips i.on {
+  background: var(--grenadine);
+  border-color: var(--grenadine);
+}
+
+.results__place {
+  font-family: var(--f-wide);
+  font-size-adjust: 0.62;
+  font-size: 1.1rem;
+}
+
+.on-stage,
+.notes-sheet {
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.example {
+  border-color: var(--teal);
+  border-radius: 8px;
+}
+
+.prep-steps li.is-now {
+  border-color: var(--grenadine);
+}
+
+.prep-steps li {
+  font-family: var(--f-wide);
+  font-size-adjust: 0.62;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}
+
+.chip {
+  border-radius: 999px;
+}
+
+.phone-band {
+  box-shadow: 0 3px 0 var(--ink);
+}
+
+.phone-band__menu {
+  font-family: var(--f-wide);
+  font-size-adjust: 0.62;
+  text-transform: uppercase;
+}
+
+.code-ticket__code {
+  font-stretch: 125%;
+}
+
+.studio-row .input--line {
+  border-color: currentColor;
+  font-stretch: 100%;
+}
+
+.join-form--studio .studio-row,
+.studio-row:has(.studio-row__stamp) {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.studio-row .input--line {
+  font-size: 1.2rem;
+  min-width: 0;
+}
+
+/* Wide type takes more room: keep the sleeve and big buttons tidy on small phones. */
+.btn {
+  font-stretch: 106%;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.btn--big {
+  font-size: 0.98rem;
+}
+
+.sleeve__body {
+  padding-top: 60px;
+}
+
+.sleeve__title {
+  font-size: clamp(1.25rem, 4.6vw, 1.9rem);
+  margin: 4px 0 10px;
+  letter-spacing: 0;
+}
+
+.sleeve__lines strong {
+  font-stretch: 100%;
+  font-size: 0.88rem;
+}
+
+.sleeve__genre {
+  font-size: clamp(1.6rem, 6.4vw, 2.6rem);
+}
+
+.results__badge {
+  font-size: 0.7rem;
+  padding: 0 5px;
+}
+
+/* Long studio names in the wide face: never run off the edge. */
+.t-ticket {
+  overflow-wrap: break-word;
+}
+
+.oscar__winner,
+.champion {
+  font-stretch: 100%;
+  font-size: clamp(2.2rem, 10.5vw, 7rem);
+  max-width: 100%;
+}
+
+.star-card .lot__name {
+  padding-right: 4px; /* room for the VHS colour fringe */
+}
+
+.stub__name {
+  overflow-wrap: normal;
+  font-stretch: 100%;
+}
+
+.ledger--crowd .stub__name {
+  font-size: 0.95rem;
+}
+
+.code-ticket {
+  --tk-bg: var(--paper);
+  --tk-ink: var(--ink);
+  outline: 3px solid var(--ink);
+  outline-offset: -3px;
+}
+
+.code-ticket__code {
+  color: var(--ink);
+  text-shadow: 3px 3px 0 var(--amber);
+}
+
+/* Big headings in the wide face, kept to a comfortable size on phones. */
+.page-title {
+  font-size: clamp(1.9rem, 8.6vw, 4.2rem);
+  text-wrap: balance;
+}
+
+.phone-title {
+  font-size: clamp(1.7rem, 8.2vw, 2.5rem);
+}
+
+.explainer__pitch {
+  --tk-bg: var(--amber);
+  --tk-ink: var(--ink);
+  outline: 3px solid var(--ink);
+  outline-offset: -3px;
+}
+
+.explainer__pitch h2,
+.explainer__pitch .t-ticket {
+  color: var(--ink);
+  text-shadow: 3px 3px 0 var(--paper);
+}
+
+.toast--sold::before {
+  content: '▶ ';
+}
+
+.explainer__pitch .explainer__big {
+  color: var(--ink);
+  text-shadow: 3px 3px 0 var(--paper);
 }

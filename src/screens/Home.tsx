@@ -35,10 +35,12 @@ export function Home({
     <main className="page home">
       <Ticket className="hero-ticket" wrapClassName="hero-wrap">
         <div className="hero-ticket__main">
+          <div className="vhs-stripes hero-ticket__corner" aria-hidden="true" />
           <div className="hero-ticket__kicker t-wide">A game of stars, money &amp; questionable decisions</div>
           <h1 className="wordmark">
             <FitText text="Greenlit" max={152} min={28} />
           </h1>
+          <div className="vhs-stripes hero-ticket__rule" aria-hidden="true" />
           <p className="hero-ticket__line">
             You’ve got $20 million. You need five stars.
             <em>You have absolutely no idea what film you’re making.</em>

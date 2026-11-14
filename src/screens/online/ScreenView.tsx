@@ -13,6 +13,7 @@ import { ShopStrip } from '../../components/ShopStrip';
 import { BidBoard } from './PhoneView';
 import { OnStage, PHASE_LABEL, ReelResults, clockLeft, mmss, ordinal } from './shared';
 import { usePrepClock } from './prep';
+import { Stamp } from '../../components/Stamp';
 
 interface Props {
   room: Room;
@@ -140,6 +141,7 @@ function Lobby({ view }: Props) {
                 const on = view.online.includes(l.id);
                 return (
                   <Ticket key={l.id} bg={k.bg} ink={k.ink} className="lobby-stub" serrated>
+                    <Stamp colour={l.colour} size={48} className="lobby-stub__stamp" />
                     <span className="t-ticket lobby-stub__name">{l.name}</span>
                     {!on && <span className="t-mono">offline</span>}
                   </Ticket>
@@ -203,7 +205,7 @@ function Handover({ view }: Props) {
       </div>
       <p className="lede">{boss.name}, check your phone. Everyone else, you’ve got ${RULES.startingBudget}M and no idea what you’re making.</p>
       {adjusted.length > 0 && (
-        <Ticket className="stub" bg="#F4E7CE" style={{ width: 'min(560px, 100%)', textAlign: 'left' }}>
+        <Ticket className="stub" bg="#FBF4E6" style={{ width: 'min(560px, 100%)', textAlign: 'left' }}>
           <h2 className="t-ticket" style={{ fontSize: '1.4rem' }}>
             Debts called in
           </h2>
@@ -309,7 +311,7 @@ function Trading({ view }: Props) {
       {g.round.trades.length > 0 && (
         <div className="memo-list" style={{ marginBottom: 24 }}>
           {g.round.trades.map((t) => (
-            <Ticket key={t.id} className="memo" serrated bg="#F4E7CE">
+            <Ticket key={t.id} className="memo" serrated bg="#FBF4E6">
               <strong>{studioById(g, t.a).name}</strong> and <strong>{studioById(g, t.b).name}</strong> have done a deal.
             </Ticket>
           ))}
@@ -340,7 +342,7 @@ function Prep({ room, view }: Props) {
       </div>
       <div className="prep">
         <div className="screen-prep">
-          <Ticket className="clock-ticket" bg="#F4E7CE">
+          <Ticket className="clock-ticket" bg="#FBF4E6">
             <div className="clock-ticket__studio t-ticket">{over ? 'Pencils down' : running ? 'Pencils down in' : 'Clock paused'}</div>
             {!over && <div className="clock">{mmss(left)}</div>}
           </Ticket>
@@ -362,7 +364,7 @@ function Prep({ room, view }: Props) {
               <li key={id}>
                 <span className="t-mono">{ordinal(i + 1)}</span>
                 <span>
-                  <span className="dot" style={{ background: stock(studioById(g, id).colour).bg }} />
+                  <Stamp colour={studioById(g, id).colour} badge size={24} className="dot-stamp" />
                   {studioById(g, id).name}
                 </span>
               </li>

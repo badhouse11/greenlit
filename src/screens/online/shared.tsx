@@ -3,7 +3,7 @@ import type { Game, RoundStudio } from '../../game/types';
 import type { Auction, Clock, RoomEvent, View } from '../../net/protocol';
 import { AUCTION } from '../../net/protocol';
 import { CATEGORIES, RULES, cardTotal, points, studioById } from '../../game/engine';
-import { stock } from '../../lib/palette';
+import { Stamp } from '../../components/Stamp';
 
 export const PHASE_LABEL: Record<Game['phase'], string> = {
   handover: 'Handover',
@@ -106,7 +106,7 @@ export function ConnectionBadge({ status }: { status: string }) {
 }
 
 export function StudioDot({ colour }: { colour: string }) {
-  return <span className="dot" style={{ background: stock(colour).bg }} />;
+  return <Stamp colour={colour} badge size={22} className="dot-stamp" />;
 }
 
 export const nameOf = (v: View, id: string | null | undefined) => (id && v.game ? studioById(v.game, id).name : '');
@@ -204,7 +204,7 @@ export function ReelResults({ g, me, big = false }: { g: Game; me?: string | nul
               <span className="results__place t-mono">{String(i + 1).padStart(2, '0')}</span>
               <div className="results__who">
                 <b>
-                  <span className="dot" style={{ background: stockBg(s.colour) }} />
+                  <Stamp colour={s.colour} badge size={24} className="dot-stamp" />
                   {s.name}
                   {won && <span className="results__badge">Greenlit</span>}
                 </b>
@@ -231,7 +231,6 @@ export function ReelResults({ g, me, big = false }: { g: Game; me?: string | nul
   );
 }
 
-const stockBg = (colour: string) => stock(colour).bg;
 
 /* ---------------------------------------------------------------------- */
 /*  Welcome: the first game on this phone                                  */

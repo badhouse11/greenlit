@@ -11,6 +11,7 @@ import { PrintShop } from './screens/PrintShop';
 import { JoinRoom, StartRoom } from './screens/online/OnlineRoom';
 import { MULTIPLAYER_READY } from './net/useRoom';
 import { clearRoomFromAddress, lastRoom } from './net/lastRoom';
+import { StampDefs } from './components/Stamp';
 
 /** A link like greenlit.app/?room=ABCD drops a phone straight into that room. */
 const linkedRoom = (() => {
@@ -147,6 +148,7 @@ export default function App() {
 
   return (
     <div className="app">
+      <StampDefs />
       {inGame && (
         <header className="marquee no-print">
           <button className="marquee__mark" onClick={() => setView('home')} aria-label="GREENLIT home">

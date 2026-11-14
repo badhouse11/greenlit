@@ -7,6 +7,7 @@ import { AUCTION, isRoomCode, makeRoomCode } from '../../net/protocol';
 import { RULES, shuffle } from '../../game/engine';
 import { PALETTE, PALETTE_KEYS, STUDIO_NAMES, stock } from '../../lib/palette';
 import { Ticket } from '../../components/Ticket';
+import { Stamp } from '../../components/Stamp';
 import { ScreenView } from './ScreenView';
 import { PhoneView } from './PhoneView';
 import { ConnectionBadge, ErrorToast, EventToast, ShareInvite } from './shared';
@@ -262,6 +263,7 @@ function StudioForm({ room, view, onDone, editing }: { room: Room; view: View; o
         }}
       >
         <div className="studio-row" style={{ background: k.bg, color: k.ink }}>
+          <Stamp colour={colour} size={40} className="studio-row__stamp" />
           <label className="visually-hidden" htmlFor="studio-name">
             Studio name
           </label>
@@ -270,20 +272,25 @@ function StudioForm({ room, view, onDone, editing }: { room: Room; view: View; o
             ↻
           </button>
         </div>
-        <div className="swatches swatches--big" role="group" aria-label="Ticket colour">
+        <div className="swatches swatches--big swatches--stamps" role="group" aria-label="Your studio’s colours and stamp">
           {PALETTE_KEYS.map((key) => (
             <button
               type="button"
               key={key}
-              className="swatch"
-              style={{ background: PALETTE[key].bg }}
+              className="swatch swatch--stamp"
               aria-pressed={colour === key}
-              aria-label={PALETTE[key].name}
+              aria-label={`${PALETTE[key].name}: ${PALETTE[key].stampName}${taken.has(key) ? ' (taken)' : ''}`}
+              title={`${PALETTE[key].name}: ${PALETTE[key].stampName}`}
               disabled={taken.has(key)}
               onClick={() => setColour(key)}
-            />
+            >
+              <Stamp colour={key} badge size={52} />
+            </button>
           ))}
         </div>
+        <p className="swatch-caption t-wide">
+          {k.name} · {k.stampName}
+        </p>
         <button className="btn btn--big btn--go" type="submit" disabled={!name.trim()}>
           {editing ? 'Save changes' : 'Take my seat'}
         </button>
@@ -321,6 +328,7 @@ function LobbyPhone({ room, view, onExit, onLeave }: { room: Room; view: View; o
             const on = view.online.includes(l.id);
             return (
               <Ticket key={l.id} bg={k.bg} ink={k.ink} className="lobby-stub" serrated>
+                <Stamp colour={l.colour} size={34} className="lobby-stub__stamp" />
                 <span className="t-ticket lobby-stub__name">
                   {l.name}
                   {l.id === mine.id ? ' (you)' : ''}

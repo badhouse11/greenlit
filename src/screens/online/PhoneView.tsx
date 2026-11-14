@@ -29,6 +29,7 @@ import { FitText, Ticket } from '../../components/Ticket';
 import { AUCTION, PREP_STEPS } from '../../net/protocol';
 import { GoogleHelp, Intro, OnStage, ReelResults, ShareInvite, auctionState, clockLeft, mmss, ordinal, useIntro } from './shared';
 import { NotesSheet, PrepNotes, usePrepClock } from './prep';
+import { Stamp } from '../../components/Stamp';
 
 interface Props {
   room: Room;
@@ -120,6 +121,7 @@ function PhoneBand({ view, isComm, rs, onMenu }: { view: View; isComm: boolean; 
   return (
     <header className="phone-band" style={{ background: k.bg, color: k.ink }}>
       <div className="phone-band__top">
+        <Stamp colour={s.colour} size={44} className="phone-band__stamp" label={`${k.stampName}, your studio’s stamp`} />
         <div className="phone-band__name t-ticket">{s.name}</div>
         <button className="phone-band__menu" onClick={onMenu} aria-label="Room menu">
           {view.you.isHost ? 'Host' : 'Room'} {view.code}
@@ -433,12 +435,15 @@ function PlayerCasting({ room, view, rs }: { room: Room; view: View; rs: RoundSt
             {steps.map((amount, i) => (
               <button
                 key={amount}
-                className={`btn bid-btn ${i === 0 ? 'btn--go' : ''}`}
+                className={`bid-btn bid-tix bid-tix--${i}`}
                 disabled={amount > limit}
                 onClick={() => room.act({ a: 'bid', amount })}
               >
-                <small>{i === 0 ? 'Bid' : `+$${amount - (a.high?.amount ?? 0)}M`}</small>
-                <b>${amount}M</b>
+                <span className="bid-tix__band" aria-hidden="true" />
+                <b className="bid-tix__amt">${amount}M</b>
+                <small className="bid-tix__serial">
+                  {i === 0 ? 'Bid' : `+$${amount - (a.high?.amount ?? 0)}M`}
+                </small>
               </button>
             ))}
           </div>
@@ -620,7 +625,7 @@ function OfferCard({ g, o, me, children }: { g: Game; o: Offer; me: string; chil
   const incoming = o.to === me;
   const other = incoming ? o.from : o.to;
   return (
-    <Ticket className="memo offer-card" serrated bg="#F4E7CE">
+    <Ticket className="memo offer-card" serrated bg="#FBF4E6">
       <strong>{incoming ? `Offer from ${studioById(g, other).name}` : `Your offer to ${studioById(g, other).name}`}</strong>
       <p>
         {incoming ? 'They give' : 'You give'}: {describeSide(g, o.from, o.fromGives)}
@@ -871,7 +876,7 @@ function PhoneStandings({ g, title = 'The board so far' }: { g: Game; title?: st
           <li key={row.studio.id}>
             <span className="t-mono">{String(i + 1).padStart(2, '0')}</span>
             <span>
-              <span className="dot" style={{ background: stock(row.studio.colour).bg }} />
+              <Stamp colour={row.studio.colour} badge size={22} className="dot-stamp" />
               {row.studio.name}
               {row.studio.folded ? ' (folded)' : ''}
               <TokenRow count={tokens(g, row.studio.id)} />
@@ -902,7 +907,7 @@ function PhoneReveal({ room, view, isComm }: Props & { isComm: boolean }) {
         <div className="reveal__after" style={{ display: 'grid', gap: 14, justifyItems: 'center' }}>
           <p style={{ opacity: 0.85 }}>You have your cast. Now make the film.</p>
           {isComm ? (
-            <button className="btn btn--big" style={{ ['--b-bg' as string]: '#F4E7CE', ['--b-ink' as string]: '#1D1814' }} onClick={() => room.act({ a: 'toTrading' })}>
+            <button className="btn btn--big" style={{ ['--b-bg' as string]: '#FBF4E6', ['--b-ink' as string]: '#1A1F25' }} onClick={() => room.act({ a: 'toTrading' })}>
               Open the trading floor
             </button>
           ) : (
@@ -1079,17 +1084,16 @@ export function LotCard({ card }: { card: Card }) {
   const kicker = legacy ? (card.oscar ? 'Vault · Oscar winner' : 'From the vault') : card.oscar ? 'Oscar winner' : 'Now casting';
   return (
     <div className="lot-wrap" key={card.id}>
-      <Ticket
-        serrated
-        frame={false}
-        className={`lot ${legacy ? 'lot--legacy' : ''} ${card.oscar ? 'lot--oscar' : ''}`}
-        wrapClassName={legacy ? 'vault-surprise' : 'slide-in'}
-      >
-        <div className="lot__kicker t-wide">{kicker}</div>
-        <div className="lot__name t-ticket">
-          <FitText text={card.name} max={44} min={16} />
+      <div className={`lot star-card ${legacy ? 'lot--legacy star-card--vault vault-surprise' : 'slide-in'} ${card.oscar ? 'lot--oscar star-card--oscar' : ''}`}>
+        <span className="star-card__spine" aria-hidden="true" />
+        <div className="star-card__body">
+          <div className="lot__kicker t-wide">{kicker}</div>
+          <div className="lot__name t-ticket">
+            <FitText text={card.name} max={34} min={16} />
+          </div>
         </div>
-      </Ticket>
+        {legacy && <span className="scanlines" aria-hidden="true" />}
+      </div>
       <GoogleHelp name={card.name} />
     </div>
   );
@@ -1102,7 +1106,12 @@ export function BidBoard({ view, now, big = false }: { view: View; now: number; 
   const leader = a.high ? studioById(view.game!, a.high.studioId) : null;
   return (
     <div className={`bid-board ${big ? 'bid-board--big' : ''}`} aria-live="polite">
-      <div className="bid-board__call t-wide">{s.call}</div>
+      <div className="bid-board__osd t-wide">
+        <span className="rec">
+          <i aria-hidden="true">●</i> {a.pausedLeft != null ? 'Pause' : 'Live'}
+        </span>
+        <span className="bid-board__call">{s.call}</span>
+      </div>
       <div className="bid-board__price t-ticket">{a.high ? `$${a.high.amount}M` : 'No bids'}</div>
       <div className="bid-board__leader">
         {leader ? (
@@ -1117,6 +1126,8 @@ export function BidBoard({ view, now, big = false }: { view: View; now: number; 
         <span style={{ width: `${s.fraction * 100}%` }} />
       </div>
       {!!a.passed?.length && <div className="bid-board__passed">Passed: {a.passed.map((id) => studioById(view.game!, id).name).join(', ')}</div>}
+      <span className="scanlines" aria-hidden="true" />
+      <span className="tracking" aria-hidden="true" />
     </div>
   );
 }
@@ -1150,7 +1161,7 @@ function MiniLedger({ g }: { g: Game }) {
         return (
           <li key={r.studioId}>
             <span>
-              <span className="dot" style={{ background: stock(s.colour).bg }} />
+              <Stamp colour={s.colour} badge size={22} className="dot-stamp" />
               {s.name}
             </span>
             <span>
